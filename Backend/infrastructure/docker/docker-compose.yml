@@ -1,0 +1,102 @@
+version: "3.9"
+
+services:
+  postgres-reviive:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: reviive_db
+      POSTGRES_USER: reviive
+      POSTGRES_PASSWORD: reviive
+    volumes:
+      - postgres_reviive_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  postgres-n8n:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: n8n_db
+      POSTGRES_USER: n8n
+      POSTGRES_PASSWORD: n8n
+    volumes:
+      - postgres_n8n_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: reviive
+      MINIO_ROOT_PASSWORD: reviive123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  api-django:
+    build:
+      context: ../../api
+    command: >
+      sh -c "python manage.py migrate &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    env_file:
+      - ../../api/.env
+    volumes:
+      - ../../api:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres-reviive
+      - redis
+      - minio
+
+  n8n:
+    image: n8nio/n8n:latest
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres-n8n
+      DB_POSTGRESDB_DATABASE: n8n_db
+      DB_POSTGRESDB_USER: n8n
+      DB_POSTGRESDB_PASSWORD: n8n
+      N8N_HOST: localhost
+      WEBHOOK_URL: http://localhost:5678/
+    ports:
+      - "5678:5678"
+    volumes:
+      - ../../automation/n8n:/home/node/.n8n
+    depends_on:
+      - postgres-n8n
+
+  web-next:
+    build:
+      context: ../../../Frontend
+    command: npm run dev
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+    volumes:
+      - ../../../Frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-django
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - web-next
+      - api-django
+
+volumes:
+  postgres_reviive_data:
+  postgres_n8n_data:
+  minio_data:

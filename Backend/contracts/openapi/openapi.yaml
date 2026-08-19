@@ -1,0 +1,124 @@
+openapi: 3.0.3
+info:
+  title: Reviive API
+  description: >
+    API de negocio de Reviive. Es la única fuente de verdad para reglas de
+    negocio; n8n orquesta los agentes de IA y llama a esta API, nunca escribe
+    directo en la base de datos de negocio.
+  version: "1.0"
+servers:
+  - url: /api/v1
+paths:
+  /auth/login:
+    post:
+      summary: Obtener par de tokens JWT (access/refresh)
+      tags: [identity]
+  /auth/refresh:
+    post:
+      summary: Refrescar access token
+      tags: [identity]
+  /users/me:
+    get:
+      summary: Perfil del usuario autenticado
+      tags: [identity]
+  /memories:
+    get:
+      summary: Listar recuerdos del cliente autenticado
+      tags: [memories]
+    post:
+      summary: Registrar un nuevo recuerdo
+      tags: [memories]
+  /memories/{id}:
+    get:
+      summary: Detalle de un recuerdo
+      tags: [memories]
+  /assets/presign:
+    post:
+      summary: Generar URL firmada para subir un archivo a S3/MinIO
+      tags: [memories]
+  /products:
+    get:
+      summary: Catálogo de servicios de restauración (público)
+      tags: [catalog]
+  /providers:
+    get:
+      summary: Listar proveedores validados
+      tags: [providers]
+  /providers/match:
+    post:
+      summary: Sugerir proveedores para un producto/ciudad
+      tags: [providers]
+  /conversations:
+    get:
+      summary: Listar conversaciones (propias, o todas para supervisión)
+      tags: [conversations]
+    post:
+      summary: Iniciar una conversación
+      tags: [conversations]
+  /conversations/{id}/messages:
+    get:
+      summary: Historial de mensajes de una conversación
+      tags: [conversations]
+    post:
+      summary: Enviar un mensaje
+      tags: [conversations]
+  /agent-runs/request:
+    post:
+      summary: n8n registra el inicio de una ejecución de agente (firmado HMAC)
+      tags: [agents]
+  /agent-runs/{id}/complete:
+    post:
+      summary: n8n reporta el resultado final de una ejecución (firmado HMAC)
+      tags: [agents]
+  /recommendations:
+    get:
+      summary: Recomendaciones generadas para un recuerdo
+      tags: [recommendations]
+  /quotations:
+    get:
+      summary: Cotizaciones del cliente/proveedor autenticado
+      tags: [quotations]
+    post:
+      summary: Crear cotización (proveedor/curador)
+      tags: [quotations]
+  /orders:
+    get:
+      summary: Pedidos del usuario autenticado
+      tags: [orders]
+    post:
+      summary: Confirmar pedido a partir de una cotización aceptada (RN-04)
+      tags: [orders]
+  /orders/{id}/events:
+    get:
+      summary: Línea de tiempo de un pedido
+      tags: [orders]
+    post:
+      summary: Registrar un evento/cambio de estado (RN-06: exige evidencia)
+      tags: [orders]
+  /memorials:
+    get:
+      summary: Memoriales digitales visibles para el usuario actual
+      tags: [memorials]
+    post:
+      summary: Crear un memorial digital (privado por defecto, RN-13)
+      tags: [memorials]
+  /dataset-examples:
+    get:
+      summary: Ejemplos candidatos a dataset de entrenamiento
+      tags: [evaluations]
+  /dataset-examples/{id}/approve:
+    post:
+      summary: Aprobar un ejemplo para el dataset (sólo supervisor_ia, RN-09/RN-11)
+      tags: [evaluations]
+  /analytics/dashboard:
+    get:
+      summary: Métricas agregadas para el panel administrativo
+      tags: [analytics]
+
+# Webhooks entrantes que expone n8n (no Django), documentados aquí por trazabilidad.
+# Ver automation/n8n/README.md.
+x-n8n-webhooks:
+  - /webhook/reviive/conversations/message
+  - /webhook/reviive/telegram/update
+  - /webhook/reviive/email/inbound
+  - /webhook/reviive/orders/status-changed

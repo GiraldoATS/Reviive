@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+:root {
+  /* Paleta de marca Reviive */
+  --color-borgona: #5b1f2e;
+  --color-borgona-dark: #451723;
+  --color-rosa: #e8c7c6;
+  --color-dorado: #d4af37;
+  --color-dorado-suave: #c7a063;
+  --color-marfil: #f7f3ec;
+  --color-greige: #d9cec2;
+  --color-carbon: #2b2b2b;
+
+  --background: var(--color-marfil);
+  --foreground: var(--color-carbon);
+}
+
+@theme inline {
+  --color-borgona: var(--color-borgona);
+  --color-borgona-dark: var(--color-borgona-dark);
+  --color-rosa: var(--color-rosa);
+  --color-dorado: var(--color-dorado);
+  --color-dorado-suave: var(--color-dorado-suave);
+  --color-marfil: var(--color-marfil);
+  --color-greige: var(--color-greige);
+  --color-carbon: var(--color-carbon);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-display: var(--font-playfair);
+  --font-body: var(--font-lora);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), "Lora", serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display), "Playfair Display", serif;
+}
+
+::selection {
+  background: var(--color-rosa);
+  color: var(--color-borgona-dark);
+}
+
+.input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-greige);
+  background: var(--color-marfil);
+  padding: 0.6rem 0.9rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--color-borgona);
+}
