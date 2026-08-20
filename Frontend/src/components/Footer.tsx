@@ -42,14 +42,14 @@ export default function Footer() {
     <footer className="border-t border-greige/70 bg-[#e8ded2]">
       <div className="mx-auto w-[94%] max-w-[1500px] pt-14 pb-15 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-[1.15fr_0.85fr_0.85fr_1fr_0.75fr] gap-x-8 xl:gap-x-10 gap-y-10 xl:items-start">
         {/* Marca */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left xl:-mt-3">
-          <div className="relative h-36 w-[122px] mx-auto md:mx-0">
+        <div className="flex flex-col items-center text-center xl:-mt-3">
+          <div className="relative h-36 w-[122px] mx-auto">
             <Image src="/images/sello.png" alt="Reviive" fill sizes="122px" className="object-contain" />
           </div>
           <p className="mt-3 text-sm italic text-carbon/70">
             El taller donde el tiempo se devuelve.
           </p>
-          <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-3">
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
             {redes.map((r) => (
               <a
                 key={r.label}
@@ -105,13 +105,13 @@ export default function Footer() {
         </div>
 
         {/* Reloj de arena: columna propia, con aire respecto a Ayuda/Contacto */}
-        <div className="flex justify-center md:col-span-3 xl:col-span-1 xl:justify-start xl:self-center mt-2 md:mt-8 xl:mt-0">
+        <div className="flex justify-center md:col-span-3 xl:col-span-1 xl:justify-start xl:-ml-8 xl:self-center mt-2 md:mt-8 xl:mt-0">
           <Image
             src="/images/footer-hourglass.png"
             alt=""
             width={700}
             height={541}
-            className="w-[180px] xl:w-[200px] h-auto opacity-90"
+            className="w-[180px] xl:w-[225px] h-auto opacity-90"
           />
         </div>
       </div>
