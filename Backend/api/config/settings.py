@@ -28,7 +28,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.postgres",
     "rest_framework",
     "corsheaders",
     "apps.identity",
@@ -79,23 +78,38 @@ ASGI_APPLICATION = "config.asgi.application"
 
 AUTH_USER_MODEL = "identity.Usuario"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("POSTGRES_DB", default="reviive_db"),
-        "USER": env("POSTGRES_USER", default="reviive"),
-        "PASSWORD": env("POSTGRES_PASSWORD", default="reviive"),
-        "HOST": env("POSTGRES_HOST", default="postgres-reviive"),
-        "PORT": env("POSTGRES_PORT", default="5432"),
+# DB_ENGINE=sqlite (por defecto, para desarrollo local sin dependencias externas)
+# DB_ENGINE=postgres (para docker-compose / despliegue, ver infrastructure/docker)
+if env("DB_ENGINE", default="sqlite") == "postgres":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("POSTGRES_DB", default="reviive_db"),
+            "USER": env("POSTGRES_USER", default="reviive"),
+            "PASSWORD": env("POSTGRES_PASSWORD", default="reviive"),
+            "HOST": env("POSTGRES_HOST", default="postgres-reviive"),
+            "PORT": env("POSTGRES_PORT", default="5432"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": env("REDIS_URL", default="redis://redis:6379/0"),
+if env("REDIS_URL", default=None):
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": env("REDIS_URL"),
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

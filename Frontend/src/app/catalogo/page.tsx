@@ -2,11 +2,12 @@ import SiteShell from "@/components/SiteShell";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
 import { ProductIcon } from "@/components/icons";
-import { productos } from "@/data/mock";
+import { getProductos } from "@/lib/api";
 
-const categorias = Array.from(new Set(productos.map((p) => p.categoria)));
+export default async function CatalogoPage() {
+  const productos = await getProductos();
+  const categorias = Array.from(new Set(productos.map((p) => p.categoria)));
 
-export default function CatalogoPage() {
   return (
     <SiteShell>
       <div className="mx-auto max-w-6xl px-6 py-14 grid md:grid-cols-[220px_1fr] gap-10">

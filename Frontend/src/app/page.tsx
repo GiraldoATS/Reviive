@@ -2,7 +2,7 @@ import SiteShell from "@/components/SiteShell";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
 import { ProductIcon, IconCuidado, IconConfianza, IconTrazable, IconSeguro } from "@/components/icons";
-import { productos } from "@/data/mock";
+import { getProductos } from "@/lib/api";
 
 const principios = [
   { Icono: IconCuidado, titulo: "Artesanal", texto: "Trazado a mano, con cuidado y respeto por cada pieza." },
@@ -11,7 +11,9 @@ const principios = [
   { Icono: IconSeguro, titulo: "Seguro", texto: "Custodia responsable de objetos con valor sentimental." },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const productos = await getProductos();
+
   return (
     <SiteShell>
       <section className="mx-auto max-w-6xl px-6 pt-16 pb-20 grid md:grid-cols-2 gap-12 items-center">

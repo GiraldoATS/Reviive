@@ -1,84 +1,26 @@
-import PortalSidebar from "@/components/PortalSidebar";
-import { conversaciones } from "@/data/mock";
+import RolePortalShell from "@/components/RolePortalShell";
+import Card from "@/components/Card";
+import StatCard from "@/components/StatCard";
+import { IconMessage, IconClockAlert, IconAlertTriangle, IconCheckCircle } from "@/components/icons";
 
-const sidebarItems = [
-  { href: "/supervision", label: "Panel", active: true },
-  { href: "/supervision", label: "Conversaciones" },
-  { href: "/supervision", label: "Pedidos" },
-  { href: "/supervision", label: "Alertas" },
-  { href: "/supervision", label: "Clientes" },
-  { href: "/supervision", label: "Reportes" },
-];
-
-const mensajesDetalle = [
-  { autor: "Carolina M.", texto: "¿Podrían enviarme una actualización del reloj?", hora: "10:42", propio: false },
-  { autor: "Alma", texto: "Claro, el reloj está en proceso de limpieza profunda.", hora: "10:43", propio: true },
-];
-
-export default function CentroSupervisionPage() {
+export default function SupervisionResumenPage() {
   return (
-    <div className="min-h-screen flex bg-marfil">
-      <PortalSidebar
-        title="Supervisión"
-        userLabel="Agente Sofía"
-        items={sidebarItems}
-      />
-      <main className="flex-1 grid md:grid-cols-[320px_1fr]">
-        <section className="border-r border-greige/60 flex flex-col">
-          <div className="px-5 py-4 border-b border-greige/60">
-            <h2 className="font-display text-lg text-carbon">Conversaciones activas</h2>
-          </div>
-          <div className="flex-1 overflow-y-auto divide-y divide-greige/50">
-            {conversaciones.map((c, i) => (
-              <div
-                key={c.id}
-                className={`px-5 py-4 cursor-pointer ${i === 0 ? "bg-rosa/20" : "hover:bg-marfil"}`}
-              >
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium text-carbon">{c.cliente}</span>
-                  <span className="text-xs text-carbon/45">{c.hora}</span>
-                </div>
-                <p className="text-xs text-carbon/55 mt-0.5">
-                  Pedido #{c.pedidoRef}
-                </p>
-                <p className="text-xs text-carbon/60 mt-1 truncate">
-                  {c.ultimoMensaje}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
+    <RolePortalShell role="supervision" crumbs={["Supervisión", "Resumen"]}>
+      <h1 className="font-display text-2xl text-carbon mb-1">Bandeja de conversaciones</h1>
+      <p className="text-sm text-carbon/55 mb-6">Monitorea, revisa y asegura conversaciones significativas.</p>
 
-        <section className="flex flex-col">
-          <div className="px-6 py-4 border-b border-greige/60">
-            <h2 className="font-display text-lg text-carbon">Carolina M.</h2>
-            <p className="text-xs text-carbon/50">Pedido #RV-2024-0512</p>
-          </div>
-          <div className="flex-1 px-6 py-4 space-y-3 overflow-y-auto">
-            {mensajesDetalle.map((m, i) => (
-              <div
-                key={i}
-                className={`max-w-[70%] rounded-2xl px-4 py-2.5 text-sm ${
-                  m.propio
-                    ? "bg-borgona text-marfil ml-auto"
-                    : "bg-white border border-greige/70 text-carbon"
-                }`}
-              >
-                <p>{m.texto}</p>
-                <p className={`mt-1 text-[10px] ${m.propio ? "text-marfil/60" : "text-carbon/40"}`}>
-                  {m.hora}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="px-6 py-4 border-t border-greige/60">
-            <input
-              className="input"
-              placeholder="Escribe tu respuesta..."
-            />
-          </div>
-        </section>
-      </main>
-    </div>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <StatCard icon={<IconMessage className="h-5 w-5" />} value="128" label="Abiertas" trend="+12 hoy" trendTone="up" tone="rosa" />
+        <StatCard icon={<IconClockAlert className="h-5 w-5" />} value="45" label="Pendientes" trend="+7 hoy" trendTone="up" tone="dorado" />
+        <StatCard icon={<IconAlertTriangle className="h-5 w-5" />} value="12" label="Críticas" trend="+3 hoy" trendTone="up" tone="borgona" />
+        <StatCard icon={<IconCheckCircle className="h-5 w-5" />} value="86" label="Corregidas" trend="+15 hoy" trendTone="up" tone="verde" />
+      </div>
+
+      <Card>
+        <p className="font-display text-lg text-borgona text-center italic">
+          &ldquo;Cada conversación es un recuerdo en construcción.&rdquo;
+        </p>
+      </Card>
+    </RolePortalShell>
   );
 }

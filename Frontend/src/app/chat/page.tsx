@@ -3,7 +3,7 @@ import ChatAlma from "@/components/ChatAlma";
 
 export default function ChatPage() {
   return (
-    <SiteShell>
+    <SiteShell hideFloatingAlma>
       <div className="mx-auto max-w-6xl px-6 py-14">
         <div className="text-center mb-10">
           <h1 className="font-display text-3xl text-carbon">Chat con Alma</h1>

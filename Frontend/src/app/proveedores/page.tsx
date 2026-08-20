@@ -1,92 +1,60 @@
-import PortalSidebar from "@/components/PortalSidebar";
+import RolePortalShell from "@/components/RolePortalShell";
+import Card from "@/components/Card";
 import Badge from "@/components/Badge";
-import { pedidos } from "@/data/mock";
+import { IconBox, IconWallet, IconTruck, IconAlertTriangle, IconStar, IconMessage } from "@/components/icons";
 
-const sidebarItems = [
-  { href: "/proveedores", label: "Inicio", active: true },
-  { href: "/proveedores", label: "Pedidos asignados" },
-  { href: "/proveedores", label: "Mis proyectos" },
-  { href: "/proveedores", label: "Mensajes" },
-  { href: "/proveedores", label: "Facturación" },
-  { href: "/proveedores", label: "Mi perfil" },
+const stats = [
+  { icon: <IconBox className="h-5 w-5" />, valor: "12", label: "Solicitudes nuevas", trend: "+20% vs. ayer" },
+  { icon: <IconMessage className="h-5 w-5" />, valor: "7", label: "Cotizaciones pendientes", trend: "Ver detalles" },
+  { icon: <IconTruck className="h-5 w-5" />, valor: "18", label: "Pedidos activos", trend: "Ver pedidos" },
+  { icon: <IconAlertTriangle className="h-5 w-5" />, valor: "3", label: "Pedidos atrasados", trend: "Atención requerida" },
+  { icon: <IconWallet className="h-5 w-5" />, valor: "$48,560", label: "Ingresos del mes", trend: "+15% vs. mes pasado" },
+  { icon: <IconStar className="h-5 w-5" />, valor: "4.8", label: "Calificación promedio", trend: "128 calificaciones" },
 ];
 
-const tabs = ["Activos", "En revisión", "Completados"];
+const tareas = [
+  { texto: "Responder 8 solicitudes nuevas", prioridad: "Alta", nota: "Vence hoy" },
+  { texto: "Enviar 3 cotizaciones pendientes", prioridad: "Media", nota: "Vence mañana" },
+  { texto: "Actualizar seguimiento de pedidos atrasados", prioridad: "Alta", nota: "Requiere atención" },
+];
 
-const toneByEstado: Record<string, "success" | "progress" | "pending"> = {
-  en_proceso: "progress",
-  en_evaluacion: "pending",
-  entregado: "success",
-};
-
-export default function PortalProveedoresPage() {
+export default function ProveedorDashboardPage() {
   return (
-    <div className="min-h-screen flex bg-marfil">
-      <PortalSidebar
-        title="Proveedores"
-        userLabel="Taller El Tiempo"
-        items={sidebarItems}
-      />
-      <main className="flex-1 px-10 py-8">
-        <h1 className="font-display text-2xl text-carbon mb-1">
-          Pedidos asignados
-        </h1>
-        <p className="text-sm text-carbon/55 mb-6">
-          Taller El Tiempo
-        </p>
+    <RolePortalShell role="proveedor" crumbs={["Proveedor", "Dashboard"]}>
+      <h1 className="font-display text-2xl text-carbon">Bienvenida, María</h1>
+      <p className="text-sm text-carbon/55 mt-1 mb-6">
+        Aquí tienes un resumen de tu actividad y pendientes importantes.
+      </p>
 
-        <div className="flex gap-2 mb-6">
-          {tabs.map((tab, i) => (
-            <span
-              key={tab}
-              className={`rounded-full px-4 py-1.5 text-sm ${
-                i === 0 ? "bg-borgona text-marfil" : "border border-greige/70 text-carbon/70"
-              }`}
-            >
-              {tab}
-            </span>
-          ))}
-        </div>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {stats.map((s) => (
+          <Card key={s.label} className="flex gap-4">
+            <div className="h-11 w-11 shrink-0 rounded-full bg-rosa/40 text-borgona-dark flex items-center justify-center">
+              {s.icon}
+            </div>
+            <div>
+              <p className="font-display text-2xl text-carbon leading-none">{s.valor}</p>
+              <p className="mt-1.5 text-xs text-carbon/55">{s.label}</p>
+              <p className="mt-1 text-[11px] text-dorado-suave">{s.trend}</p>
+            </div>
+          </Card>
+        ))}
+      </div>
 
-        <div className="rounded-2xl border border-greige/70 bg-white/60 divide-y divide-greige/60">
-          {pedidos.map((pedido) => (
-            <div
-              key={pedido.id}
-              className="flex items-center justify-between px-6 py-4"
-            >
-              <div>
-                <p className="text-sm font-medium text-carbon">
-                  #{pedido.codigo} · {pedido.objeto}
-                </p>
-                <p className="text-xs text-carbon/50">
-                  Cliente: {pedido.clienteNombre}
-                </p>
+      <Card>
+        <h2 className="font-display text-lg text-carbon mb-4">Tareas prioritarias</h2>
+        <ul className="divide-y divide-greige/50">
+          {tareas.map((t) => (
+            <li key={t.texto} className="flex items-center justify-between py-3">
+              <span className="text-sm text-carbon">{t.texto}</span>
+              <div className="flex items-center gap-3">
+                <Badge tone={t.prioridad === "Alta" ? "progress" : "pending"}>{t.prioridad}</Badge>
+                <span className="text-xs text-carbon/45">{t.nota}</span>
               </div>
-              <Badge tone={toneByEstado[pedido.estado] ?? "pending"}>
-                {pedido.estado.replace(/_/g, " ")}
-              </Badge>
-            </div>
+            </li>
           ))}
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <p className="text-sm font-medium text-carbon">
-                #RV-2024-0513 · Cámara Rolleiflex
-              </p>
-              <p className="text-xs text-carbon/50">Cliente: Andrés P.</p>
-            </div>
-            <Badge tone="progress">en proceso</Badge>
-          </div>
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <p className="text-sm font-medium text-carbon">
-                #RV-2024-0514 · Máquina de escribir Remington
-              </p>
-              <p className="text-xs text-carbon/50">Cliente: Laura G.</p>
-            </div>
-            <Badge tone="pending">en evaluación</Badge>
-          </div>
-        </div>
-      </main>
-    </div>
+        </ul>
+      </Card>
+    </RolePortalShell>
   );
 }

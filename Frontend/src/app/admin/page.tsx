@@ -1,20 +1,13 @@
-import PortalSidebar from "@/components/PortalSidebar";
-
-const sidebarItems = [
-  { href: "/admin", label: "Resumen", active: true },
-  { href: "/admin", label: "Pedidos" },
-  { href: "/admin", label: "Clientes" },
-  { href: "/admin", label: "Finanzas" },
-  { href: "/admin", label: "Talleres / Proveedores" },
-  { href: "/admin", label: "Reportes" },
-  { href: "/admin", label: "Configuración" },
-];
+import RolePortalShell from "@/components/RolePortalShell";
+import Card from "@/components/Card";
+import StatCard from "@/components/StatCard";
+import { IconBox, IconUsers, IconWallet, IconAlertTriangle } from "@/components/icons";
 
 const stats = [
-  { label: "Pedidos totales", valor: "248", cambio: "+18% vs. ayer" },
-  { label: "En proceso", valor: "132", cambio: "+150% vs. ayer" },
-  { label: "Entregados", valor: "96", cambio: "+22% vs. ayer" },
-  { label: "Nuevos clientes", valor: "38", cambio: "+15% vs. ayer" },
+  { label: "Pedidos totales", valor: "248", cambio: "+18% vs. ayer", icon: <IconBox className="h-5 w-5" /> },
+  { label: "En proceso", valor: "132", cambio: "+150% vs. ayer", icon: <IconWallet className="h-5 w-5" /> },
+  { label: "Entregados", valor: "96", cambio: "+22% vs. ayer", icon: <IconUsers className="h-5 w-5" /> },
+  { label: "Nuevos clientes", valor: "38", cambio: "+15% vs. ayer", icon: <IconAlertTriangle className="h-5 w-5" /> },
 ];
 
 const estados = [
@@ -45,84 +38,69 @@ const puntos = tendencia
 
 export default function DashboardAdminPage() {
   return (
-    <div className="min-h-screen flex bg-marfil">
-      <PortalSidebar title="Admin" userLabel="Administrador" items={sidebarItems} />
-      <main className="flex-1 px-10 py-8">
-        <div className="flex items-center justify-between mb-6">
+    <RolePortalShell role="admin" crumbs={["Administración", "Resumen"]}>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <p className="text-xs text-dorado-suave">Bienvenido de vuelta</p>
           <h1 className="font-display text-2xl text-carbon">Resumen general</h1>
-          <span className="rounded-full border border-greige/70 px-4 py-1.5 text-xs text-carbon/60">
-            Hoy
-          </span>
         </div>
+        <span className="rounded-full border border-greige/70 px-4 py-1.5 text-xs text-carbon/60">
+          Hoy
+        </span>
+      </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {stats.map((s) => (
-            <div
-              key={s.label}
-              className="rounded-2xl border border-greige/70 bg-white/60 p-5"
-            >
-              <p className="text-xs text-carbon/50">{s.label}</p>
-              <p className="font-display text-3xl text-carbon mt-1">{s.valor}</p>
-              <p className="text-xs text-dorado-suave mt-1">{s.cambio}</p>
-            </div>
-          ))}
-        </div>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {stats.map((s) => (
+          <StatCard
+            key={s.label}
+            icon={s.icon}
+            value={s.valor}
+            label={s.label}
+            trend={s.cambio}
+            trendTone="up"
+            tone="rosa"
+          />
+        ))}
+      </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="rounded-2xl border border-greige/70 bg-white/60 p-6">
-            <h2 className="font-display text-lg text-carbon mb-4">
-              Pedidos por estado
-            </h2>
-            <div className="flex items-center gap-8">
-              <div
-                className="relative h-36 w-36 rounded-full shrink-0"
-                style={{ background: conicGradient() }}
-              >
-                <div className="absolute inset-4 rounded-full bg-white flex flex-col items-center justify-center">
-                  <span className="font-display text-xl text-carbon">{total}</span>
-                  <span className="text-[10px] text-carbon/50">Total</span>
-                </div>
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card>
+          <h2 className="font-display text-lg text-carbon mb-4">Pedidos por estado</h2>
+          <div className="flex items-center gap-8">
+            <div className="relative h-36 w-36 rounded-full shrink-0" style={{ background: conicGradient() }}>
+              <div className="absolute inset-4 rounded-full bg-white flex flex-col items-center justify-center">
+                <span className="font-display text-xl text-carbon">{total}</span>
+                <span className="text-[10px] text-carbon/50">Total</span>
               </div>
-              <ul className="space-y-2 text-sm">
-                {estados.map((e) => (
-                  <li key={e.label} className="flex items-center gap-2">
-                    <span
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ background: e.color }}
-                    />
-                    <span className="text-carbon/70">{e.label}</span>
-                    <span className="text-carbon/45 text-xs">{e.valor}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
+            <ul className="space-y-2 text-sm">
+              {estados.map((e) => (
+                <li key={e.label} className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ background: e.color }} />
+                  <span className="text-carbon/70">{e.label}</span>
+                  <span className="text-carbon/45 text-xs">{e.valor}</span>
+                </li>
+              ))}
+            </ul>
           </div>
+        </Card>
 
-          <div className="rounded-2xl border border-greige/70 bg-white/60 p-6">
-            <h2 className="font-display text-lg text-carbon mb-4">
-              Tendencia de pedidos
-            </h2>
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="h-36 w-full">
-              <polyline
-                points={puntos}
-                fill="none"
-                stroke="var(--color-borgona)"
-                strokeWidth="2"
-                vectorEffect="non-scaling-stroke"
-              />
-            </svg>
-            <div className="flex justify-between text-[10px] text-carbon/40 mt-2">
-              <span>L</span>
-              <span>M</span>
-              <span>M</span>
-              <span>J</span>
-              <span>V</span>
-              <span>S</span>
-              <span>D</span>
-            </div>
+        <Card>
+          <h2 className="font-display text-lg text-carbon mb-4">Tendencia de pedidos</h2>
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="h-36 w-full">
+            <polyline
+              points={puntos}
+              fill="none"
+              stroke="var(--color-borgona)"
+              strokeWidth="2"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+          <div className="flex justify-between text-[10px] text-carbon/40 mt-2">
+            <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
           </div>
-        </div>
-      </main>
-    </div>
+        </Card>
+      </div>
+    </RolePortalShell>
   );
 }

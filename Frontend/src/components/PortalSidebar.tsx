@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "./Logo";
 
 type PortalSidebarProps = {
   title: string;
@@ -10,8 +11,8 @@ export default function PortalSidebar({ title, items, userLabel }: PortalSidebar
   return (
     <aside className="w-64 shrink-0 bg-borgona text-marfil/90 flex flex-col min-h-screen">
       <div className="px-6 py-6 border-b border-marfil/15">
-        <span className="font-display text-xl text-marfil">Reviive</span>
-        <p className="text-[11px] uppercase tracking-widest text-rosa/80 mt-1">
+        <Logo tone="marfil" tagline="El tiempo, a tu favor" />
+        <p className="text-[11px] uppercase tracking-widest text-rosa/80 mt-2">
           {title}
         </p>
       </div>
