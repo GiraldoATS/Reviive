@@ -38,6 +38,9 @@ export default function Footer() {
   return (
     <footer className="border-t border-greige/70 bg-[#e8ded2] relative overflow-hidden">
       <div className="mx-auto max-w-6xl px-6 lg:px-4 pt-14 pb-10 grid gap-10 sm:grid-cols-2 md:grid-cols-4 relative">
+        <div className="hidden md:block absolute right-0 top-10 h-32 w-44 opacity-40 pointer-events-none">
+          <Image src="/images/footer-hourglass.png" alt="" fill sizes="176px" className="object-contain object-right" />
+        </div>
         <div className="min-w-0">
           <div className="relative h-40 w-[140px] mx-auto">
             <Image src="/images/sello.png" alt="Reviive" fill sizes="140px" className="object-contain" />
@@ -92,11 +95,6 @@ export default function Footer() {
           <p className="text-sm text-carbon/80">+57 318 485 5941</p>
           <p className="text-sm text-carbon/80">Medellín, Colombia</p>
           <Button href="/contacto" variant="secondary" className="mt-3 text-xs">Escríbenos</Button>
-        </div>
-      </div>
-      <div className="hidden md:flex justify-end max-w-6xl mx-auto px-6 lg:px-4 -mt-4 mb-6 pointer-events-none">
-        <div className="relative h-[134px] w-[173px]">
-          <Image src="/images/footer-hourglass.png" alt="" fill sizes="173px" className="object-contain" />
         </div>
       </div>
       <div className="bg-borgona">
