@@ -395,6 +395,60 @@ export function IconMemorial(props: IconProps) {
   );
 }
 
+export function IconAnillo(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="15" r="5.5" />
+      <path d="M9 9.5 12 4l3 5.5" />
+    </svg>
+  );
+}
+
+export function IconVasija(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M9 4h6M10 4v3.5c0 1-3 3-3 7.5a5 5 0 0 0 10 0c0-4.5-3-6.5-3-7.5V4" />
+    </svg>
+  );
+}
+
+export function IconBolso(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M5 9h14l-1 11H6Z" />
+      <path d="M8.5 9V6.5a3.5 3.5 0 0 1 7 0V9" />
+    </svg>
+  );
+}
+
+export function IconSilla(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M6 4v9M18 4v9M6 13h12v3H6ZM7 16l-1 5M17 16l1 5" />
+    </svg>
+  );
+}
+
+export function IconManos(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 13c0-3 2-5 4-5s3 2 3 4v3M17 13c0-3-2-5-4-5" />
+      <path d="M11 15v2a3 3 0 0 0 3 3h1a3 3 0 0 0 3-3v-4c0-2-1-4-3-4" />
+      <path d="M4 13v2a2 2 0 0 0 2 2h1" />
+    </svg>
+  );
+}
+
+export function IconUserCircle(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="10" r="2.8" />
+      <path d="M6.5 18c1.1-2.6 3-3.8 5.5-3.8s4.4 1.2 5.5 3.8" />
+    </svg>
+  );
+}
+
 export const productIcons: Record<string, (props: IconProps) => React.ReactElement> = {
   reloj: IconReloj,
   joya: IconJoya,
