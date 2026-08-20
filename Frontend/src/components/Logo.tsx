@@ -80,10 +80,10 @@ export default function Logo({
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div className="relative h-8 w-[120px] shrink-0">
-        <Image src="/images/logo.png" alt="Reviive" fill sizes="120px" className="object-contain object-left" priority />
+      <div className="relative h-12 w-[184px] shrink-0">
+        <Image src="/images/logo.png" alt="Reviive" fill sizes="184px" className="object-contain object-left" priority />
       </div>
-      {tagline && <p className={`text-[10px] italic ${taglineColor} -ml-1`}>{tagline}</p>}
+      {tagline && <p className={`text-[11px] italic ${taglineColor} -ml-1`}>{tagline}</p>}
     </div>
   );
 }
