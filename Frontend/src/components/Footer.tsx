@@ -34,21 +34,22 @@ const ayuda = [
   { href: "/preguntas-frecuentes", label: "Política de privacidad" },
 ];
 
+const tituloClase = "text-xs uppercase tracking-widest text-dorado-suave mb-3";
+const listaClase = "space-y-[16px] text-sm text-carbon/80";
+
 export default function Footer() {
   return (
-    <footer className="border-t border-greige/70 bg-[#e8ded2] relative overflow-hidden">
-      <div className="mx-auto max-w-6xl px-6 lg:px-4 pt-14 pb-10 grid gap-10 sm:grid-cols-2 md:grid-cols-4 relative">
-        <div className="hidden md:block absolute right-0 top-24 h-28 w-40 opacity-40 pointer-events-none">
-          <Image src="/images/footer-hourglass.png" alt="" fill sizes="160px" className="object-contain object-right" />
-        </div>
-        <div className="min-w-0">
-          <div className="relative h-40 w-[140px] mx-auto">
-            <Image src="/images/sello.png" alt="Reviive" fill sizes="140px" className="object-contain" />
+    <footer className="border-t border-greige/70 bg-[#e8ded2]">
+      <div className="mx-auto w-[94%] max-w-[1500px] pt-14 pb-15 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-[1.15fr_0.85fr_0.85fr_1fr_0.75fr] gap-x-8 xl:gap-x-10 gap-y-10 xl:items-start">
+        {/* Marca */}
+        <div className="flex flex-col items-center md:items-start text-center md:text-left xl:-mt-3">
+          <div className="relative h-36 w-[122px] mx-auto md:mx-0">
+            <Image src="/images/sello.png" alt="Reviive" fill sizes="122px" className="object-contain" />
           </div>
-          <p className="mt-5 text-sm italic text-carbon/70 text-center">
+          <p className="mt-3 text-sm italic text-carbon/70">
             El taller donde el tiempo se devuelve.
           </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-3">
             {redes.map((r) => (
               <a
                 key={r.label}
@@ -61,44 +62,62 @@ export default function Footer() {
             ))}
           </div>
         </div>
-        <div>
-          <h3 className="text-xs uppercase tracking-widest text-dorado-suave mb-3">Navegación</h3>
-          <ul className="space-y-2 text-sm text-carbon/80">
-            {navegacion.map((n) => (
-              <li key={n.label}>
-                <Link href={n.href} className="hover:text-borgona transition-colors">{n.label}</Link>
-              </li>
-            ))}
-          </ul>
+
+        {/* Navegación + Servicios: una sola columna en tablet, dos columnas propias en desktop */}
+        <div className="xl:contents grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-8 gap-y-10 sm:gap-y-0">
+          <div>
+            <h3 className={tituloClase}>Navegación</h3>
+            <ul className={listaClase}>
+              {navegacion.map((n) => (
+                <li key={n.label}>
+                  <Link href={n.href} className="hover:text-borgona transition-colors">{n.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 className={tituloClase}>Servicios</h3>
+            <ul className={listaClase}>
+              {servicios.map((s) => (
+                <li key={s.label}>
+                  <Link href={s.href} className="hover:text-borgona transition-colors">{s.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
+
+        {/* Ayuda + Contacto: un solo bloque */}
         <div>
-          <h3 className="text-xs uppercase tracking-widest text-dorado-suave mb-3">Servicios</h3>
-          <ul className="space-y-2 text-sm text-carbon/80">
-            {servicios.map((s) => (
-              <li key={s.label}>
-                <Link href={s.href} className="hover:text-borgona transition-colors">{s.label}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-xs uppercase tracking-widest text-dorado-suave mb-3">Ayuda</h3>
-          <ul className="space-y-2 text-sm text-carbon/80 mb-5">
+          <h3 className={tituloClase}>Ayuda</h3>
+          <ul className={listaClase}>
             {ayuda.map((a) => (
               <li key={a.label}>
                 <Link href={a.href} className="hover:text-borgona transition-colors">{a.label}</Link>
               </li>
             ))}
           </ul>
-          <h3 className="text-xs uppercase tracking-widest text-dorado-suave mb-2">Contacto</h3>
+          <h3 className={`${tituloClase} mt-7`}>Contacto</h3>
           <p className="text-sm text-carbon/80">hola@reviive.com</p>
           <p className="text-sm text-carbon/80">+57 318 485 5941</p>
           <p className="text-sm text-carbon/80">Medellín, Colombia</p>
-          <Button href="/contacto" variant="secondary" className="mt-3 text-xs">Escríbenos</Button>
+          <Button href="/contacto" variant="secondary" className="mt-4 text-xs">Escríbenos</Button>
+        </div>
+
+        {/* Reloj de arena: columna propia, con aire respecto a Ayuda/Contacto */}
+        <div className="flex justify-center md:col-span-3 xl:col-span-1 xl:justify-start xl:self-center mt-2 md:mt-8 xl:mt-0">
+          <Image
+            src="/images/footer-hourglass.png"
+            alt=""
+            width={700}
+            height={541}
+            className="w-[180px] xl:w-[200px] h-auto opacity-90"
+          />
         </div>
       </div>
+
       <div className="bg-borgona">
-        <div className="py-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-marfil/60 max-w-6xl mx-auto">
+        <div className="py-4 w-[94%] max-w-[1500px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-marfil/60">
           <span>© 2026 Reviive. Todos los derechos reservados.</span>
           <div className="flex gap-4">
             <Link href="/preguntas-frecuentes" className="hover:text-marfil transition-colors">Términos y condiciones</Link>
