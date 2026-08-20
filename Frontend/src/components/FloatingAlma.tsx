@@ -1,17 +1,23 @@
 import Link from "next/link";
-import { IconTiempo } from "./icons";
+import Image from "next/image";
+import { IconChevronDown } from "./icons";
 
 export default function FloatingAlma() {
   return (
     <Link
       href="/chat"
-      className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-borgona pl-3 pr-4 py-2.5 text-marfil shadow-lg shadow-borgona/20 hover:bg-borgona-dark transition-colors"
+      className="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-full bg-borgona pl-2 pr-4 py-2 text-marfil shadow-lg shadow-borgona/20 hover:bg-borgona-dark transition-colors"
       aria-label="Hablar con Alma"
     >
-      <span className="h-7 w-7 rounded-full bg-marfil/15 flex items-center justify-center">
-        <IconTiempo className="h-4 w-4" />
+      <span className="relative h-10 w-10 rounded-full overflow-hidden shrink-0 ring-2 ring-marfil/30">
+        <Image src="/images/alma.png" alt="Alma" fill sizes="40px" className="object-cover" />
+        <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-borgona" />
       </span>
-      <span className="text-sm">Hablar con Alma</span>
+      <span className="leading-tight">
+        <span className="block text-sm font-medium">Alma</span>
+        <span className="block text-[11px] text-marfil/75">Tu asistente de confianza</span>
+      </span>
+      <IconChevronDown className="h-4 w-4 rotate-180 text-marfil/70" />
     </Link>
   );
 }

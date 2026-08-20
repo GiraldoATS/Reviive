@@ -491,6 +491,41 @@ export function IconUserCircle(props: IconProps) {
   );
 }
 
+export function IconInstagram(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="4" y="4" width="16" height="16" rx="5" />
+      <circle cx="12" cy="12" r="3.5" />
+      <circle cx="16.3" cy="7.7" r="0.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function IconFacebook(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" {...props}>
+      <path d="M14.5 21v-7.6h2.6l.4-3h-3V8.4c0-.9.2-1.5 1.6-1.5h1.6V4.2c-.6-.1-1.6-.2-2.7-.2-2.7 0-4.5 1.6-4.5 4.6v2.6H8v3h2.5V21h4Z" />
+    </svg>
+  );
+}
+
+export function IconTikTok(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" {...props}>
+      <path d="M14.2 3h2.6c.2 1.5 1.1 2.8 2.5 3.5.6.3 1.3.5 2 .5v2.7c-1.5 0-2.9-.4-4.1-1.2v6.8c0 3.1-2.5 5.6-5.6 5.6S5.9 17.4 5.9 14.3c0-3 2.3-5.4 5.2-5.6v2.7a2.9 2.9 0 1 0 2.9 2.9V3Z" />
+    </svg>
+  );
+}
+
+export function IconCorreo(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3.5" y="6" width="17" height="12" rx="1.5" />
+      <path d="M4 7l8 6 8-6" />
+    </svg>
+  );
+}
+
 export const productIcons: Record<string, (props: IconProps) => React.ReactElement> = {
   reloj: IconReloj,
   joya: IconJoya,

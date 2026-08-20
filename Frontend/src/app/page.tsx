@@ -1,7 +1,6 @@
 import Image from "next/image";
 import SiteShell from "@/components/SiteShell";
 import Button from "@/components/Button";
-import LeafSprig from "@/components/LeafSprig";
 import {
   IconAnillo,
   IconFotografia,
@@ -175,18 +174,20 @@ export default function Home() {
             <p className="font-display text-2xl text-borgona leading-snug">
               No es solo restaurar un objeto, es devolverle su lugar en tu historia.
             </p>
-            <LeafSprig className="h-10 w-10 text-dorado mt-3" />
+            <div className="relative h-7 w-14 mt-3">
+              <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="56px" className="object-contain object-left" />
+            </div>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
             {testimonios.map((t) => (
-              <div key={t.nombre} className="flex flex-col items-start gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="relative h-10 w-10 rounded-full overflow-hidden shrink-0">
-                    <Image src={t.foto} alt={t.nombre} fill sizes="40px" className="object-cover" />
-                  </div>
+              <div key={t.nombre} className="flex items-start gap-4">
+                <div className="relative h-14 w-14 rounded-full overflow-hidden shrink-0 ring-2 ring-white">
+                  <Image src={t.foto} alt={t.nombre} fill sizes="56px" className="object-cover" />
                 </div>
-                <p className="text-sm text-carbon/75 italic">&ldquo;{t.texto}&rdquo;</p>
-                <p className="text-xs font-medium text-borgona">{t.nombre}</p>
+                <div>
+                  <p className="text-sm text-carbon/75 italic">&ldquo;{t.texto}&rdquo;</p>
+                  <p className="mt-1.5 text-xs font-medium text-borgona">{t.nombre}</p>
+                </div>
               </div>
             ))}
           </div>
