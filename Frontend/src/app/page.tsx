@@ -154,8 +154,13 @@ export default function Home() {
           <div className="mt-8 grid sm:grid-cols-2 md:grid-cols-5 gap-8 text-center md:divide-x md:divide-dotted md:divide-dorado/40">
             {confianza.map((c) => (
               <div key={c.titulo} className="md:px-2">
-                <c.Icono className="h-8 w-8 mx-auto text-dorado" />
-                <h3 className="mt-3 font-display text-base">{c.titulo}</h3>
+                <div className="mx-auto h-16 w-16 rounded-2xl bg-black/15 border border-dorado/25 shadow-[0_0_22px_-4px_rgba(212,175,55,0.45)] flex items-center justify-center">
+                  <c.Icono
+                    className="h-8 w-8 text-dorado drop-shadow-[0_0_5px_rgba(212,175,55,0.75)]"
+                    strokeWidth={1.6}
+                  />
+                </div>
+                <h3 className="mt-4 font-display text-base">{c.titulo}</h3>
                 <p className="mt-1.5 text-xs text-marfil/70">{c.texto}</p>
               </div>
             ))}
