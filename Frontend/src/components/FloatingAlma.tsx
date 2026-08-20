@@ -6,11 +6,11 @@ export default function FloatingAlma() {
   return (
     <Link
       href="/chat"
-      className="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-full bg-borgona pl-2 pr-4 py-2 text-marfil shadow-lg shadow-borgona/20 hover:bg-borgona-dark transition-colors"
+      className="fixed bottom-16 right-5 z-50 flex items-center gap-3 rounded-full bg-borgona pl-2 pr-4 py-2 text-marfil shadow-lg shadow-borgona/20 hover:bg-borgona-dark transition-colors"
       aria-label="Hablar con Alma"
     >
       <span className="relative h-10 w-10 rounded-full overflow-hidden shrink-0 ring-2 ring-marfil/30">
-        <Image src="/images/alma.png" alt="Alma" fill sizes="40px" className="object-cover" />
+        <Image src="/images/alma-chat-v2.png" alt="Alma" fill sizes="40px" className="object-cover" />
         <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-borgona" />
       </span>
       <span className="leading-tight">

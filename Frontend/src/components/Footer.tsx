@@ -37,13 +37,10 @@ const ayuda = [
 export default function Footer() {
   return (
     <footer className="border-t border-greige/70 bg-[#e8ded2] relative overflow-hidden">
-      <div className="hidden md:block absolute right-0 bottom-0 h-60 w-[280px] pointer-events-none">
-        <Image src="/images/footer-hourglass.png" alt="" fill sizes="280px" className="object-contain object-bottom" />
-      </div>
-      <div className="mx-auto max-w-6xl px-6 py-14 grid gap-10 sm:grid-cols-2 md:grid-cols-4 relative">
+      <div className="mx-auto max-w-6xl px-6 pt-14 grid gap-10 sm:grid-cols-2 md:grid-cols-4 relative">
         <div>
-          <div className="relative h-24 w-[92px]">
-            <Image src="/images/sello.png" alt="Reviive" fill sizes="92px" className="object-contain object-left" />
+          <div className="relative h-40 w-40">
+            <Image src="/images/sello.png" alt="Reviive" fill sizes="160px" className="object-contain object-left" />
           </div>
           <p className="mt-3 max-w-xs text-sm italic text-carbon/70">
             El taller donde el tiempo se devuelve.
@@ -54,7 +51,7 @@ export default function Footer() {
                 key={r.label}
                 href={r.href}
                 aria-label={r.label}
-                className="relative h-10 w-10 hover:opacity-80 transition-opacity"
+                className="relative h-10 w-10 transition-transform duration-200 hover:scale-110 hover:drop-shadow-[0_0_10px_rgba(212,175,55,0.9)]"
               >
                 <Image src={r.icono} alt={r.label} fill sizes="40px" className="object-contain" />
               </a>
@@ -97,11 +94,18 @@ export default function Footer() {
           <Button href="/contacto" variant="secondary" className="mt-3 text-xs">Escríbenos</Button>
         </div>
       </div>
-      <div className="border-t border-greige/60 py-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-carbon/50 max-w-6xl mx-auto">
-        <span>© 2026 Reviive. Todos los derechos reservados.</span>
-        <div className="flex gap-4">
-          <Link href="/preguntas-frecuentes" className="hover:text-borgona">Términos y condiciones</Link>
-          <Link href="/preguntas-frecuentes" className="hover:text-borgona">Política de privacidad</Link>
+      <div className="hidden md:flex justify-end max-w-6xl mx-auto px-6 mt-4 pointer-events-none">
+        <div className="relative h-24 w-[140px]">
+          <Image src="/images/footer-hourglass.png" alt="" fill sizes="140px" className="object-contain" />
+        </div>
+      </div>
+      <div className="bg-borgona">
+        <div className="py-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-marfil/60 max-w-6xl mx-auto">
+          <span>© 2026 Reviive. Todos los derechos reservados.</span>
+          <div className="flex gap-4">
+            <Link href="/preguntas-frecuentes" className="hover:text-marfil transition-colors">Términos y condiciones</Link>
+            <Link href="/preguntas-frecuentes" className="hover:text-marfil transition-colors">Política de privacidad</Link>
+          </div>
         </div>
       </div>
     </footer>

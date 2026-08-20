@@ -62,7 +62,7 @@ export default function ChatAlma() {
     <div className="mx-auto max-w-lg border border-greige/70 rounded-2xl bg-white/70 shadow-sm flex flex-col h-[640px] overflow-hidden">
       <div className="flex items-center gap-3 border-b border-greige/60 px-5 py-4 bg-marfil">
         <div className="relative h-9 w-9 rounded-full overflow-hidden shrink-0">
-          <Image src="/images/alma-chat.png" alt="Alma" fill sizes="36px" className="object-cover" />
+          <Image src="/images/alma-chat-v2.png" alt="Alma" fill sizes="36px" className="object-cover" />
         </div>
         <div>
           <p className="font-display text-borgona leading-none">Alma</p>
@@ -75,7 +75,7 @@ export default function ChatAlma() {
           <div key={m.id} className={`flex items-end gap-2 ${m.rol === "usuario" ? "justify-end" : ""}`}>
             {m.rol === "alma" && (
               <div className="relative h-6 w-6 rounded-full overflow-hidden shrink-0">
-                <Image src="/images/alma-chat.png" alt="Alma" fill sizes="24px" className="object-cover" />
+                <Image src="/images/alma-chat-v2.png" alt="Alma" fill sizes="24px" className="object-cover" />
               </div>
             )}
             <div
