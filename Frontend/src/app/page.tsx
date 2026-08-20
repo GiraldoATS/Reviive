@@ -8,10 +8,11 @@ import {
   IconVasija,
   IconBolso,
   IconSilla,
-  IconCuidado,
+  IconManosCorazon,
+  IconMedalla,
   IconConfianza,
-  IconSeguro,
-  IconTiempo,
+  IconBrote,
+  IconRelojArena,
 } from "@/components/icons";
 
 const pasos = [
@@ -30,11 +31,11 @@ const categorias = [
 ];
 
 const confianza = [
-  { Icono: IconCuidado, titulo: "Hecho con cuidado", texto: "Cada pieza es tratada con el máximo respeto y dedicación." },
-  { Icono: IconConfianza, titulo: "Artesanía experta", texto: "Técnicas tradicionales y materiales de la más alta calidad." },
-  { Icono: IconSeguro, titulo: "Confidencialidad", texto: "Tu historia y tus objetos están en las mejores manos." },
-  { Icono: IconVasija, titulo: "Sostenibilidad", texto: "Damos nueva vida a lo que ya existe, reduciendo impacto y cuidando el planeta." },
-  { Icono: IconTiempo, titulo: "Herencias que perduran", texto: "Creamos piezas que siguen contando historias por generaciones." },
+  { Icono: IconManosCorazon, titulo: "Hecho con cuidado", texto: "Cada pieza es tratada con el máximo respeto y dedicación." },
+  { Icono: IconMedalla, titulo: "Artesanía experta", texto: "Técnicas tradicionales y materiales de la más alta calidad." },
+  { Icono: IconConfianza, titulo: "Confidencialidad", texto: "Tu historia y tus objetos están en las mejores manos." },
+  { Icono: IconBrote, titulo: "Sostenibilidad", texto: "Damos nueva vida a lo que ya existe, reduciendo impacto y cuidando el planeta." },
+  { Icono: IconRelojArena, titulo: "Herencias que perduran", texto: "Creamos piezas que siguen contando historias por generaciones." },
 ];
 
 const testimonios = [
@@ -135,15 +136,24 @@ export default function Home() {
       </section>
 
       <section className="bg-borgona text-marfil py-16 relative overflow-hidden">
-        <LeafSprig className="hidden md:block absolute -left-10 -top-10 h-64 w-64 text-marfil/10 rotate-12" />
-        <LeafSprig className="hidden md:block absolute -right-10 -bottom-10 h-64 w-64 text-marfil/10 -rotate-12" />
+        <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 h-64 w-40 -rotate-6">
+          <Image src="/images/branch-left-v2.png" alt="" fill sizes="160px" className="object-contain object-left" />
+        </div>
+        <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 h-64 w-40 rotate-6 scale-x-[-1]">
+          <Image src="/images/branch-left-v2.png" alt="" fill sizes="160px" className="object-contain object-left" />
+        </div>
         <div className="mx-auto max-w-6xl px-6 relative">
-          <p className="text-center text-xs uppercase tracking-widest text-dorado">
-            Por qué confiar en Reviive
-          </p>
-          <div className="mt-10 grid sm:grid-cols-2 md:grid-cols-5 gap-8 text-center">
+          <div className="flex items-center justify-center gap-2">
+            <p className="text-center text-xs uppercase tracking-widest text-dorado">
+              Por qué confiar en Reviive
+            </p>
+            <span className="relative h-6 w-12 shrink-0">
+              <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="48px" className="object-contain" />
+            </span>
+          </div>
+          <div className="mt-8 grid sm:grid-cols-2 md:grid-cols-5 gap-8 text-center md:divide-x md:divide-dotted md:divide-dorado/40">
             {confianza.map((c) => (
-              <div key={c.titulo}>
+              <div key={c.titulo} className="md:px-2">
                 <c.Icono className="h-8 w-8 mx-auto text-dorado" />
                 <h3 className="mt-3 font-display text-base">{c.titulo}</h3>
                 <p className="mt-1.5 text-xs text-marfil/70">{c.texto}</p>
