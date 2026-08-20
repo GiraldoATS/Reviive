@@ -37,24 +37,21 @@ const ayuda = [
 export default function Footer() {
   return (
     <footer className="border-t border-greige/70 bg-[#e8ded2] relative overflow-hidden">
-      <div className="hidden 2xl:block absolute right-10 top-14 h-28 w-36 pointer-events-none">
-        <Image src="/images/footer-hourglass.png" alt="" fill sizes="144px" className="object-contain" />
-      </div>
-      <div className="mx-auto max-w-6xl px-6 pt-14 grid gap-10 sm:grid-cols-2 md:grid-cols-4 relative">
-        <div>
-          <div className="relative h-40 w-[140px]">
+      <div className="mx-auto max-w-6xl px-6 lg:px-4 pt-14 pb-10 grid gap-10 sm:grid-cols-2 md:grid-cols-4 relative">
+        <div className="min-w-0">
+          <div className="relative h-40 w-[140px] mx-auto">
             <Image src="/images/sello.png" alt="Reviive" fill sizes="140px" className="object-contain" />
           </div>
-          <p className="mt-3 max-w-xs text-sm italic text-carbon/70">
+          <p className="mt-5 text-sm italic text-carbon/70 text-center">
             El taller donde el tiempo se devuelve.
           </p>
-          <div className="mt-4 flex gap-3">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             {redes.map((r) => (
               <a
                 key={r.label}
                 href={r.href}
                 aria-label={r.label}
-                className="relative h-10 w-10 transition-transform duration-200 hover:scale-110 hover:drop-shadow-[0_0_10px_rgba(212,175,55,0.9)]"
+                className="relative h-10 w-10 shrink-0 transition-transform duration-200 hover:scale-110 hover:drop-shadow-[0_0_10px_rgba(212,175,55,0.9)]"
               >
                 <Image src={r.icono} alt={r.label} fill sizes="40px" className="object-contain" />
               </a>
@@ -95,6 +92,11 @@ export default function Footer() {
           <p className="text-sm text-carbon/80">+57 318 485 5941</p>
           <p className="text-sm text-carbon/80">Medellín, Colombia</p>
           <Button href="/contacto" variant="secondary" className="mt-3 text-xs">Escríbenos</Button>
+        </div>
+      </div>
+      <div className="hidden md:flex justify-end max-w-6xl mx-auto px-6 lg:px-4 -mt-4 mb-6 pointer-events-none">
+        <div className="relative h-[134px] w-[173px]">
+          <Image src="/images/footer-hourglass.png" alt="" fill sizes="173px" className="object-contain" />
         </div>
       </div>
       <div className="bg-borgona">
