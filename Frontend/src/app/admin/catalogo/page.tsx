@@ -2,7 +2,8 @@ import RolePortalShell from "@/components/RolePortalShell";
 import SimpleTable from "@/components/SimpleTable";
 import Badge from "@/components/Badge";
 import Button from "@/components/Button";
-import { ProductIcon, IconPlus } from "@/components/icons";
+import ProductPhoto from "@/components/ProductPhoto";
+import { IconPlus } from "@/components/icons";
 import { getProductos } from "@/lib/api";
 
 export default async function CatalogoAdminPage() {
@@ -23,7 +24,7 @@ export default async function CatalogoAdminPage() {
       <SimpleTable
         columns={["", "Nombre", "Categoría", "Precio base", "Estado", ""]}
         rows={productos.map((p) => [
-          <ProductIcon key="i" icono={p.imagen} className="h-6 w-6 text-borgona" />,
+          <ProductPhoto key="i" icono={p.imagen} className="h-10 w-10 rounded-lg" />,
           p.nombre,
           p.categoria,
           `$${p.precioBase.toLocaleString("es-CO")}`,

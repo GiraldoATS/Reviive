@@ -1,7 +1,9 @@
+import Image from "next/image";
 import SiteShell from "@/components/SiteShell";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
-import { ProductIcon, IconCuidado, IconConfianza, IconTrazable, IconSeguro } from "@/components/icons";
+import ProductPhoto from "@/components/ProductPhoto";
+import { IconCuidado, IconConfianza, IconTrazable, IconSeguro } from "@/components/icons";
 import { getProductos } from "@/lib/api";
 
 const principios = [
@@ -41,15 +43,26 @@ export default async function Home() {
             <span>Seguro</span>
           </div>
         </div>
-        <Card className="bg-gradient-to-br from-rosa/30 via-marfil to-greige/40 border-dorado/30">
-          <ProductIcon icono="reloj" className="h-16 w-16 mx-auto text-dorado py-2" />
-          <p className="font-display text-lg text-borgona text-center">
-            &ldquo;Historias que vuelven a marcar momentos.&rdquo;
-          </p>
-          <p className="text-center text-sm text-carbon/60 mt-2">
-            Ver historias de restauración →
-          </p>
-        </Card>
+        <div className="rounded-2xl border border-dorado/30 overflow-hidden bg-marfil">
+          <div className="relative h-64 w-full">
+            <Image
+              src="/images/hero-watch.png"
+              alt="Reloj restaurado por Reviive"
+              fill
+              sizes="(min-width: 768px) 480px, 100vw"
+              className="object-cover"
+              priority
+            />
+          </div>
+          <div className="p-6">
+            <p className="font-display text-lg text-borgona text-center">
+              &ldquo;Historias que vuelven a marcar momentos.&rdquo;
+            </p>
+            <Button href="/historias" variant="ghost" className="w-full justify-center text-sm mt-2">
+              Ver historias de restauración →
+            </Button>
+          </div>
+        </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-6">
@@ -75,16 +88,19 @@ export default async function Home() {
         </div>
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
           {productos.slice(0, 4).map((prod) => (
-            <Card key={prod.id} className="hover:shadow-md transition-shadow">
-              <ProductIcon icono={prod.imagen} className="h-9 w-9 text-borgona" />
-              <h3 className="mt-4 font-display text-lg text-carbon">
-                {prod.nombre}
-              </h3>
-              <p className="mt-2 text-sm text-carbon/65">{prod.descripcion}</p>
-              <p className="mt-4 text-sm text-dorado-suave">
-                Desde ${prod.precioBase.toLocaleString("es-CO")}
-              </p>
-            </Card>
+            <div
+              key={prod.id}
+              className="rounded-2xl border border-greige/70 bg-white/60 overflow-hidden hover:shadow-md transition-shadow"
+            >
+              <ProductPhoto icono={prod.imagen} className="h-32 w-full" />
+              <div className="p-5">
+                <h3 className="font-display text-lg text-carbon">{prod.nombre}</h3>
+                <p className="mt-2 text-sm text-carbon/65">{prod.descripcion}</p>
+                <p className="mt-4 text-sm text-dorado-suave">
+                  Desde ${prod.precioBase.toLocaleString("es-CO")}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
       </section>

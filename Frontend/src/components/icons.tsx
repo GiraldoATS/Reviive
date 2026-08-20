@@ -344,6 +344,57 @@ export function IconSparkle(props: IconProps) {
   );
 }
 
+export function IconPeluche(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="7.5" cy="6" r="2" />
+      <circle cx="16.5" cy="6" r="2" />
+      <circle cx="12" cy="13" r="7" />
+      <circle cx="9" cy="12" r="0.8" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="12" r="0.8" fill="currentColor" stroke="none" />
+      <path d="M10 16c.6.6 1.4.9 2 .9s1.4-.3 2-.9" />
+    </svg>
+  );
+}
+
+export function IconAlmohada(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4Z" />
+      <path d="M9 9c1 1 1 2 0 3M15 9c-1 1-1 2 0 3" />
+    </svg>
+  );
+}
+
+export function IconLibro(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 6c-1.8-1.3-4-2-6.5-2v13c2.5 0 4.7.7 6.5 2 1.8-1.3 4-2 6.5-2V4c-2.5 0-4.7.7-6.5 2Z" />
+      <path d="M12 6v13" />
+    </svg>
+  );
+}
+
+export function IconCompartido(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M9.5 18s-5.3-3.3-6.7-6.7C1.7 8.7 3.5 6 6 6c1.3 0 2.4.7 3.5 2" />
+      <path d="M14.5 18s5.3-3.3 6.7-6.7C22.3 8.7 20.5 6 18 6c-1.3 0-2.4.7-3.5 2" />
+      <path d="M9.5 18 12 20l2.5-2" />
+    </svg>
+  );
+}
+
+export function IconMemorial(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3" y="5" width="18" height="12" rx="1.5" />
+      <path d="M9 21h6M12 17v4" />
+      <path d="M8 13c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5" />
+    </svg>
+  );
+}
+
 export const productIcons: Record<string, (props: IconProps) => React.ReactElement> = {
   reloj: IconReloj,
   joya: IconJoya,
@@ -355,6 +406,25 @@ export const productIcons: Record<string, (props: IconProps) => React.ReactEleme
   madera: IconMadera,
   trazable: IconTrazable,
   tiempo: IconTiempo,
+  peluche: IconPeluche,
+  almohada: IconAlmohada,
+  cuadro: IconFotografia,
+  caja: IconMadera,
+  libro: IconLibro,
+  restauracion: IconSparkle,
+  compartido: IconCompartido,
+  memorial: IconMemorial,
+};
+
+export const productPhotos: Record<string, string> = {
+  peluche: "/images/products/peluche.png",
+  almohada: "/images/products/almohada.png",
+  cuadro: "/images/products/cuadro.png",
+  caja: "/images/products/caja.png",
+  libro: "/images/products/libro.png",
+  restauracion: "/images/products/restauracion.png",
+  compartido: "/images/products/compartido.png",
+  memorial: "/images/products/memorial.png",
 };
 
 export function ProductIcon({

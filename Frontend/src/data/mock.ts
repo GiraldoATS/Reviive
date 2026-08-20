@@ -1,91 +1,9 @@
 import type {
   ConversacionResumen,
   Pedido,
-  Producto,
   Proveedor,
   Recomendacion,
 } from "@/types";
-
-export const productos: Producto[] = [
-  {
-    id: "prod-relojes",
-    nombre: "Restauración de relojes",
-    categoria: "Relojes",
-    descripcion:
-      "Devolvemos el mecanismo y el brillo original a relojes de pulsera y bolsillo con historia.",
-    precioBase: 89000,
-    imagen: "reloj",
-    activo: true,
-  },
-  {
-    id: "prod-joyas",
-    nombre: "Restauración de joyas",
-    categoria: "Joyas",
-    descripcion:
-      "Limpieza, engaste y pulido artesanal para anillos, collares y piezas familiares.",
-    precioBase: 69000,
-    imagen: "joya",
-    activo: true,
-  },
-  {
-    id: "prod-camaras",
-    nombre: "Restauración de cámaras",
-    categoria: "Cámaras",
-    descripcion:
-      "Recuperamos cámaras análogas para que vuelvan a capturar momentos.",
-    precioBase: 99000,
-    imagen: "camara",
-    activo: true,
-  },
-  {
-    id: "prod-escritura",
-    nombre: "Máquinas de escribir",
-    categoria: "Escritura",
-    descripcion:
-      "Ajuste mecánico y estético de máquinas de escribir antiguas.",
-    precioBase: 75000,
-    imagen: "escritura",
-    activo: true,
-  },
-  {
-    id: "prod-fotografia",
-    nombre: "Restauración fotográfica",
-    categoria: "Fotografía",
-    descripcion:
-      "Recuperamos fotografías dañadas por el tiempo, la humedad o el uso.",
-    precioBase: 45000,
-    imagen: "fotografia",
-    activo: true,
-  },
-  {
-    id: "prod-antiguedades",
-    nombre: "Objetos antiguos",
-    categoria: "Objetos antiguos",
-    descripcion:
-      "Restauración de piezas de valor sentimental sin catálogo definido.",
-    precioBase: 110000,
-    imagen: "antiguedad",
-    activo: true,
-  },
-  {
-    id: "prod-textiles",
-    nombre: "Restauración de textiles",
-    categoria: "Textiles",
-    descripcion: "Reparación cuidadosa de prendas y textiles con historia.",
-    precioBase: 55000,
-    imagen: "textil",
-    activo: true,
-  },
-  {
-    id: "prod-madera",
-    nombre: "Restauración en madera",
-    categoria: "Madera",
-    descripcion: "Baúles, cajas y muebles pequeños devueltos a la vida.",
-    precioBase: 130000,
-    imagen: "madera",
-    activo: true,
-  },
-];
 
 export const proveedores: Proveedor[] = [
   {
@@ -137,19 +55,19 @@ export const pedidos: Pedido[] = [
 export const recomendaciones: Recomendacion[] = [
   {
     id: "rec-1",
-    productoId: "prod-relojes",
-    titulo: "Limpieza y restauración completa",
-    justificacion: "Ideal para devolver la funcionalidad y estética original del reloj.",
+    productoId: "prod-restauracion",
+    titulo: "Restauración Especial",
+    justificacion: "Ideal para devolver la funcionalidad y estética original de tu reloj de bolsillo.",
     puntaje: 0.96,
-    imagen: "reloj",
+    imagen: "restauracion",
   },
   {
     id: "rec-2",
-    productoId: "prod-relojes",
-    titulo: "Cómo cuidar tu reloj de bolsillo",
-    justificacion: "Consejos para mantenerlo en el tiempo.",
+    productoId: "prod-caja",
+    titulo: "Caja del Tiempo",
+    justificacion: "Una caja personalizada para guardar el reloj junto con su historia.",
     puntaje: 0.81,
-    imagen: "trazable",
+    imagen: "caja",
   },
 ];
 

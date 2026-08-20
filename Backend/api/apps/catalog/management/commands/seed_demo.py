@@ -12,30 +12,30 @@ from apps.providers.models import CapacidadProveedor, Proveedor
 from apps.quotations.models import Cotizacion
 
 PRODUCTOS = [
-    dict(nombre="Restauración de relojes", categoria="Relojes", icono="reloj",
-         descripcion="Devolvemos el mecanismo y el brillo original a relojes de pulsera y bolsillo con historia.",
-         precio_base=89000),
-    dict(nombre="Restauración de joyas", categoria="Joyas", icono="joya",
-         descripcion="Limpieza, engaste y pulido artesanal para anillos, collares y piezas familiares.",
-         precio_base=69000),
-    dict(nombre="Restauración de cámaras", categoria="Cámaras", icono="camara",
-         descripcion="Recuperamos cámaras análogas para que vuelvan a capturar momentos.",
-         precio_base=99000),
-    dict(nombre="Máquinas de escribir", categoria="Escritura", icono="escritura",
-         descripcion="Ajuste mecánico y estético de máquinas de escribir antiguas.",
-         precio_base=75000),
-    dict(nombre="Restauración fotográfica", categoria="Fotografía", icono="fotografia",
-         descripcion="Recuperamos fotografías dañadas por el tiempo, la humedad o el uso.",
-         precio_base=45000),
-    dict(nombre="Objetos antiguos", categoria="Objetos antiguos", icono="antiguedad",
-         descripcion="Restauración de piezas de valor sentimental sin catálogo definido.",
-         precio_base=110000),
-    dict(nombre="Restauración de textiles", categoria="Textiles", icono="textil",
-         descripcion="Reparación cuidadosa de prendas y textiles con historia.",
-         precio_base=55000),
-    dict(nombre="Restauración en madera", categoria="Madera", icono="madera",
-         descripcion="Baúles, cajas y muebles pequeños devueltos a la vida.",
-         precio_base=130000),
+    dict(nombre="Peluche Memoria", categoria="Objetos personales", icono="peluche",
+         descripcion="Restauramos y reinventamos peluches que han sido testigos de grandes historias de amor.",
+         precio_base=60000),
+    dict(nombre="Almohada Abrazo", categoria="Textiles", icono="almohada",
+         descripcion="Confeccionamos almohadas con prendas o textiles significativos para sentir cerca a quienes amas.",
+         precio_base=80000),
+    dict(nombre="Cuadro de Historia", categoria="Arte y decoración", icono="cuadro",
+         descripcion="Componemos y restauramos recuerdos visuales en cuadros que cuentan tu historia.",
+         precio_base=120000),
+    dict(nombre="Caja del Tiempo", categoria="Objetos personales", icono="caja",
+         descripcion="Creamos cajas personalizadas para guardar recuerdos que marcaron momentos inolvidables.",
+         precio_base=90000),
+    dict(nombre="Libro de Memorias", categoria="Documentos y papel", icono="libro",
+         descripcion="Diseñamos y restauramos libros para preservar recuerdos, cartas y fotografías en un solo lugar.",
+         precio_base=100000),
+    dict(nombre="Restauración Especial", categoria="Objetos personales", icono="restauracion",
+         descripcion="Restauramos objetos únicos con técnicas artesanales para devolverles su valor y belleza original.",
+         precio_base=150000),
+    dict(nombre="Recuerdo Compartido", categoria="Objetos personales", icono="compartido",
+         descripcion="Diseñamos piezas que se dividen para que dos personas lleven siempre un recuerdo compartido.",
+         precio_base=70000),
+    dict(nombre="Memorial Digital", categoria="Digitales", icono="memorial",
+         descripcion="Creamos memoriales digitales para honrar y recordar a quienes ya no están con nosotros.",
+         precio_base=80000),
 ]
 
 
@@ -52,7 +52,9 @@ class Command(BaseCommand):
                 nombre=data["nombre"], defaults={**data, "activo": True}
             )
             productos.append(prod)
-        self.stdout.write(f"Productos: {len(productos)}")
+        nombres_vigentes = [data["nombre"] for data in PRODUCTOS]
+        obsoletos, _ = Producto.objects.exclude(nombre__in=nombres_vigentes).delete()
+        self.stdout.write(f"Productos: {len(productos)} (obsoletos eliminados: {obsoletos})")
 
         cliente, created = Usuario.objects.get_or_create(
             email="carolina@example.com",
@@ -79,9 +81,10 @@ class Command(BaseCommand):
                 calificacion=4.9,
             ),
         )
+        producto_restauracion = Producto.objects.get(nombre="Restauración Especial")
         CapacidadProveedor.objects.update_or_create(
             proveedor=proveedor,
-            producto=productos[0],
+            producto=producto_restauracion,
             material="",
             defaults=dict(ciudad="Bogotá", tiempo_estimado_dias=10),
         )

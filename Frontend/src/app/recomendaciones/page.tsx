@@ -1,7 +1,7 @@
 import SiteShell from "@/components/SiteShell";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
-import { ProductIcon } from "@/components/icons";
+import ProductPhoto from "@/components/ProductPhoto";
 import { recomendaciones } from "@/data/mock";
 
 const tabs = ["Para el objeto", "Cuidados", "Inspiración"];
@@ -34,9 +34,9 @@ export default function RecomendacionesPage() {
 
         <div className="grid sm:grid-cols-2 gap-6">
           {recomendaciones.map((rec) => (
-            <Card key={rec.id} className="flex gap-4">
-              <ProductIcon icono={rec.imagen} className="h-9 w-9 shrink-0 text-borgona" />
-              <div>
+            <Card key={rec.id} className="flex gap-0 !p-0 overflow-hidden">
+              <ProductPhoto icono={rec.imagen} className="h-auto w-28 shrink-0 self-stretch" />
+              <div className="p-5 flex-1">
                 <h3 className="font-display text-lg text-carbon">{rec.titulo}</h3>
                 <p className="mt-1 text-sm text-carbon/65">{rec.justificacion}</p>
                 <Button href="/pedido/pedido-0512" variant="ghost" className="mt-3 px-0 text-xs">

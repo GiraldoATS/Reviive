@@ -1,3 +1,4 @@
+import Image from "next/image";
 import SiteShell from "@/components/SiteShell";
 import Card from "@/components/Card";
 import { IconCuidado, IconConfianza, IconTrazable, IconSeguro } from "@/components/icons";
@@ -5,7 +6,11 @@ import { IconCuidado, IconConfianza, IconTrazable, IconSeguro } from "@/componen
 export default function SobreReviivePage() {
   return (
     <SiteShell>
-      <div className="mx-auto max-w-3xl px-6 py-16 text-center">
+      <div className="relative h-64 w-full">
+        <Image src="/images/auth-desk.png" alt="" fill sizes="100vw" className="object-cover" priority />
+        <div className="absolute inset-0 bg-gradient-to-t from-marfil via-marfil/40 to-transparent" />
+      </div>
+      <div className="mx-auto max-w-3xl px-6 pt-4 pb-16 text-center -mt-10 relative">
         <h1 className="font-display text-4xl text-carbon">Sobre Reviive</h1>
         <p className="mt-4 text-carbon/70">
           Reviive nació de una idea simple: los objetos que guardan una
