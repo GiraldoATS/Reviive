@@ -38,9 +38,9 @@ const confianza = [
 ];
 
 const testimonios = [
-  { nombre: "Mariana G.", foto: "/images/avatars/mariana.png", texto: "Mi abuela estaría feliz de ver su reloj otra vez conmigo. Gracias por tanto cuidado y amor." },
-  { nombre: "Andrés P.", foto: "/images/avatars/andres.png", texto: "Transformaron un mueble que ya no usábamos en la pieza favorita de mi hogar." },
-  { nombre: "Lucía T.", foto: "/images/avatars/lucia.png", texto: "Profesionales, cálidos y atentos. Superaron todas mis expectativas." },
+  { nombre: "Mariana G.", foto: "/images/avatars/mariana-v2.png", texto: "Mi abuela estaría feliz de ver su reloj otra vez conmigo. Gracias por tanto cuidado y amor." },
+  { nombre: "Andrés P.", foto: "/images/avatars/andres-v2.png", texto: "Transformaron un mueble que ya no usábamos en la pieza favorita de mi hogar." },
+  { nombre: "Lucía T.", foto: "/images/avatars/lucia-v2.png", texto: "Profesionales, cálidos y atentos. Superaron todas mis expectativas." },
 ];
 
 export default function Home() {
@@ -168,17 +168,19 @@ export default function Home() {
       </section>
 
       <section className="bg-rosa/25 py-16">
-        <div className="mx-auto max-w-6xl px-6 grid lg:grid-cols-[1fr_1.4fr] gap-10 items-center">
+        <div className="mx-auto max-w-6xl px-6 grid lg:grid-cols-[0.8fr_2.2fr] gap-8 items-center">
           <div>
-            <span className="font-display text-5xl text-dorado leading-none">&ldquo;</span>
-            <p className="font-display text-2xl text-borgona leading-snug">
-              No es solo restaurar un objeto, es devolverle su lugar en tu historia.
-            </p>
+            <div className="flex items-start gap-2">
+              <span className="font-display text-4xl text-dorado leading-none shrink-0">&ldquo;</span>
+              <p className="font-display text-2xl text-borgona leading-snug">
+                No es solo restaurar un objeto, es devolverle su lugar en tu historia.
+              </p>
+            </div>
             <div className="relative h-7 w-14 mt-3">
               <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="56px" className="object-contain object-left" />
             </div>
           </div>
-          <div className="grid sm:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-3 gap-5">
             {testimonios.map((t) => (
               <div key={t.nombre} className="flex items-start gap-4">
                 <div className="relative h-14 w-14 rounded-full overflow-hidden shrink-0 ring-2 ring-white">
