@@ -159,8 +159,8 @@ export default function ComoFuncionaPage() {
         </div>
       </section>
 
-      <section className="bg-rosa/25 py-14 relative overflow-hidden">
-        <div className="mx-auto max-w-6xl px-6 xl:pr-40 grid lg:grid-cols-[1fr_1fr_auto] gap-8 items-center relative">
+      <section className="bg-rosa/25 py-14">
+        <div className="mx-auto max-w-6xl px-6 grid lg:grid-cols-[1fr_1fr_auto] gap-8 items-center">
           <div className="flex items-start gap-3">
             <span className="relative h-8 w-8 shrink-0 mt-1">
               <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="32px" className="object-contain" />
@@ -175,9 +175,6 @@ export default function ComoFuncionaPage() {
           <Button href="/recuerdos/nuevo" variant="primary" className="justify-self-start lg:justify-self-end">
             Solicitar evaluación →
           </Button>
-        </div>
-        <div className="hidden xl:block absolute right-4 top-1/2 -translate-y-1/2 h-24 w-32 opacity-70 pointer-events-none">
-          <Image src="/images/footer-hourglass.png" alt="" fill sizes="128px" className="object-contain" />
         </div>
       </section>
     </SiteShell>
