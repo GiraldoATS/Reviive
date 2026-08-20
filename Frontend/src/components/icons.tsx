@@ -432,11 +432,9 @@ export function IconSilla(props: IconProps) {
 export function IconManosCorazon(props: IconProps) {
   return (
     <svg {...base} {...props}>
-      <path d="M3.5 13.5c0-3 2-5 4-5s3 2 3 4v3.5" />
-      <path d="M17 13.5c0-3-2-5-4-5" />
-      <path d="M10.5 16v1.5a3 3 0 0 0 3 3h.5a3 3 0 0 0 3-3v-3.5c0-2-1-3.5-2.5-3.5" />
-      <path d="M3.5 13.5v1.5a2 2 0 0 0 2 2h1" />
-      <path d="M12 5.2c.5-1 1.6-1.6 2.6-1.2 1.1.4 1.6 1.7 1 2.7-.6 1-3.6 2.8-3.6 2.8s-3-1.8-3.6-2.8c-.6-1-.1-2.3 1-2.7 1-.4 2.1.2 2.6 1.2Z" />
+      <path d="M5 17.5c-.5-3.6 1.5-6.6 4.8-7.1" />
+      <path d="M19 17.5c.5-3.6-1.5-6.6-4.8-7.1" />
+      <path d="M12 10.3c-.9-1.7-3-2.3-4.1-1-1.1 1.2-1 3 .2 4.1C9.2 14.5 12 16.5 12 16.5s2.8-2 3.9-3.1c1.2-1.1 1.3-2.9.2-4.1-1.1-1.3-3.2-.7-4.1 1Z" />
     </svg>
   );
 }
@@ -465,8 +463,10 @@ export function IconBrote(props: IconProps) {
 export function IconRelojArena(props: IconProps) {
   return (
     <svg {...base} {...props}>
-      <path d="M6.5 3h11M6.5 21h11" />
-      <path d="M8 3v2.8c0 2.2 1.4 3.8 4 6.2-2.6 2.4-4 4-4 6.2V21M16 3v2.8c0 2.2-1.4 3.8-4 6.2 2.6 2.4 4 4 4 6.2V21" />
+      <path d="M7 3h10" />
+      <path d="M7 21h10" />
+      <path d="M7.5 3.5c0 3 .5 4.7 3 6.5.7.5.7 1.5 0 2-2.5 1.8-3 3.5-3 6.5" />
+      <path d="M16.5 3.5c0 3-.5 4.7-3 6.5-.7.5-.7 1.5 0 2 2.5 1.8 3 3.5 3 6.5" />
     </svg>
   );
 }
