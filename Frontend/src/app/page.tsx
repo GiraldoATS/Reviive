@@ -3,11 +3,7 @@ import SiteShell from "@/components/SiteShell";
 import Button from "@/components/Button";
 import LeafSprig from "@/components/LeafSprig";
 import {
-  IconAnillo,
-  IconFotografia,
   IconVasija,
-  IconBolso,
-  IconSilla,
   IconCuidado,
   IconConfianza,
   IconSeguro,
@@ -22,11 +18,11 @@ const pasos = [
 ];
 
 const categorias = [
-  { Icono: IconAnillo, titulo: "Joyas y Relojes", texto: "Restauración y mantenimiento de piezas que guardan momentos inolvidables.", foto: "/images/categories/joyas-relojes.png" },
-  { Icono: IconFotografia, titulo: "Memorias en Papel", texto: "Conservación y restauración de fotografías, cartas y documentos familiares.", foto: "/images/categories/memorias-papel.png" },
-  { Icono: IconVasija, titulo: "Objetos Decorativos", texto: "Devolvemos la belleza a piezas de cerámica, vidrio, metal y más.", foto: "/images/categories/objetos-decorativos.png" },
-  { Icono: IconBolso, titulo: "Cuero y Textiles", texto: "Restauración de bolsos, prendas y textiles con valor emocional.", foto: "/images/categories/cuero-textiles.png" },
-  { Icono: IconSilla, titulo: "Muebles y Maderas", texto: "Reparación y restauración para que vuelvan a ser parte de tu hogar.", foto: "/images/categories/muebles-maderas.png" },
+  { icono: "/images/categories/icon-joyas-relojes.png", titulo: "Joyas y Relojes", texto: "Restauración y mantenimiento de piezas que guardan momentos inolvidables.", foto: "/images/categories/joyas-relojes.png" },
+  { icono: "/images/categories/icon-memorias-papel.png", titulo: "Memorias en Papel", texto: "Conservación y restauración de fotografías, cartas y documentos familiares.", foto: "/images/categories/memorias-papel.png" },
+  { icono: "/images/categories/icon-objetos-decorativos.png", titulo: "Objetos Decorativos", texto: "Devolvemos la belleza a piezas de cerámica, vidrio, metal y más.", foto: "/images/categories/objetos-decorativos.png" },
+  { icono: "/images/categories/icon-cuero-textiles.png", titulo: "Cuero y Textiles", texto: "Restauración de bolsos, prendas y textiles con valor emocional.", foto: "/images/categories/cuero-textiles.png" },
+  { icono: "/images/categories/icon-muebles-maderas.png", titulo: "Muebles y Maderas", texto: "Reparación y restauración para que vuelvan a ser parte de tu hogar.", foto: "/images/categories/muebles-maderas.png" },
 ];
 
 const confianza = [
@@ -112,15 +108,20 @@ export default function Home() {
           <p className="text-center text-xs uppercase tracking-widest text-dorado-suave">
             Categorías destacadas
           </p>
-          <div className="mt-10 grid sm:grid-cols-2 md:grid-cols-5 gap-6">
+          <div className="relative h-7 w-14 mx-auto mt-2">
+            <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="56px" className="object-contain" />
+          </div>
+          <div className="mt-8 grid sm:grid-cols-2 md:grid-cols-5 gap-6">
             {categorias.map((c) => (
               <div key={c.titulo} className="rounded-2xl border border-greige/70 bg-white/70 overflow-hidden">
                 <div className="relative h-28 w-full">
                   <Image src={c.foto} alt="" fill sizes="220px" className="object-cover" />
                 </div>
                 <div className="px-4 pb-5 pt-8 relative text-center">
-                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 h-10 w-10 rounded-full bg-white border border-greige/60 flex items-center justify-center shadow-sm">
-                    <c.Icono className="h-5 w-5 text-borgona" />
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 h-10 w-10 rounded-full bg-white border border-greige/60 flex items-center justify-center shadow-sm overflow-hidden">
+                    <div className="relative h-6 w-6">
+                      <Image src={c.icono} alt="" fill sizes="24px" className="object-contain" />
+                    </div>
                   </div>
                   <h3 className="font-display text-base text-borgona">{c.titulo}</h3>
                   <p className="mt-1.5 text-xs text-carbon/60">{c.texto}</p>
