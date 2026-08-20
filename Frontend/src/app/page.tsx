@@ -38,9 +38,9 @@ const confianza = [
 ];
 
 const testimonios = [
-  { nombre: "Mariana G.", foto: "/images/avatars/mariana-v2.png", texto: "Mi abuela estaría feliz de ver su reloj otra vez conmigo. Gracias por tanto cuidado y amor." },
-  { nombre: "Andrés P.", foto: "/images/avatars/andres-v2.png", texto: "Transformaron un mueble que ya no usábamos en la pieza favorita de mi hogar." },
-  { nombre: "Lucía T.", foto: "/images/avatars/lucia-v2.png", texto: "Profesionales, cálidos y atentos. Superaron todas mis expectativas." },
+  { nombre: "Mariana G.", foto: "/images/avatars/mariana-v3.png", texto: "Mi abuela estaría feliz de ver su reloj otra vez conmigo. Gracias por tanto cuidado y amor." },
+  { nombre: "Andrés P.", foto: "/images/avatars/andres-v3.png", texto: "Transformaron un mueble que ya no usábamos en la pieza favorita de mi hogar." },
+  { nombre: "Lucía T.", foto: "/images/avatars/lucia-v3.png", texto: "Profesionales, cálidos y atentos. Superaron todas mis expectativas." },
 ];
 
 export default function Home() {
