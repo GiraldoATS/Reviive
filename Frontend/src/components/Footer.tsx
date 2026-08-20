@@ -1,15 +1,13 @@
 import Link from "next/link";
-import Logo from "./Logo";
-import LeafSprig from "./LeafSprig";
+import Image from "next/image";
 import Button from "./Button";
-import { IconInstagram, IconFacebook, IconTikTok, IconCorreo, IconEnviar } from "./icons";
 
 const redes = [
-  { Icono: IconInstagram, label: "Instagram", href: "https://instagram.com" },
-  { Icono: IconFacebook, label: "Facebook", href: "https://facebook.com" },
-  { Icono: IconTikTok, label: "TikTok", href: "https://tiktok.com" },
-  { Icono: IconCorreo, label: "Correo", href: "mailto:hola@reviive.com" },
-  { Icono: IconEnviar, label: "Telegram", href: "https://t.me" },
+  { icono: "/images/social/instagram.png", label: "Instagram", href: "https://instagram.com" },
+  { icono: "/images/social/facebook.png", label: "Facebook", href: "https://facebook.com" },
+  { icono: "/images/social/tiktok.png", label: "TikTok", href: "https://tiktok.com" },
+  { icono: "/images/social/correo.png", label: "Correo", href: "mailto:hola@reviive.com" },
+  { icono: "/images/social/telegram.png", label: "Telegram", href: "https://t.me" },
 ];
 
 const navegacion = [
@@ -38,12 +36,16 @@ const ayuda = [
 
 export default function Footer() {
   return (
-    <footer className="mt-24 border-t border-greige/70 bg-[#e8ded2] relative overflow-hidden">
-      <LeafSprig className="hidden md:block absolute right-6 top-8 h-40 w-40 text-dorado/50" />
+    <footer className="border-t border-greige/70 bg-[#e8ded2] relative overflow-hidden">
+      <div className="hidden md:block absolute right-0 bottom-0 h-60 w-[280px] pointer-events-none">
+        <Image src="/images/footer-hourglass.png" alt="" fill sizes="280px" className="object-contain object-bottom" />
+      </div>
       <div className="mx-auto max-w-6xl px-6 py-14 grid gap-10 sm:grid-cols-2 md:grid-cols-4 relative">
         <div>
-          <Logo className="scale-125 origin-left" />
-          <p className="mt-5 max-w-xs text-sm italic text-carbon/70">
+          <div className="relative h-24 w-[92px]">
+            <Image src="/images/sello.png" alt="Reviive" fill sizes="92px" className="object-contain object-left" />
+          </div>
+          <p className="mt-3 max-w-xs text-sm italic text-carbon/70">
             El taller donde el tiempo se devuelve.
           </p>
           <div className="mt-4 flex gap-3">
@@ -52,9 +54,9 @@ export default function Footer() {
                 key={r.label}
                 href={r.href}
                 aria-label={r.label}
-                className="h-9 w-9 rounded-full bg-borgona text-marfil flex items-center justify-center hover:bg-borgona-dark transition-colors"
+                className="relative h-10 w-10 hover:opacity-80 transition-opacity"
               >
-                <r.Icono className="h-4 w-4" />
+                <Image src={r.icono} alt={r.label} fill sizes="40px" className="object-contain" />
               </a>
             ))}
           </div>

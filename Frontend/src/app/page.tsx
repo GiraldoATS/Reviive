@@ -1,40 +1,28 @@
 import Image from "next/image";
 import SiteShell from "@/components/SiteShell";
 import Button from "@/components/Button";
-import {
-  IconAnillo,
-  IconFotografia,
-  IconVasija,
-  IconBolso,
-  IconSilla,
-  IconManosCorazon,
-  IconMedalla,
-  IconConfianza,
-  IconBrote,
-  IconRelojArena,
-} from "@/components/icons";
 
 const pasos = [
-  { foto: "/images/steps/step1-historia-v3.png", titulo: "Cuéntanos tu historia", texto: "Cada objeto tiene un significado. Escuchamos tu historia y entendemos qué lo hace único." },
-  { foto: "/images/steps/step2-lupa-v3.png", titulo: "Evaluamos y proponemos", texto: "Analizamos su estado y te proponemos la mejor forma de preservarlo o transformarlo." },
-  { foto: "/images/steps/step3-manos-v3.png", titulo: "Restauramos y creamos", texto: "Trabajamos con técnicas artesanales y materiales de la más alta calidad para devolverle vida." },
-  { foto: "/images/steps/step4-hourglass-v3.png", titulo: "Lo devolvemos a tu historia", texto: "Recibes tu pieza restaurada o transformada, lista para seguir siendo parte de tu vida." },
+  { icono: "/images/steps2/step1.png", titulo: "Cuéntanos tu historia", texto: "Cada objeto tiene un significado. Escuchamos tu historia y entendemos qué lo hace único." },
+  { icono: "/images/steps2/step2.png", titulo: "Evaluamos y proponemos", texto: "Analizamos su estado y te proponemos la mejor forma de preservarlo o transformarlo." },
+  { icono: "/images/steps2/step3.png", titulo: "Restauramos y creamos", texto: "Trabajamos con técnicas artesanales y materiales de la más alta calidad para devolverle vida." },
+  { icono: "/images/steps2/step4.png", titulo: "Lo devolvemos a tu historia", texto: "Recibes tu pieza restaurada o transformada, lista para seguir siendo parte de tu vida." },
 ];
 
 const categorias = [
-  { Icono: IconAnillo, titulo: "Joyas y Relojes", texto: "Restauración y mantenimiento de piezas que guardan momentos inolvidables.", foto: "/images/categories/joyas-relojes.png" },
-  { Icono: IconFotografia, titulo: "Memorias en Papel", texto: "Conservación y restauración de fotografías, cartas y documentos familiares.", foto: "/images/categories/memorias-papel.png" },
-  { Icono: IconVasija, titulo: "Objetos Decorativos", texto: "Devolvemos la belleza a piezas de cerámica, vidrio, metal y más.", foto: "/images/categories/objetos-decorativos.png" },
-  { Icono: IconBolso, titulo: "Cuero y Textiles", texto: "Restauración de bolsos, prendas y textiles con valor emocional.", foto: "/images/categories/cuero-textiles.png" },
-  { Icono: IconSilla, titulo: "Muebles y Maderas", texto: "Reparación y restauración para que vuelvan a ser parte de tu hogar.", foto: "/images/categories/muebles-maderas.png" },
+  { icono: "/images/categories2/anillo.png", titulo: "Joyas y Relojes", texto: "Restauración y mantenimiento de piezas que guardan momentos inolvidables.", foto: "/images/categories/joyas-relojes.png" },
+  { icono: "/images/categories2/fotografia.png", titulo: "Memorias en Papel", texto: "Conservación y restauración de fotografías, cartas y documentos familiares.", foto: "/images/categories/memorias-papel.png" },
+  { icono: "/images/categories2/vasija.png", titulo: "Objetos Decorativos", texto: "Devolvemos la belleza a piezas de cerámica, vidrio, metal y más.", foto: "/images/categories/objetos-decorativos.png" },
+  { icono: "/images/categories2/cuero.png", titulo: "Cuero y Textiles", texto: "Restauración de bolsos, prendas y textiles con valor emocional.", foto: "/images/categories/cuero-textiles.png" },
+  { icono: "/images/categories2/silla.png", titulo: "Muebles y Maderas", texto: "Reparación y restauración para que vuelvan a ser parte de tu hogar.", foto: "/images/categories/muebles-maderas.png" },
 ];
 
 const confianza = [
-  { Icono: IconManosCorazon, titulo: "Hecho con cuidado", texto: "Cada pieza es tratada con el máximo respeto y dedicación." },
-  { Icono: IconMedalla, titulo: "Artesanía experta", texto: "Técnicas tradicionales y materiales de la más alta calidad." },
-  { Icono: IconConfianza, titulo: "Confidencialidad", texto: "Tu historia y tus objetos están en las mejores manos." },
-  { Icono: IconBrote, titulo: "Sostenibilidad", texto: "Damos nueva vida a lo que ya existe, reduciendo impacto y cuidando el planeta." },
-  { Icono: IconRelojArena, titulo: "Herencias que perduran", texto: "Creamos piezas que siguen contando historias por generaciones." },
+  { icono: "/images/trust/manos.png", titulo: "Hecho con cuidado", texto: "Cada pieza es tratada con el máximo respeto y dedicación." },
+  { icono: "/images/trust/medalla.png", titulo: "Artesanía experta", texto: "Técnicas tradicionales y materiales de la más alta calidad." },
+  { icono: "/images/trust/escudo.png", titulo: "Confidencialidad", texto: "Tu historia y tus objetos están en las mejores manos." },
+  { icono: "/images/trust/brote.png", titulo: "Sostenibilidad", texto: "Damos nueva vida a lo que ya existe, reduciendo impacto y cuidando el planeta." },
+  { icono: "/images/trust/reloj.png", titulo: "Herencias que perduran", texto: "Creamos piezas que siguen contando historias por generaciones." },
 ];
 
 const testimonios = [
@@ -93,10 +81,8 @@ export default function Home() {
         <div className="mt-8 grid sm:grid-cols-2 md:grid-cols-4 gap-8 md:divide-x md:divide-dotted md:divide-greige">
           {pasos.map((p, i) => (
             <div key={p.titulo} className="md:px-2">
-              <div className="h-14 w-14 mx-auto rounded-full bg-rosa/40 flex items-center justify-center">
-                <div className="relative h-7 w-7">
-                  <Image src={p.foto} alt="" fill sizes="28px" className="object-contain" />
-                </div>
+              <div className="relative h-16 w-16 mx-auto">
+                <Image src={p.icono} alt="" fill sizes="64px" className="object-contain" />
               </div>
               <h3 className="mt-4 font-display text-base text-borgona">
                 {i + 1}. {p.titulo}
@@ -122,8 +108,8 @@ export default function Home() {
                   <Image src={c.foto} alt="" fill sizes="220px" className="object-cover" />
                 </div>
                 <div className="px-4 pb-5 pt-8 relative text-center">
-                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 h-10 w-10 rounded-full bg-white border border-greige/60 flex items-center justify-center shadow-sm">
-                    <c.Icono className="h-5 w-5 text-borgona" />
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 h-12 w-12">
+                    <Image src={c.icono} alt="" fill sizes="48px" className="object-contain" />
                   </div>
                   <h3 className="font-display text-base text-borgona">{c.titulo}</h3>
                   <p className="mt-1.5 text-xs text-carbon/60">{c.texto}</p>
@@ -154,10 +140,9 @@ export default function Home() {
             {confianza.map((c) => (
               <div key={c.titulo} className="md:px-2">
                 <div className="mx-auto h-16 w-16 rounded-2xl bg-black/15 border border-dorado/25 shadow-[0_0_22px_-4px_rgba(212,175,55,0.45)] flex items-center justify-center">
-                  <c.Icono
-                    className="h-8 w-8 text-dorado drop-shadow-[0_0_5px_rgba(212,175,55,0.75)]"
-                    strokeWidth={1.6}
-                  />
+                  <div className="relative h-9 w-9 drop-shadow-[0_0_5px_rgba(212,175,55,0.75)]">
+                    <Image src={c.icono} alt="" fill sizes="36px" className="object-contain" />
+                  </div>
                 </div>
                 <h3 className="mt-4 font-display text-base">{c.titulo}</h3>
                 <p className="mt-1.5 text-xs text-marfil/70">{c.texto}</p>

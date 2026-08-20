@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import type { Mensaje } from "@/types";
 import { respuestasAlma } from "@/data/mock";
-import { IconTiempo, IconEnviar } from "@/components/icons";
+import { IconEnviar } from "@/components/icons";
 
 const sugerencias = [
   { texto: "Quiero iniciar un proyecto", clave: "proyecto" },
@@ -60,8 +61,8 @@ export default function ChatAlma() {
   return (
     <div className="mx-auto max-w-lg border border-greige/70 rounded-2xl bg-white/70 shadow-sm flex flex-col h-[640px] overflow-hidden">
       <div className="flex items-center gap-3 border-b border-greige/60 px-5 py-4 bg-marfil">
-        <div className="h-9 w-9 rounded-full bg-borgona/10 flex items-center justify-center">
-          <IconTiempo className="h-5 w-5 text-borgona" />
+        <div className="relative h-9 w-9 rounded-full overflow-hidden shrink-0">
+          <Image src="/images/alma-chat.png" alt="Alma" fill sizes="36px" className="object-cover" />
         </div>
         <div>
           <p className="font-display text-borgona leading-none">Alma</p>
@@ -71,22 +72,28 @@ export default function ChatAlma() {
 
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
         {mensajes.map((m) => (
-          <div
-            key={m.id}
-            className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
-              m.rol === "alma"
-                ? "bg-marfil border border-greige/70 text-carbon"
-                : "bg-borgona text-marfil ml-auto"
-            }`}
-          >
-            <p>{m.contenido}</p>
-            <p
-              className={`mt-1 text-[10px] ${
-                m.rol === "alma" ? "text-carbon/40" : "text-marfil/60"
+          <div key={m.id} className={`flex items-end gap-2 ${m.rol === "usuario" ? "justify-end" : ""}`}>
+            {m.rol === "alma" && (
+              <div className="relative h-6 w-6 rounded-full overflow-hidden shrink-0">
+                <Image src="/images/alma-chat.png" alt="Alma" fill sizes="24px" className="object-cover" />
+              </div>
+            )}
+            <div
+              className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
+                m.rol === "alma"
+                  ? "bg-marfil border border-greige/70 text-carbon"
+                  : "bg-borgona text-marfil"
               }`}
             >
-              {m.hora}
-            </p>
+              <p>{m.contenido}</p>
+              <p
+                className={`mt-1 text-[10px] ${
+                  m.rol === "alma" ? "text-carbon/40" : "text-marfil/60"
+                }`}
+              >
+                {m.hora}
+              </p>
+            </div>
           </div>
         ))}
       </div>
