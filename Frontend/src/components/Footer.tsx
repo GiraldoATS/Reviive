@@ -37,10 +37,13 @@ const ayuda = [
 export default function Footer() {
   return (
     <footer className="border-t border-greige/70 bg-[#e8ded2] relative overflow-hidden">
+      <div className="hidden 2xl:block absolute right-10 top-14 h-28 w-36 pointer-events-none">
+        <Image src="/images/footer-hourglass.png" alt="" fill sizes="144px" className="object-contain" />
+      </div>
       <div className="mx-auto max-w-6xl px-6 pt-14 grid gap-10 sm:grid-cols-2 md:grid-cols-4 relative">
         <div>
-          <div className="relative h-40 w-40">
-            <Image src="/images/sello.png" alt="Reviive" fill sizes="160px" className="object-contain object-left" />
+          <div className="relative h-40 w-[140px]">
+            <Image src="/images/sello.png" alt="Reviive" fill sizes="140px" className="object-contain" />
           </div>
           <p className="mt-3 max-w-xs text-sm italic text-carbon/70">
             El taller donde el tiempo se devuelve.
@@ -92,11 +95,6 @@ export default function Footer() {
           <p className="text-sm text-carbon/80">+57 318 485 5941</p>
           <p className="text-sm text-carbon/80">Medellín, Colombia</p>
           <Button href="/contacto" variant="secondary" className="mt-3 text-xs">Escríbenos</Button>
-        </div>
-      </div>
-      <div className="hidden md:flex justify-end max-w-6xl mx-auto px-6 mt-4 pointer-events-none">
-        <div className="relative h-24 w-[140px]">
-          <Image src="/images/footer-hourglass.png" alt="" fill sizes="140px" className="object-contain" />
         </div>
       </div>
       <div className="bg-borgona">
