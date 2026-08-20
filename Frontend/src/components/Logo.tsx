@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 type LogoProps = {
   variant?: "full" | "icon";
   tone?: "borgona" | "marfil";
@@ -51,32 +53,37 @@ export default function Logo({
   tagline,
   className = "",
 }: LogoProps) {
-  const wordmarkColor = tone === "marfil" ? "text-marfil" : "text-borgona";
   const taglineColor = tone === "marfil" ? "text-marfil/75" : "text-carbon/55";
 
   if (variant === "icon") {
     return <HourglassMark className={className || "h-8 w-8"} />;
   }
 
-  return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
-      <HourglassMark className="h-8 w-8 shrink-0" />
-      <div className="leading-none">
-        <span className={`font-display text-2xl relative ${wordmarkColor}`}>
-          Reviive
-          <span
-            className="absolute -top-2 left-[52%] h-1.5 w-1.5 rounded-full bg-dorado"
-            aria-hidden="true"
-          />
-          <span
-            className="absolute -top-2 left-[64%] h-1.5 w-1.5 rounded-full bg-dorado"
-            aria-hidden="true"
-          />
-        </span>
-        {tagline && (
-          <p className={`mt-0.5 text-[10px] italic ${taglineColor}`}>{tagline}</p>
-        )}
+  // El logo real (recortado de la guía de marca) sólo existe en tinta
+  // borgoña/dorado, así que se usa sobre fondos claros. Sobre fondos
+  // oscuros (sidebars internos) se conserva la marca dibujada en dorado.
+  if (tone === "marfil") {
+    return (
+      <div className={`flex items-center gap-2.5 ${className}`}>
+        <HourglassMark className="h-8 w-8 shrink-0" />
+        <div className="leading-none">
+          <span className="font-display text-2xl relative text-marfil">
+            Reviive
+            <span className="absolute -top-2 left-[52%] h-1.5 w-1.5 rounded-full bg-dorado" aria-hidden="true" />
+            <span className="absolute -top-2 left-[64%] h-1.5 w-1.5 rounded-full bg-dorado" aria-hidden="true" />
+          </span>
+          {tagline && <p className={`mt-0.5 text-[10px] italic ${taglineColor}`}>{tagline}</p>}
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className={`flex items-center gap-2 ${className}`}>
+      <div className="relative h-8 w-[120px] shrink-0">
+        <Image src="/images/logo.png" alt="Reviive" fill sizes="120px" className="object-contain object-left" priority />
+      </div>
+      {tagline && <p className={`text-[10px] italic ${taglineColor} -ml-1`}>{tagline}</p>}
     </div>
   );
 }

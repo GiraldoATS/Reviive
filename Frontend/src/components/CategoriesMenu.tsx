@@ -21,7 +21,18 @@ export default function CategoriesMenu() {
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
-      <button className="hover:text-borgona transition-colors">Categorías</button>
+      <button
+        className={`group relative pb-1 text-carbon/80 transition-colors hover:text-borgona hover:font-medium ${
+          open ? "text-borgona font-medium" : ""
+        }`}
+      >
+        Categorías
+        <span
+          className={`absolute left-0 -bottom-0.5 h-px bg-borgona transition-all ${
+            open ? "w-full" : "w-0 group-hover:w-full"
+          }`}
+        />
+      </button>
       {open && (
         <div className="absolute left-1/2 -translate-x-1/2 top-full pt-3 z-50">
           <div className="w-[560px] rounded-2xl border border-greige/70 bg-marfil shadow-lg p-6 grid grid-cols-2 gap-x-8 gap-y-5 text-left">

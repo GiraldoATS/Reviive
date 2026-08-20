@@ -2,15 +2,8 @@ import Link from "next/link";
 import Logo from "./Logo";
 import Button from "./Button";
 import CategoriesMenu from "./CategoriesMenu";
+import NavLink from "./NavLink";
 import { IconUserCircle } from "./icons";
-
-const links = [
-  { href: "/como-funciona", label: "Cómo funciona" },
-  { href: "/catalogo", label: "Servicios" },
-  { href: "/historias", label: "Historias" },
-  { href: "/sobre-reviive", label: "Sobre Reviive" },
-  { href: "/contacto", label: "Contacto" },
-];
 
 export default function Navbar() {
   return (
@@ -19,14 +12,14 @@ export default function Navbar() {
         <Link href="/" aria-label="Reviive - Inicio">
           <Logo />
         </Link>
-        <nav className="hidden lg:flex items-center gap-7 text-sm text-carbon/80">
-          <Link href="/" className="hover:text-borgona transition-colors">Inicio</Link>
-          <Link href={links[0].href} className="hover:text-borgona transition-colors">{links[0].label}</Link>
-          <Link href={links[1].href} className="hover:text-borgona transition-colors">{links[1].label}</Link>
+        <nav className="hidden lg:flex items-center gap-7 text-sm">
+          <NavLink href="/">Inicio</NavLink>
+          <NavLink href="/como-funciona">Cómo funciona</NavLink>
+          <NavLink href="/catalogo">Servicios</NavLink>
           <CategoriesMenu />
-          <Link href={links[2].href} className="hover:text-borgona transition-colors">{links[2].label}</Link>
-          <Link href={links[3].href} className="hover:text-borgona transition-colors">{links[3].label}</Link>
-          <Link href={links[4].href} className="hover:text-borgona transition-colors">{links[4].label}</Link>
+          <NavLink href="/historias">Historias</NavLink>
+          <NavLink href="/sobre-reviive">Sobre Reviive</NavLink>
+          <NavLink href="/contacto">Contacto</NavLink>
         </nav>
         <div className="flex items-center gap-3">
           <Button href="/recuerdos/nuevo" variant="primary" className="text-xs md:text-sm">
