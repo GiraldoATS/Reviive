@@ -52,12 +52,12 @@ export default function Home() {
       <section className="grid lg:grid-cols-2 items-stretch">
         <div className="relative px-6 py-16 lg:py-24 flex flex-col justify-center lg:pl-[max(1.5rem,calc((100vw-72rem)/2))] overflow-hidden">
           <div className="hidden lg:block absolute left-2 top-1/2 -translate-y-1/2 h-[420px] w-32">
-            <Image src="/images/branch-left.png" alt="" fill sizes="128px" className="object-contain object-top" />
+            <Image src="/images/branch-left-v2.png" alt="" fill sizes="128px" className="object-contain object-top" />
           </div>
           <h1 className="relative font-display text-4xl md:text-5xl leading-tight text-borgona max-w-md">
             El taller donde el tiempo se devuelve.
             <span className="absolute -right-1 bottom-2 h-9 w-16 translate-x-full">
-              <Image src="/images/branch-sprig.png" alt="" fill sizes="64px" className="object-contain" />
+              <Image src="/images/branch-sprig-v2.png" alt="" fill sizes="64px" className="object-contain" />
             </span>
           </h1>
           <p className="relative mt-5 text-carbon/75 max-w-md">
