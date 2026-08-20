@@ -15,10 +15,10 @@ import {
 } from "@/components/icons";
 
 const pasos = [
-  { foto: "/images/steps/step1-historia.png", titulo: "Cuéntanos tu historia", texto: "Cada objeto tiene un significado. Escuchamos tu historia y entendemos qué lo hace único." },
-  { foto: "/images/steps/step2-lupa.png", titulo: "Evaluamos y proponemos", texto: "Analizamos su estado y te proponemos la mejor forma de preservarlo o transformarlo." },
-  { foto: "/images/steps/step3-manos.png", titulo: "Restauramos y creamos", texto: "Trabajamos con técnicas artesanales y materiales de la más alta calidad para devolverle vida." },
-  { foto: "/images/steps/step4-hourglass.png", titulo: "Lo devolvemos a tu historia", texto: "Recibes tu pieza restaurada o transformada, lista para seguir siendo parte de tu vida." },
+  { foto: "/images/steps/step1-historia-v3.png", titulo: "Cuéntanos tu historia", texto: "Cada objeto tiene un significado. Escuchamos tu historia y entendemos qué lo hace único." },
+  { foto: "/images/steps/step2-lupa-v3.png", titulo: "Evaluamos y proponemos", texto: "Analizamos su estado y te proponemos la mejor forma de preservarlo o transformarlo." },
+  { foto: "/images/steps/step3-manos-v3.png", titulo: "Restauramos y creamos", texto: "Trabajamos con técnicas artesanales y materiales de la más alta calidad para devolverle vida." },
+  { foto: "/images/steps/step4-hourglass-v3.png", titulo: "Lo devolvemos a tu historia", texto: "Recibes tu pieza restaurada o transformada, lista para seguir siendo parte de tu vida." },
 ];
 
 const categorias = [
@@ -54,7 +54,7 @@ export default function Home() {
           <h1 className="relative font-display text-4xl md:text-5xl leading-tight text-borgona max-w-md">
             El taller donde el tiempo se devuelve.
             <span className="absolute -right-2 bottom-2 h-14 w-24 translate-x-full">
-              <Image src="/images/branch-sprig-v2.png" alt="" fill sizes="96px" className="object-contain" />
+              <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="96px" className="object-contain" />
             </span>
           </h1>
           <p className="relative mt-5 text-carbon/75 max-w-md">
@@ -87,8 +87,8 @@ export default function Home() {
         <h2 className="mt-2 font-display text-3xl md:text-4xl font-medium text-borgona-dark">
           Un proceso cuidadoso, humano y artesanal.
         </h2>
-        <div className="relative h-6 w-11 mx-auto mt-1">
-          <Image src="/images/sprig-comofunciona.png" alt="" fill sizes="44px" className="object-contain" />
+        <div className="relative h-7 w-14 mx-auto mt-2">
+          <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="56px" className="object-contain" />
         </div>
         <div className="mt-8 grid sm:grid-cols-2 md:grid-cols-4 gap-8 md:divide-x md:divide-dotted md:divide-greige">
           {pasos.map((p, i) => (
@@ -98,7 +98,7 @@ export default function Home() {
                   <Image src={p.foto} alt="" fill sizes="28px" className="object-contain" />
                 </div>
               </div>
-              <h3 className="mt-4 font-display text-base text-carbon">
+              <h3 className="mt-4 font-display text-base text-borgona">
                 {i + 1}. {p.titulo}
               </h3>
               <p className="mt-2 text-sm text-carbon/60">{p.texto}</p>
