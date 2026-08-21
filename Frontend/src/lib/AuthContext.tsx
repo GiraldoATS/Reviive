@@ -1,7 +1,13 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { iniciarSesion, obtenerPerfil, type SesionUsuario } from "@/lib/auth";
+import {
+  iniciarSesion,
+  obtenerPerfil,
+  registrarUsuario,
+  type DatosRegistro,
+  type SesionUsuario,
+} from "@/lib/auth";
 
 const STORAGE_KEY = "reviive_access_token";
 
@@ -10,6 +16,7 @@ type AuthContextValue = {
   usuario: SesionUsuario | null;
   cargando: boolean;
   login: (email: string, password: string) => Promise<void>;
+  registrar: (datos: DatosRegistro) => Promise<void>;
   logout: () => void;
 };
 
@@ -45,6 +52,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUsuario(perfil);
   }
 
+  async function registrar(datos: DatosRegistro) {
+    const respuesta = await registrarUsuario(datos);
+    localStorage.setItem(STORAGE_KEY, respuesta.access);
+    setAccessToken(respuesta.access);
+    if (respuesta.usuario) {
+      setUsuario(respuesta.usuario);
+    } else {
+      setUsuario(await obtenerPerfil(respuesta.access));
+    }
+  }
+
   function logout() {
     localStorage.removeItem(STORAGE_KEY);
     setAccessToken(null);
@@ -52,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ accessToken, usuario, cargando, login, logout }}>
+    <AuthContext.Provider value={{ accessToken, usuario, cargando, login, registrar, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -24,7 +24,7 @@ const roles = [
     icon: IconSettings,
     titulo: "Administrador",
     texto: "Administra la plataforma, usuarios, proveedores y configuraciones.",
-    href: "/admin",
+    href: `${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1$/, "") ?? "http://localhost:8000"}/admin/`,
     label: "Ingresar como administrador",
     destacado: false,
   },

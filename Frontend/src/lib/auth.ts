@@ -61,6 +61,13 @@ export async function registrarUsuario(datos: DatosRegistro): Promise<RespuestaA
   return res.json();
 }
 
+/** Deriva un username a partir del correo (Django lo exige, pero la UI no lo pide). */
+export function sugerirUsername(email: string): string {
+  const base = email.split("@")[0].toLowerCase().replace(/[^a-z0-9._-]/g, "");
+  const sufijo = Math.random().toString(36).slice(2, 6);
+  return `${base || "usuario"}-${sufijo}`;
+}
+
 export async function obtenerPerfil(accessToken: string): Promise<SesionUsuario> {
   const res = await fetch(`${API_URL}/users/me`, {
     headers: { Authorization: `Bearer ${accessToken}` },
