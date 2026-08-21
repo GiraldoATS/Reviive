@@ -126,6 +126,11 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
+    # Controla rafagas de mensajes al chat (cada mensaje dispara una llamada
+    # a un LLM, tiene costo real). Ver apps.conversations.throttles.
+    "DEFAULT_THROTTLE_RATES": {
+        "mensajes_chat": "20/min",
+    },
 }
 
 SIMPLE_JWT = {

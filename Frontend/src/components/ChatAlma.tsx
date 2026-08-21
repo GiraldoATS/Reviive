@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Mensaje } from "@/types";
-import { IconEnviar } from "@/components/icons";
+import { IconEnviar, IconCamara, IconMicrofono, IconStop, IconVideo } from "@/components/icons";
 import { useAuth } from "@/lib/AuthContext";
 import { API_URL } from "@/lib/api";
 
@@ -33,11 +33,30 @@ function horaActual() {
     .padStart(2, "0")}`;
 }
 
+function archivoABase64(archivo: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const lector = new FileReader();
+    lector.onload = () => resolve(lector.result as string);
+    lector.onerror = reject;
+    lector.readAsDataURL(archivo);
+  });
+}
+
+type TipoAdjunto = "imagen" | "audio" | "video";
+
+interface Adjunto {
+  tipo: TipoAdjunto;
+  base64: string;
+  nombre: string;
+  previewUrl?: string;
+}
+
 interface RespuestaWebhookAlma {
   conversacion_id: string;
   run_id: string;
   reply: string;
   estado: string;
+  reply_audio_base64?: string;
 }
 
 export default function ChatAlma() {
@@ -53,8 +72,16 @@ export default function ChatAlma() {
   ]);
   const [texto, setTexto] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [adjunto, setAdjunto] = useState<Adjunto | null>(null);
+  const [grabando, setGrabando] = useState(false);
+  const [avisoLimite, setAvisoLimite] = useState<string | null>(null);
   const conversacionId = useRef<string | null>(null);
   const creandoConversacion = useRef(false);
+  const inputImagenRef = useRef<HTMLInputElement>(null);
+  const inputVideoRef = useRef<HTMLInputElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksAudioRef = useRef<Blob[]>([]);
+  const audioReproductorRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     async function asegurarConversacion() {
@@ -82,17 +109,66 @@ export default function ChatAlma() {
     asegurarConversacion();
   }, [accessToken]);
 
+  async function elegirArchivo(tipo: "imagen" | "video", archivo: File | undefined) {
+    if (!archivo) return;
+    const base64 = await archivoABase64(archivo);
+    setAdjunto({
+      tipo,
+      base64,
+      nombre: archivo.name,
+      previewUrl: tipo === "imagen" ? base64 : undefined,
+    });
+  }
+
+  async function iniciarGrabacion() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const grabador = new MediaRecorder(stream);
+      chunksAudioRef.current = [];
+      grabador.ondataavailable = (e) => chunksAudioRef.current.push(e.data);
+      grabador.onstop = async () => {
+        const blob = new Blob(chunksAudioRef.current, { type: "audio/webm" });
+        stream.getTracks().forEach((t) => t.stop());
+        const base64 = await archivoABase64(new File([blob], "nota-de-voz.webm", { type: "audio/webm" }));
+        setAdjunto({ tipo: "audio", base64, nombre: "nota-de-voz.webm" });
+      };
+      grabador.start();
+      mediaRecorderRef.current = grabador;
+      setGrabando(true);
+    } catch {
+      setAvisoLimite("No pude acceder al micrófono. Revisa los permisos del navegador.");
+    }
+  }
+
+  function detenerGrabacion() {
+    mediaRecorderRef.current?.stop();
+    setGrabando(false);
+  }
+
   async function enviar(contenido: string) {
-    if (!contenido.trim() || enviando || !accessToken) return;
+    if (enviando || !accessToken) return;
+    if (!contenido.trim() && !adjunto) return;
+
+    const adjuntoActual = adjunto;
+    const etiquetaAdjunto =
+      adjuntoActual?.tipo === "imagen"
+        ? "Imagen adjunta"
+        : adjuntoActual?.tipo === "audio"
+        ? "Nota de voz"
+        : adjuntoActual?.tipo === "video"
+        ? "Video adjunto"
+        : "";
 
     const mensajeUsuario: Mensaje = {
       id: nextId(),
       rol: "usuario",
-      contenido,
+      contenido: contenido.trim() || etiquetaAdjunto,
       hora: horaActual(),
     };
     setMensajes((prev) => [...prev, mensajeUsuario]);
     setTexto("");
+    setAdjunto(null);
+    setAvisoLimite(null);
     setEnviando(true);
 
     try {
@@ -117,8 +193,12 @@ export default function ChatAlma() {
           access_token: accessToken,
           conversacion_id: conversacionId.current,
           mensaje: contenido,
+          adjunto: adjuntoActual
+            ? { tipo: adjuntoActual.tipo, base64: adjuntoActual.base64, nombre: adjuntoActual.nombre }
+            : null,
         }),
       });
+
       if (!res.ok) throw new Error("Alma no respondió a tiempo.");
       const data: RespuestaWebhookAlma = await res.json();
 
@@ -131,6 +211,13 @@ export default function ChatAlma() {
           hora: horaActual(),
         },
       ]);
+
+      if (data.reply_audio_base64 && audioReproductorRef.current) {
+        audioReproductorRef.current.src = `data:audio/mpeg;base64,${data.reply_audio_base64}`;
+        audioReproductorRef.current.play().catch(() => {
+          // Autoplay puede estar bloqueado por el navegador; no es critico.
+        });
+      }
     } catch {
       setMensajes((prev) => [
         ...prev,
@@ -225,6 +312,33 @@ export default function ChatAlma() {
         )}
       </div>
 
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <audio ref={audioReproductorRef} className="hidden" />
+
+      {avisoLimite && (
+        <div className="px-5 py-2 text-xs text-borgona bg-rosa/20 border-t border-greige/60">{avisoLimite}</div>
+      )}
+
+      {adjunto && (
+        <div className="px-5 py-2 border-t border-greige/60 flex items-center gap-2 bg-marfil">
+          {adjunto.tipo === "imagen" && adjunto.previewUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={adjunto.previewUrl} alt="" className="h-10 w-10 rounded object-cover" />
+          ) : (
+            <span className="text-xs text-carbon/60">
+              {adjunto.tipo === "audio" ? "Nota de voz lista" : "Video listo"}: {adjunto.nombre}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => setAdjunto(null)}
+            className="ml-auto text-xs text-carbon/50 hover:text-borgona"
+          >
+            Quitar
+          </button>
+        </div>
+      )}
+
       <div className="px-5 py-3 flex flex-wrap gap-2 border-t border-greige/60">
         {sugerencias.map((s) => (
           <button
@@ -243,12 +357,58 @@ export default function ChatAlma() {
           e.preventDefault();
           enviar(texto);
         }}
-        className="flex items-center gap-2 border-t border-greige/60 px-4 py-3"
+        className="flex items-center gap-1.5 border-t border-greige/60 px-3 py-3"
       >
+        <input
+          ref={inputImagenRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => elegirArchivo("imagen", e.target.files?.[0])}
+        />
+        <input
+          ref={inputVideoRef}
+          type="file"
+          accept="video/*"
+          className="hidden"
+          onChange={(e) => elegirArchivo("video", e.target.files?.[0])}
+        />
+        <button
+          type="button"
+          onClick={() => inputImagenRef.current?.click()}
+          disabled={enviando}
+          className="h-8 w-8 shrink-0 rounded-full text-carbon/50 hover:text-borgona hover:bg-borgona/5 flex items-center justify-center disabled:opacity-50"
+          aria-label="Adjuntar imagen"
+          title="Adjuntar imagen"
+        >
+          <IconCamara className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => inputVideoRef.current?.click()}
+          disabled={enviando}
+          className="h-8 w-8 shrink-0 rounded-full text-carbon/50 hover:text-borgona hover:bg-borgona/5 flex items-center justify-center disabled:opacity-50"
+          aria-label="Adjuntar video"
+          title="Adjuntar video"
+        >
+          <IconVideo className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={grabando ? detenerGrabacion : iniciarGrabacion}
+          disabled={enviando}
+          className={`h-8 w-8 shrink-0 rounded-full flex items-center justify-center disabled:opacity-50 ${
+            grabando ? "text-marfil bg-borgona" : "text-carbon/50 hover:text-borgona hover:bg-borgona/5"
+          }`}
+          aria-label={grabando ? "Detener grabación" : "Grabar nota de voz"}
+          title={grabando ? "Detener grabación" : "Grabar nota de voz"}
+        >
+          {grabando ? <IconStop className="h-4 w-4" /> : <IconMicrofono className="h-4 w-4" />}
+        </button>
         <input
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
-          placeholder="Escribe tu mensaje..."
+          placeholder={adjunto ? "Agrega un mensaje (opcional)…" : "Escribe tu mensaje..."}
           disabled={enviando}
           className="flex-1 rounded-full border border-greige/70 bg-marfil px-4 py-2 text-sm outline-none focus:border-borgona/50 disabled:opacity-60"
         />

@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status
@@ -56,27 +57,30 @@ def _crear_recomendaciones(ejecucion: EjecucionAgente) -> None:
         return
 
     # Reemplaza cualquier tanda anterior para este recuerdo (reintentos del
-    # workflow no deben acumular duplicados).
-    Recomendacion.objects.filter(recuerdo=recuerdo).delete()
+    # workflow no deben acumular duplicados). Todo en una transacción para
+    # que un fallo a mitad de la tanda no deje al recuerdo sin ninguna
+    # recomendación (ni la vieja ni la nueva).
+    with transaction.atomic():
+        Recomendacion.objects.filter(recuerdo=recuerdo).delete()
 
-    for item in data.get("recomendaciones", []):
-        try:
-            producto = Producto.objects.get(pk=item["producto_id"])
-        except (Producto.DoesNotExist, KeyError, ValueError, TypeError):
-            continue
-        # concepto_creativo (agente Creativo) es la narrativa mostrada al
-        # cliente; si no viene, se usa justificacion como respaldo.
-        justificacion = item.get("concepto_creativo") or item.get("justificacion", "")
-        Recomendacion.objects.create(
-            recuerdo=recuerdo,
-            producto=producto,
-            titulo=item.get("titulo", producto.nombre),
-            justificacion=justificacion,
-            puntaje=item.get("puntaje", 0),
-            # Salida del agente Viabilidad para esta misma alternativa.
-            advertencias=item.get("advertencias", []),
-            requiere_revision_humana=bool(item.get("requiere_revision_humana", False)),
-        )
+        for item in data.get("recomendaciones", []):
+            try:
+                producto = Producto.objects.get(pk=item["producto_id"])
+            except (Producto.DoesNotExist, KeyError, ValueError, TypeError):
+                continue
+            # concepto_creativo (agente Creativo) es la narrativa mostrada al
+            # cliente; si no viene, se usa justificacion como respaldo.
+            justificacion = item.get("concepto_creativo") or item.get("justificacion", "")
+            Recomendacion.objects.create(
+                recuerdo=recuerdo,
+                producto=producto,
+                titulo=item.get("titulo", producto.nombre),
+                justificacion=justificacion,
+                puntaje=item.get("puntaje", 0),
+                # Salida del agente Viabilidad para esta misma alternativa.
+                advertencias=item.get("advertencias", []),
+                requiere_revision_humana=bool(item.get("requiere_revision_humana", False)),
+            )
 
 
 def _crear_recuerdo_desde_extraccion(ejecucion: EjecucionAgente) -> None:

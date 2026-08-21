@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 
 from .models import Conversacion, Mensaje
 from .serializers import ConversacionSerializer, MensajeSerializer
+from .throttles import MensajePorUsuarioThrottle
 
 STAFF_ROLES = {"supervisor_ia", "administrador", "superadministrador"}
 
@@ -29,6 +30,14 @@ class ConversacionMensajesView(APIView):
     """/api/v1/conversations/{id}/messages"""
 
     permission_classes = [IsAuthenticated]
+    throttle_classes = [MensajePorUsuarioThrottle]
+
+    def get_throttles(self):
+        # Sólo se limita el envío de mensajes nuevos (cada uno dispara un
+        # agente); leer el historial no debe estar restringido igual.
+        if self.request.method != "POST":
+            return []
+        return super().get_throttles()
 
     def _get_conversacion(self, request: Request, conversacion_id) -> Conversacion:
         conversacion = get_object_or_404(Conversacion, pk=conversacion_id)
