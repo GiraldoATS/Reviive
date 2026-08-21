@@ -18,6 +18,8 @@ class ObjetoMemoriaSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "tipo",
+            "marca",
+            "anio_aproximado",
             "material",
             "estado",
             "nivel_transformacion",
@@ -26,7 +28,9 @@ class ObjetoMemoriaSerializer(serializers.ModelSerializer):
 
 
 class RecuerdoSerializer(serializers.ModelSerializer):
-    objetos = ObjetoMemoriaSerializer(many=True, read_only=True)
+    # Writable: permite crear el primer objeto junto con el recuerdo en el
+    # mismo POST (el wizard del frontend registra ambos en un solo paso).
+    objetos = ObjetoMemoriaSerializer(many=True, required=False)
 
     class Meta:
         model = Recuerdo
@@ -42,5 +46,9 @@ class RecuerdoSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "creado_en", "actualizado_en"]
 
     def create(self, validated_data):
+        objetos_data = validated_data.pop("objetos", [])
         validated_data["cliente"] = self.context["request"].user
-        return super().create(validated_data)
+        recuerdo = super().create(validated_data)
+        for objeto_data in objetos_data:
+            ObjetoMemoria.objects.create(recuerdo=recuerdo, **objeto_data)
+        return recuerdo

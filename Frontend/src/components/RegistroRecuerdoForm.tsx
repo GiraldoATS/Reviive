@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Button from "./Button";
+import { useAuth } from "@/lib/AuthContext";
+import { API_URL } from "@/lib/api";
 
 const pasos = [
   "Información del objeto",
@@ -12,6 +16,8 @@ const pasos = [
 ];
 
 export default function RegistroRecuerdoForm() {
+  const router = useRouter();
+  const { accessToken, cargando } = useAuth();
   const [pasoActual, setPasoActual] = useState(0);
   const [form, setForm] = useState({
     tipoObjeto: "Reloj de bolsillo",
@@ -20,11 +26,64 @@ export default function RegistroRecuerdoForm() {
     descripcion: "",
     historia: "",
   });
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const esUltimo = pasoActual === pasos.length - 1;
 
   function actualizar<K extends keyof typeof form>(campo: K, valor: string) {
     setForm((prev) => ({ ...prev, [campo]: valor }));
+  }
+
+  async function guardarYContinuar() {
+    if (!accessToken) return;
+    setError(null);
+    setEnviando(true);
+    try {
+      const res = await fetch(`${API_URL}/memories/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          historia: form.historia,
+          objetos: [
+            {
+              tipo: form.tipoObjeto,
+              marca: form.marca,
+              anio_aproximado: form.anioAproximado,
+              estado: form.descripcion,
+            },
+          ],
+        }),
+      });
+      if (!res.ok) throw new Error("No se pudo guardar tu recuerdo. Intenta de nuevo.");
+      router.push("/recomendaciones");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo guardar tu recuerdo.");
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  if (cargando) return null;
+
+  if (!accessToken) {
+    return (
+      <div className="rounded-2xl border border-greige/70 bg-white/60 p-10 text-center">
+        <p className="font-display text-xl text-borgona mb-2">Inicia sesión para registrar tu recuerdo</p>
+        <p className="text-sm text-carbon/60 mb-6">
+          Necesitamos saber quién eres para guardar la historia de tu objeto de forma privada.
+        </p>
+        <Link
+          href="/auth/login"
+          className="inline-flex items-center justify-center rounded-full bg-borgona text-marfil px-6 py-2.5 text-sm"
+        >
+          Iniciar sesión →
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -131,6 +190,8 @@ export default function RegistroRecuerdoForm() {
           </div>
         )}
 
+        {error && <p className="mt-4 text-sm text-borgona">{error}</p>}
+
         <div className="mt-8 flex justify-between">
           <Button
             variant="secondary"
@@ -141,14 +202,13 @@ export default function RegistroRecuerdoForm() {
           </Button>
           <Button
             variant="primary"
-            href={esUltimo ? "/recomendaciones" : undefined}
             onClick={
               esUltimo
-                ? undefined
+                ? guardarYContinuar
                 : () => setPasoActual((p) => Math.min(pasos.length - 1, p + 1))
             }
           >
-            {esUltimo ? "Ver recomendaciones →" : "Continuar"}
+            {esUltimo ? (enviando ? "Guardando…" : "Ver recomendaciones →") : "Continuar"}
           </Button>
         </div>
       </div>

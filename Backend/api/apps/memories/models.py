@@ -55,8 +55,10 @@ class ObjetoMemoria(models.Model):
         Recuerdo, on_delete=models.CASCADE, related_name="objetos"
     )
     tipo = models.CharField(max_length=100)
+    marca = models.CharField(max_length=100, blank=True)
+    anio_aproximado = models.CharField(max_length=20, blank=True)
     material = models.CharField(max_length=100, blank=True)
-    estado = models.CharField(max_length=100, blank=True)
+    estado = models.TextField(blank=True)
     nivel_transformacion = models.CharField(max_length=100, blank=True)
     archivos = models.ManyToManyField(Archivo, blank=True, related_name="objetos_memoria")
 
