@@ -4,7 +4,10 @@ from .models import EjecucionAgente
 
 
 class AgentRunRequestSerializer(serializers.Serializer):
-    conversacion_id = serializers.UUIDField()
+    # Sólo los agentes conversacionales (orquestador, acompanamiento, ...)
+    # se atan a una Conversacion; los demás (recomendacion, proveedores...)
+    # se disparan desde otras acciones y no tienen una.
+    conversacion_id = serializers.UUIDField(required=False, allow_null=True)
     agente = serializers.ChoiceField(choices=EjecucionAgente.Agente.choices)
     agent_version = serializers.CharField(default="v1")
 

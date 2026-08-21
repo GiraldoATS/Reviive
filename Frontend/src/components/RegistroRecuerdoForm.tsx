@@ -7,6 +7,10 @@ import Button from "./Button";
 import { useAuth } from "@/lib/AuthContext";
 import { API_URL } from "@/lib/api";
 
+const RECOMENDACION_WEBHOOK_URL =
+  process.env.NEXT_PUBLIC_N8N_RECOMENDACION_WEBHOOK_URL ??
+  "http://127.0.0.1:5678/webhook/reviive/memories/recuerdo-creado";
+
 const pasos = [
   "Información del objeto",
   "Fotos",
@@ -59,7 +63,20 @@ export default function RegistroRecuerdoForm() {
         }),
       });
       if (!res.ok) throw new Error("No se pudo guardar tu recuerdo. Intenta de nuevo.");
-      router.push("/recomendaciones");
+      const recuerdo = await res.json();
+
+      try {
+        await fetch(RECOMENDACION_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ access_token: accessToken, recuerdo_id: recuerdo.id }),
+        });
+      } catch {
+        // Si el agente de recomendacion no responde, igual seguimos: la
+        // pagina de recomendaciones mostrara "sin recomendaciones aun".
+      }
+
+      router.push(`/recomendaciones?recuerdo=${recuerdo.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo guardar tu recuerdo.");
     } finally {

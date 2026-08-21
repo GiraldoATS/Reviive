@@ -32,8 +32,15 @@ class EjecucionAgente(models.Model):
         FALLIDO = "fallido", "Fallido"
 
     run_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # Nulo para agentes que no ocurren dentro de un chat (recomendacion,
+    # proveedores, cotizacion, pedidos, memorial se disparan desde otras
+    # acciones del usuario, no desde una Conversacion).
     conversacion = models.ForeignKey(
-        Conversacion, on_delete=models.CASCADE, related_name="ejecuciones_agente"
+        Conversacion,
+        on_delete=models.CASCADE,
+        related_name="ejecuciones_agente",
+        null=True,
+        blank=True,
     )
     agente = models.CharField(max_length=32, choices=Agente.choices)
     agent_version = models.CharField(max_length=32, default="v1")
