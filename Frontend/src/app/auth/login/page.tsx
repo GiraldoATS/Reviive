@@ -1,8 +1,34 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AuthShell from "@/components/AuthShell";
 import Button from "@/components/Button";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setEnviando(true);
+    try {
+      await login(email, password);
+      router.push("/chat");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo iniciar sesión.");
+    } finally {
+      setEnviando(false);
+    }
+  }
+
   return (
     <AuthShell
       eyebrow="Bienvenida de vuelta"
@@ -16,15 +42,30 @@ export default function LoginPage() {
         </p>
       }
     >
-      <form className="space-y-4">
+      <form className="space-y-4" onSubmit={onSubmit}>
         <label className="block">
           <span className="block text-xs uppercase tracking-wide text-carbon/50 mb-1.5">Correo electrónico</span>
-          <input type="email" className="input" placeholder="tu@email.com" />
+          <input
+            type="email"
+            required
+            className="input"
+            placeholder="tu@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </label>
         <label className="block">
           <span className="block text-xs uppercase tracking-wide text-carbon/50 mb-1.5">Contraseña</span>
-          <input type="password" className="input" placeholder="••••••••" />
+          <input
+            type="password"
+            required
+            className="input"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </label>
+        {error && <p className="text-sm text-borgona">{error}</p>}
         <div className="flex items-center justify-between text-sm">
           <label className="flex items-center gap-2 text-carbon/60">
             <input type="checkbox" className="accent-borgona" /> Recordarme
@@ -32,7 +73,7 @@ export default function LoginPage() {
           <Link href="/auth/recuperar" className="text-borgona">¿Olvidaste tu contraseña?</Link>
         </div>
         <Button type="submit" variant="primary" className="w-full justify-center">
-          Iniciar sesión →
+          {enviando ? "Entrando…" : "Iniciar sesión →"}
         </Button>
         <div className="flex items-center gap-3 text-xs text-carbon/40">
           <span className="flex-1 h-px bg-greige/70" /> o continuar con <span className="flex-1 h-px bg-greige/70" />
