@@ -3,18 +3,28 @@ from datetime import timedelta
 from django.contrib.auth import get_user_model
 from django.db.models import Count
 from django.utils import timezone
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import BasePermission
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.orders.models import Pedido
 
+ROLES_PANEL_ADMIN = {"administrador", "superadministrador", "supervisor_ia"}
+
+
+class EsStaffAdministrativo(BasePermission):
+    """Sólo staff/roles administrativos ven métricas agregadas del negocio."""
+
+    def has_permission(self, request, view) -> bool:
+        user = request.user
+        return user.is_authenticated and (user.is_staff or user.rol in ROLES_PANEL_ADMIN)
+
 
 class DashboardView(APIView):
     """GET /api/v1/analytics/dashboard — resumen para el panel administrativo."""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [EsStaffAdministrativo]
 
     def get(self, request: Request) -> Response:
         Usuario = get_user_model()

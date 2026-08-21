@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import BasePermission, IsAuthenticated
+from rest_framework.permissions import BasePermission
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -20,10 +20,14 @@ class EsSupervisorIA(BasePermission):
 
 
 class EjemploDatasetViewSet(viewsets.ReadOnlyModelViewSet):
-    """/api/v1/dataset-examples y /api/v1/dataset-examples/{id}/approve"""
+    """/api/v1/dataset-examples y /api/v1/dataset-examples/{id}/approve
+
+    Herramienta interna de curación de datos: sólo supervisor_ia/staff,
+    nunca clientes o proveedores (podría exponer conversaciones ajenas).
+    """
 
     serializer_class = EjemploDatasetSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [EsSupervisorIA]
     queryset = EjemploDataset.objects.all()
 
     @action(detail=True, methods=["post"], permission_classes=[EsSupervisorIA])
