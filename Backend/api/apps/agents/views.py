@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 
 from apps.catalog.models import Producto
 from apps.conversations.models import Conversacion, Mensaje
-from apps.memories.models import Recuerdo
+from apps.evaluations.models import Evaluacion
+from apps.memories.models import ObjetoMemoria, Recuerdo
 from apps.recommendations.models import Recomendacion
 
 from .models import EjecucionAgente
@@ -63,13 +64,76 @@ def _crear_recomendaciones(ejecucion: EjecucionAgente) -> None:
             producto = Producto.objects.get(pk=item["producto_id"])
         except (Producto.DoesNotExist, KeyError, ValueError, TypeError):
             continue
+        # concepto_creativo (agente Creativo) es la narrativa mostrada al
+        # cliente; si no viene, se usa justificacion como respaldo.
+        justificacion = item.get("concepto_creativo") or item.get("justificacion", "")
         Recomendacion.objects.create(
             recuerdo=recuerdo,
             producto=producto,
             titulo=item.get("titulo", producto.nombre),
-            justificacion=item.get("justificacion", ""),
+            justificacion=justificacion,
             puntaje=item.get("puntaje", 0),
+            # Salida del agente Viabilidad para esta misma alternativa.
+            advertencias=item.get("advertencias", []),
+            requiere_revision_humana=bool(item.get("requiere_revision_humana", False)),
         )
+
+
+def _crear_recuerdo_desde_extraccion(ejecucion: EjecucionAgente) -> None:
+    """Efecto de agent-runs/complete para el agente `extraccion`: convierte
+    la Ficha de Memoria/Tecnica que devolvio el agente en un Recuerdo real,
+    ligado al cliente de la conversacion. RN-01: no se crea nada si el
+    cliente no dio su consentimiento de tratamiento de datos.
+    """
+    if not ejecucion.conversacion_id:
+        return
+    cliente = ejecucion.conversacion.usuario
+    perfil = getattr(cliente, "perfil", None)
+    if not perfil or not perfil.consentimiento_datos:
+        return
+
+    data = ejecucion.structured_data or {}
+    historia = data.get("historia", "")
+    if not historia:
+        return
+
+    recuerdo = Recuerdo.objects.create(
+        cliente=cliente,
+        persona_recordada=data.get("persona_recordada", ""),
+        historia=historia,
+    )
+    objeto = data.get("objeto") or {}
+    if objeto.get("tipo"):
+        ObjetoMemoria.objects.create(
+            recuerdo=recuerdo,
+            tipo=objeto.get("tipo", ""),
+            marca=objeto.get("marca", ""),
+            anio_aproximado=objeto.get("anio_aproximado", ""),
+            material=objeto.get("material", ""),
+            estado=objeto.get("estado", ""),
+        )
+    # Se guarda el id para que la respuesta de Alma pueda referenciarlo.
+    data["recuerdo_id"] = str(recuerdo.id)
+    ejecucion.structured_data = data
+    ejecucion.save(update_fields=["structured_data"])
+
+
+def _crear_evaluacion(ejecucion: EjecucionAgente) -> None:
+    """Efecto de agent-runs/complete para el agente `evaluador`: registra
+    una Evaluacion automatica sobre OTRA ejecucion ya completada.
+    """
+    data = ejecucion.structured_data or {}
+    try:
+        ejecucion_evaluada = EjecucionAgente.objects.get(pk=data.get("ejecucion_evaluada"))
+    except (EjecucionAgente.DoesNotExist, ValueError, TypeError):
+        return
+
+    Evaluacion.objects.create(
+        ejecucion=ejecucion_evaluada,
+        tipo=Evaluacion.Tipo.AUTOMATICA,
+        puntaje=data.get("puntaje", 0),
+        requiere_revision=bool(data.get("requiere_revision", False)),
+    )
 
 
 class AgentRunCompleteView(APIView):
@@ -114,10 +178,12 @@ class AgentRunCompleteView(APIView):
                 contenido=ejecucion.reply,
             )
 
-        if (
-            ejecucion.estado == EjecucionAgente.Estado.COMPLETADO
-            and ejecucion.agente == EjecucionAgente.Agente.RECOMENDACION
-        ):
-            _crear_recomendaciones(ejecucion)
+        if ejecucion.estado == EjecucionAgente.Estado.COMPLETADO:
+            if ejecucion.agente == EjecucionAgente.Agente.RECOMENDACION:
+                _crear_recomendaciones(ejecucion)
+            elif ejecucion.agente == EjecucionAgente.Agente.EXTRACCION:
+                _crear_recuerdo_desde_extraccion(ejecucion)
+            elif ejecucion.agente == EjecucionAgente.Agente.EVALUADOR:
+                _crear_evaluacion(ejecucion)
 
         return Response(EjecucionAgenteSerializer(ejecucion).data)

@@ -16,6 +16,12 @@ class Recomendacion(models.Model):
     titulo = models.CharField(max_length=200)
     justificacion = models.TextField(blank=True)
     puntaje = models.DecimalField(max_digits=4, decimal_places=3)
+    # Salida del agente Viabilidad (ver arquitectura de agentes): riesgos,
+    # restricciones o necesidad de inspeccion antes de proceder. RN-03: una
+    # transformacion que implique cortar/desarmar material exige avisar
+    # aqui que se necesita autorizacion explicita del cliente.
+    advertencias = models.JSONField(default=list, blank=True)
+    requiere_revision_humana = models.BooleanField(default=False)
     creado_en = models.DateTimeField(auto_now_add=True)
 
     class Meta:

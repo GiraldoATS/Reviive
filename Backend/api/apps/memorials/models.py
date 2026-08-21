@@ -15,6 +15,9 @@ class MemorialDigital(models.Model):
         Recuerdo, on_delete=models.CASCADE, related_name="memorial"
     )
     slug = models.SlugField(max_length=160, unique=True)
+    # Salida del agente Memorial: biografia/tributo redactado a partir de la
+    # historia del recuerdo. El cliente puede editarlo despues.
+    biografia = models.TextField(blank=True)
     visibilidad = models.CharField(
         max_length=16, choices=Visibilidad.choices, default=Visibilidad.PRIVADO
     )

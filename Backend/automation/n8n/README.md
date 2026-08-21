@@ -20,7 +20,8 @@ n8n recibe los eventos externos y dispara los workflows correspondientes:
 | `/webhook/reviive/telegram/update` | Telegram Bot API | Workflow Orquestador (canal Telegram) |
 | `/webhook/reviive/email/inbound` | Correo entrante (IMAP) | Workflow Orquestador (canal correo) |
 | `/webhook/reviive/orders/status-changed` | API Django (evento saliente) | Workflow de notificaciones al cliente |
-| `/webhook/reviive/memories/recuerdo-creado` | Web (tras registrar un recuerdo) | Workflow Agente - Recomendación |
+| `/webhook/reviive/memories/recuerdo-creado` | Web (tras registrar un recuerdo) | Workflow Agente - Recomendación (+ Creativo + Viabilidad) |
+| `/webhook/reviive/memorials/memorial-creado` | Web (tras crear un memorial digital) | Workflow Agente - Memorial |
 
 Todos los webhooks se firman con HMAC-SHA256 usando `N8N_WEBHOOK_SECRET`
 (la misma variable que Django usa para validar las llamadas entrantes a
@@ -70,10 +71,11 @@ de por la interfaz visual.
 
 ### Credenciales que hay que crear en cada instancia
 
-Ambos workflows (`orquestador-chat-alma.json` y `agente-recomendacion.json`)
-referencian las mismas dos credenciales por nombre — hay que crearlas una
-vez (vía UI, o por API con `POST /api/v1/credentials`) y volver a
-enlazarlas en los nodos si se reimporta el JSON en una instancia nueva:
+Los 3 workflows (`orquestador-chat-alma.json`, `agente-recomendacion.json`,
+`agente-memorial.json`) referencian las mismas dos credenciales por
+nombre — hay que crearlas una vez (vía UI, o por API con
+`POST /api/v1/credentials`) y volver a enlazarlas en los nodos si se
+reimporta el JSON en una instancia nueva:
 
 | Nombre | Tipo | Uso |
 |---|---|---|
@@ -82,8 +84,7 @@ enlazarlas en los nodos si se reimporta el JSON en una instancia nueva:
 
 ### Importar y activar un workflow
 
-Repetir por cada archivo en `workflows/` (`orquestador-chat-alma.json`,
-`agente-recomendacion.json`):
+Repetir por cada archivo en `workflows/`:
 
 ```bash
 curl -X POST http://127.0.0.1:5678/api/v1/workflows \
@@ -93,90 +94,105 @@ curl -X POST http://127.0.0.1:5678/api/v1/workflows \
 curl -X POST http://127.0.0.1:5678/api/v1/workflows/<id>/activate -H "X-N8N-API-KEY: $N8N_API_KEY"
 ```
 
-## Workflow implementado: "Orquestador - Chat con Alma"
+## Los 12 agentes: dónde vive cada uno
 
-Cubre de punta a punta el flujo de chat, con un **Orquestador real** (no
-siempre llama al mismo agente — clasifica y enruta, como pide la sección 11
-del Documento de Arquitectura):
+Los 12 agentes de la sección 11.1 de `Reviive_Documento_Arquitectura_y_Diseno_Tecnico_v1`
+y la sección 12 de `Reviive_Documento_Definicion_Estrategica_y_Funcional_v1`
+están todos implementados, repartidos en 3 workflows:
+
+| Agente | Workflow | Cómo |
+|---|---|---|
+| Orquestador | Chat con Alma | clasifica riesgo + intención antes de responder |
+| Acompañamiento | Chat con Alma | rama por defecto de la intención |
+| Seguridad | Chat con Alma | riesgo alto → respuesta fija + escalamiento, sin llamar al LLM creativo |
+| Pedidos (Seguimiento) | Chat con Alma | rama `pedidos`, con `GET /orders/` real como contexto |
+| Proveedores | Chat con Alma | rama `proveedores`, con `GET /providers/` real como contexto |
+| Cotización | Chat con Alma | rama `cotizacion`, estimación preliminar sobre `precio_base` real del catálogo |
+| Extracción | Chat con Alma | rama `extraccion`: convierte la conversación en un `Recuerdo` + `ObjetoMemoria` reales |
+| Evaluador | Chat con Alma | corre después de responder (no le agrega espera al usuario), califica la respuesta y crea una `Evaluacion` |
+| Recomendación | Agente - Recomendacion | rankea hasta 3 productos reales del catálogo |
+| Creativo | Agente - Recomendacion | mismo paso, aporta el `concepto_creativo` de cada recomendación |
+| Viabilidad | Agente - Recomendacion | mismo paso, aporta `advertencias` / `requiere_revision_humana` (RN-03) |
+| Memorial | Agente - Memorial | redacta la biografía del memorial y la guarda con el token del propio cliente |
+
+### Chat con Alma (Orquestador + 7 agentes)
 
 1. **Webhook** recibe `{ access_token, conversacion_id, mensaje }` (el
-   `access_token` es el JWT del usuario ya autenticado en Django; la
-   conversación se crea antes, con una llamada normal del frontend a
-   `POST /api/v1/conversations/`).
-2. Guarda el mensaje del usuario con `POST /conversations/{id}/messages`
-   (usando el JWT del usuario — Django fuerza `rol=usuario`).
-3. **Clasifica** el mensaje con OpenAI (`response_format: json_object`) en
-   `riesgo` (bajo/medio/alto) e `intencion` (`acompanamiento` / `pedidos` /
-   `proveedores`).
-4. Trae contexto real de Django: `GET /orders/` (pedidos del usuario) y
-   `GET /providers/` (proveedores validados) — siempre, sea cual sea la
-   intención, para que el modelo sólo pueda citar datos reales y nunca
-   invente un estado de pedido o un proveedor (RN-10).
-5. Firma y llama `POST /agent-runs/request` (HMAC), con `agente` = el
-   resultado de la clasificación (`acompanamiento`, `pedidos`,
-   `proveedores`, o `seguridad` si el riesgo es alto).
-6. **Si el riesgo es alto**: no se llama a OpenAI para generar una respuesta
-   creativa — se responde con un mensaje fijo de contención (línea de
-   ayuda) y se marca `evaluation.flags: ["riesgo_emocional"]`, siguiendo
-   RN-14 ("los casos de riesgo emocional deben escalarse y suspender
-   automatismos comerciales") y el control "no presentarse como psicóloga"
-   de la sección 12.2 del Documento de Definición Estratégica.
-7. **En cualquier otro caso**: llama a OpenAI (`gpt-4o-mini`) con la persona
-   de Alma + los pedidos/proveedores reales como contexto, instruyendo
-   explícitamente a no inventar nada que no esté en ese contexto.
-8. Firma y llama `POST /agent-runs/{run_id}/complete` (HMAC) con la
-   respuesta; Django crea automáticamente el `Mensaje` de Alma en la
-   conversación (ver `apps.agents.views.AgentRunCompleteView`) — n8n nunca
-   escribe el mensaje directo, sólo reporta el resultado del agente.
-9. Responde al webhook con `{ conversacion_id, run_id, reply, estado }`.
+   frontend ya creó la conversación con `POST /api/v1/conversations/`).
+2. Guarda el mensaje del usuario (`POST /conversations/{id}/messages`,
+   Django fuerza `rol=usuario`).
+3. **Clasifica** con OpenAI (`response_format: json_object`):
+   `riesgo` (bajo/medio/alto) e `intencion`
+   (`acompanamiento` / `pedidos` / `proveedores` / `cotizacion` / `extraccion`).
+4. Trae siempre contexto real: `GET /orders/`, `GET /providers/`,
+   `GET /products/` — así el modelo sólo puede citar pedidos, proveedores
+   y precios reales, nunca inventados (RN-10).
+5. Firma y llama `POST /agent-runs/request` con `agente` = la intención
+   detectada (o `seguridad` si el riesgo es alto).
+6. **Riesgo alto** → mensaje fijo de contención (línea de ayuda 192) +
+   `evaluation.flags: ["riesgo_emocional"]`, sin gastar una llamada
+   creativa (RN-14, control "no sustituir atención profesional").
+7. **`extraccion`** → el LLM responde en JSON `{reply, persona_recordada,
+   historia, objeto}`; si hay suficiente historia, Django crea el
+   `Recuerdo`/`ObjetoMemoria` real al completar (RN-01: sólo si el cliente
+   dio consentimiento).
+8. **Cualquier otra intención** → respuesta de texto normal de Alma, con
+   el contexto real inyectado.
+9. Firma y llama `POST /agent-runs/{run_id}/complete`; Django crea el
+   `Mensaje` de Alma (o el `Recuerdo`, si era `extraccion`).
+10. Responde al webhook con `{ conversacion_id, run_id, reply, estado }`.
+11. **Después de responder** (no bloquea al usuario): el agente Evaluador
+    califica esa misma respuesta con otro llamado a OpenAI y crea una
+    `Evaluacion` automática (`puntaje`, `requiere_revision`) sobre la
+    ejecución que se acaba de completar.
 
-Si OpenAI falla (por ejemplo, sin crédito o key inválida), el workflow no se
-cae: registra la ejecución como `fallido` con una respuesta de repaldo de
-Alma, para que el chat nunca quede colgado.
+Si OpenAI falla, el workflow no se cae: registra la ejecución como
+`fallido` con una respuesta de respaldo de Alma.
 
-Los 4 agentes cubiertos por este workflow (Orquestador, Acompañamiento,
-Pedidos/Seguimiento, Proveedores, Seguridad) están tomados literalmente de
-la tabla de agentes de `Reviive_Documento_Arquitectura_y_Diseno_Tecnico_v1`
-(sección 11.1) y `Reviive_Documento_Definicion_Estrategica_y_Funcional_v1`
-(sección 12). Los que faltan (Extracción, Creativo, Viabilidad, Cotización,
-Memorial, Evaluador) se pueden agregar como nuevas ramas de intención en el
-mismo patrón: clasificar → traer contexto real → responder o actuar.
+### Agente - Recomendacion (Recomendación + Creativo + Viabilidad)
 
-## Workflow implementado: "Agente - Recomendacion"
+Se dispara justo después de registrar un recuerdo
+(`EjecucionAgente.conversacion` es opcional para esto):
 
-Se dispara justo después de que el cliente registra un recuerdo (no es un
-agente conversacional, por eso `EjecucionAgente.conversacion` es opcional):
+1. Lee el recuerdo (`GET /memories/{id}/`) y el catálogo real
+   (`GET /products/`).
+2. Un solo llamado a OpenAI en JSON produce, por cada producto sugerido:
+   `titulo`, `concepto_creativo` (Creativo), `puntaje` (Recomendación) y
+   `advertencias` / `requiere_revision_humana` (Viabilidad — se marca
+   `true` si la transformación implica cortar/desarmar material, por
+   RN-03, o si el estado descrito sugiere que hace falta inspección
+   presencial).
+3. Firma y llama `agent-runs/complete`; Django crea las filas reales de
+   `Recomendacion` con los 3 agentes fusionados en una sola tabla (ver
+   `apps.agents.views._crear_recomendaciones`).
 
-1. **Webhook** recibe `{ access_token, recuerdo_id }`.
-2. Lee el recuerdo completo (`GET /memories/{id}/`, con el JWT del cliente)
-   y el catálogo real de servicios (`GET /products/`).
-3. Firma y llama `POST /agent-runs/request` (agente `recomendacion`, sin
-   `conversacion_id`).
-4. Llama a OpenAI (`gpt-4o-mini`, `response_format: json_object`) con la
-   historia del recuerdo + el catálogo, pidiendo hasta 3 recomendaciones en
-   JSON (`{producto_id, titulo, justificacion, puntaje}`). El prompt exige
-   que el `producto_id` exista en el catálogo dado y prohíbe confirmar
-   precios/tiempos (RN-10).
-5. Firma y llama `POST /agent-runs/{run_id}/complete` con
-   `structured_data: { recuerdo_id, recomendaciones }`; Django crea las
-   filas reales de `Recomendacion` como efecto de ese POST (ver
-   `apps.agents.views._crear_recomendaciones`) — de nuevo, n8n nunca
-   escribe la tabla de negocio directo.
-6. Responde al webhook con `{ recuerdo_id, run_id, estado }`; el frontend
-   lee las recomendaciones ya guardadas con
-   `GET /recommendations/?recuerdo=<id>`.
+Se auditan como un solo `EjecucionAgente` (`agente=recomendacion`) en vez
+de tres separados — decisión deliberada para no triplicar llamadas a
+OpenAI por cada recuerdo; la trazabilidad de fondo (qué se generó, con
+qué modelo, con qué costo) queda igual de completa.
 
 **El catálogo (`Producto`) tiene que tener datos reales para que esto
-funcione** — si está vacío, OpenAI correctamente no recomienda nada (el
-prompt le prohíbe inventar productos). Los 8 servicios base se cargaron una
-vez a mano desde `apps.catalog.management.commands.seed_demo.PRODUCTOS`
-(sólo esas filas, sin los usuarios/proveedor/pedido de ejemplo que trae ese
-comando completo).
+funcione** — si está vacío, OpenAI correctamente no recomienda nada. Los
+8 servicios base se cargaron una vez a mano desde
+`apps.catalog.management.commands.seed_demo.PRODUCTOS` (sólo esas filas,
+sin los usuarios/proveedor/pedido de ejemplo que trae ese comando
+completo).
 
-Los demás agentes (Extracción, Creativo, Viabilidad, Proveedores,
-Cotización, Pedidos, Memorial, Seguridad, Evaluador) se pueden construir
-como workflows adicionales siguiendo el mismo patrón: firmar y llamar
-`agent-runs/request` → hacer el trabajo (LLM y/o llamadas a los demás
-endpoints de la API) → firmar y llamar `agent-runs/{id}/complete`, y decidir
-ahí qué efecto de negocio dispara esa finalización (igual que el mensaje de
-Alma o las recomendaciones).
+### Agente - Memorial
+
+Se dispara tras crear un memorial digital (`POST /memorials/` desde el
+frontend, luego este webhook):
+
+1. Lee el memorial (`GET /memorials/{id}/`) y su recuerdo asociado
+   (`GET /memories/{id}/`).
+2. Le pide a OpenAI una biografía cálida (2-3 párrafos) sobre la persona
+   recordada — nunca simulando ser ella (control de la sección 12.2:
+   "no afirmar que puede revivir o simular a la persona fallecida"), sin
+   inventar datos que no estén en la historia (RN-02).
+3. **Guarda el resultado con `PATCH /memorials/{id}/` usando el propio
+   JWT del cliente** (no un endpoint interno firmado con HMAC): el
+   cliente ya es dueño de ese memorial, así que el agente sólo automatiza
+   un campo que el usuario podría editar el mismo. Sigue siendo Django
+   quien valida el permiso, n8n no escribe la tabla directo.
+4. Registra `agent-runs/request` + `/complete` para trazabilidad, con
+   `structured_data: { memorial_id, biografia }`.

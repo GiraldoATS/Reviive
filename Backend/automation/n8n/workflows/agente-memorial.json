@@ -1,0 +1,261 @@
+{
+  "name": "Agente - Memorial",
+  "nodes": [
+    {
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "webhookId": "reviive-memorials-memorial-creado",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "reviive/memorials/memorial-creado",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "obtener-memorial",
+      "name": "Obtener memorial",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [260, 0],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.DJANGO_API_URL }}/memorials/{{ $json.body.memorial_id }}/",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $json.body.access_token }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "obtener-recuerdo",
+      "name": "Obtener recuerdo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [500, 0],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.DJANGO_API_URL }}/memories/{{ $json.recuerdo }}/",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $('Webhook').item.json.body.access_token }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "construir-firma-request",
+      "name": "Construir firma request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [740, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const body = { agente: 'memorial', agent_version: 'v1' };\nreturn [{ json: { bodyString: JSON.stringify(body) } }];"
+      }
+    },
+    {
+      "id": "firmar-request",
+      "name": "Firmar request",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [980, 0],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ $json.bodyString }}",
+        "dataPropertyName": "signature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": { "id": "fG3VUKNiYE9P68kJ", "name": "Reviive HMAC" }
+      }
+    },
+    {
+      "id": "registrar-inicio-agente",
+      "name": "Registrar inicio de agente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1220, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/agent-runs/request",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Reviive-Signature", "value": "={{ $json.signature }}" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.bodyString }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "preparar-prompt-memorial",
+      "name": "Preparar prompt memorial",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1460, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const recuerdo = $('Obtener recuerdo').item.json;\nconst objetos = (recuerdo.objetos || []).map((o) => o.tipo).filter(Boolean);\n\nconst systemPrompt = `Eres el agente Memorial de Reviive. A partir de la historia de un recuerdo, escribe un texto breve y calido (2 a 3 parrafos cortos, en espanol) para un memorial digital que honra a la persona recordada. Escribe SOBRE la persona y su historia, nunca COMO si fueras la persona fallecida ni simules ser ella. No inventes datos, fechas o detalles que no esten en la historia dada; si falta informacion, mantente en generalidades calidas. No uses lenguaje religioso especifico salvo que la historia lo mencione. Responde solo con el texto del memorial, sin titulos ni comillas.`;\n\nconst userPayload = {\n  persona_recordada: recuerdo.persona_recordada || '',\n  historia: recuerdo.historia || '',\n  objetos_asociados: objetos,\n};\n\nreturn [{\n  json: {\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    openaiPayload: {\n      model: 'gpt-4o-mini',\n      temperature: 0.6,\n      max_tokens: 400,\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: JSON.stringify(userPayload) },\n      ],\n    },\n  },\n}];"
+      }
+    },
+    {
+      "id": "llamar-openai",
+      "name": "Llamar a OpenAI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1700, 0],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.openaiPayload }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": { "id": "8kXUBb43FVoTNqhA", "name": "OpenAI Reviive" }
+      }
+    },
+    {
+      "id": "procesar-respuesta",
+      "name": "Procesar respuesta memorial",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1940, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const resp = $json;\nlet biografia, statusValue, inputTokens = null, outputTokens = null;\n\nif (resp.error || !resp.choices || !resp.choices.length) {\n  statusValue = 'fallido';\n  biografia = '';\n} else {\n  statusValue = 'completado';\n  biografia = resp.choices[0].message.content.trim();\n  if (resp.usage) {\n    inputTokens = resp.usage.prompt_tokens;\n    outputTokens = resp.usage.completion_tokens;\n  }\n}\n\nreturn [{\n  json: {\n    run_id: $('Preparar prompt memorial').item.json.run_id,\n    biografia,\n    status: statusValue,\n    input_tokens: inputTokens,\n    output_tokens: outputTokens,\n  },\n}];"
+      }
+    },
+    {
+      "id": "guardar-biografia",
+      "name": "Guardar biografia en el memorial",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2180, 0],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.DJANGO_API_URL }}/memorials/{{ $('Webhook').item.json.body.memorial_id }}/",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $('Webhook').item.json.body.access_token }}" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ { biografia: $json.biografia } }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "construir-firma-complete",
+      "name": "Construir firma complete",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2420, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const biografia = $('Procesar respuesta memorial').item.json.biografia;\nconst status = $('Procesar respuesta memorial').item.json.status;\nconst body = {\n  status,\n  structured_data: {\n    memorial_id: $('Webhook').item.json.body.memorial_id,\n    biografia,\n  },\n};\nconst metrics = {\n  input_tokens: $('Procesar respuesta memorial').item.json.input_tokens,\n  output_tokens: $('Procesar respuesta memorial').item.json.output_tokens,\n};\nif (metrics.input_tokens != null || metrics.output_tokens != null) body.metrics = metrics;\n\nreturn [{ json: { run_id: $('Procesar respuesta memorial').item.json.run_id, bodyString: JSON.stringify(body) } }];"
+      }
+    },
+    {
+      "id": "firmar-complete",
+      "name": "Firmar complete",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [2660, 0],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ $json.bodyString }}",
+        "dataPropertyName": "signature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": { "id": "fG3VUKNiYE9P68kJ", "name": "Reviive HMAC" }
+      }
+    },
+    {
+      "id": "completar-ejecucion-agente",
+      "name": "Completar ejecucion de agente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2900, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/agent-runs/{{ $json.run_id }}/complete",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Reviive-Signature", "value": "={{ $json.signature }}" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.bodyString }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "responder-frontend",
+      "name": "Responder al frontend",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [3140, 0],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { memorial_id: $('Webhook').item.json.body.memorial_id, run_id: $json.run_id, biografia: $('Procesar respuesta memorial').item.json.biografia, estado: $('Procesar respuesta memorial').item.json.status } }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Obtener memorial", "type": "main", "index": 0 }]] },
+    "Obtener memorial": { "main": [[{ "node": "Obtener recuerdo", "type": "main", "index": 0 }]] },
+    "Obtener recuerdo": { "main": [[{ "node": "Construir firma request", "type": "main", "index": 0 }]] },
+    "Construir firma request": { "main": [[{ "node": "Firmar request", "type": "main", "index": 0 }]] },
+    "Firmar request": { "main": [[{ "node": "Registrar inicio de agente", "type": "main", "index": 0 }]] },
+    "Registrar inicio de agente": { "main": [[{ "node": "Preparar prompt memorial", "type": "main", "index": 0 }]] },
+    "Preparar prompt memorial": { "main": [[{ "node": "Llamar a OpenAI", "type": "main", "index": 0 }]] },
+    "Llamar a OpenAI": { "main": [[{ "node": "Procesar respuesta memorial", "type": "main", "index": 0 }]] },
+    "Procesar respuesta memorial": { "main": [[{ "node": "Guardar biografia en el memorial", "type": "main", "index": 0 }]] },
+    "Guardar biografia en el memorial": { "main": [[{ "node": "Construir firma complete", "type": "main", "index": 0 }]] },
+    "Construir firma complete": { "main": [[{ "node": "Firmar complete", "type": "main", "index": 0 }]] },
+    "Firmar complete": { "main": [[{ "node": "Completar ejecucion de agente", "type": "main", "index": 0 }]] },
+    "Completar ejecucion de agente": { "main": [[{ "node": "Responder al frontend", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

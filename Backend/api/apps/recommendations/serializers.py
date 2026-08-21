@@ -20,6 +20,8 @@ class RecomendacionSerializer(serializers.ModelSerializer):
             "titulo",
             "justificacion",
             "puntaje",
+            "advertencias",
+            "requiere_revision_humana",
             "creado_en",
         ]
         read_only_fields = ["id", "creado_en"]
