@@ -1,3 +1,15 @@
 .DS_Store
 Thumbs.db
 *.log
+
+# Backend (Django)
+Backend/api/.venv/
+Backend/api/**/__pycache__/
+Backend/api/**/*.pyc
+Backend/api/db.sqlite3
+Backend/api/.env
+
+# Frontend (Next.js)
+Frontend/node_modules/
+Frontend/.next/
+Frontend/.env*.local

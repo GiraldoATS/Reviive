@@ -1,16 +1,17 @@
 version: "3.9"
 
 services:
-  postgres-reviive:
-    image: pgvector/pgvector:pg16
+  mysql-reviive:
+    image: mysql:8.0
     environment:
-      POSTGRES_DB: reviive_db
-      POSTGRES_USER: reviive
-      POSTGRES_PASSWORD: reviive
+      MYSQL_DATABASE: reviive_db
+      MYSQL_USER: reviive
+      MYSQL_PASSWORD: reviive
+      MYSQL_ROOT_PASSWORD: reviive
     volumes:
-      - postgres_reviive_data:/var/lib/postgresql/data
+      - mysql_reviive_data:/var/lib/mysql
     ports:
-      - "5432:5432"
+      - "3306:3306"
 
   postgres-n8n:
     image: postgres:16
@@ -51,7 +52,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - postgres-reviive
+      - mysql-reviive
       - redis
       - minio
 
@@ -97,6 +98,6 @@ services:
       - api-django
 
 volumes:
-  postgres_reviive_data:
+  mysql_reviive_data:
   postgres_n8n_data:
   minio_data:

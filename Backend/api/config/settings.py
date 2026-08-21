@@ -78,26 +78,19 @@ ASGI_APPLICATION = "config.asgi.application"
 
 AUTH_USER_MODEL = "identity.Usuario"
 
-# DB_ENGINE=sqlite (por defecto, para desarrollo local sin dependencias externas)
-# DB_ENGINE=postgres (para docker-compose / despliegue, ver infrastructure/docker)
-if env("DB_ENGINE", default="sqlite") == "postgres":
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": env("POSTGRES_DB", default="reviive_db"),
-            "USER": env("POSTGRES_USER", default="reviive"),
-            "PASSWORD": env("POSTGRES_PASSWORD", default="reviive"),
-            "HOST": env("POSTGRES_HOST", default="postgres-reviive"),
-            "PORT": env("POSTGRES_PORT", default="5432"),
-        }
+# Base de datos: MySQL (administrada localmente con MySQL Workbench).
+# Ver Backend/README.md para la creación del esquema y la configuración de .env.
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": env("MYSQL_DATABASE", default="reviive_db"),
+        "USER": env("MYSQL_USER", default="root"),
+        "PASSWORD": env("MYSQL_PASSWORD", default=""),
+        "HOST": env("MYSQL_HOST", default="127.0.0.1"),
+        "PORT": env("MYSQL_PORT", default="3306"),
+        "OPTIONS": {"charset": "utf8mb4"},
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+}
 
 if env("REDIS_URL", default=None):
     CACHES = {
@@ -144,8 +137,8 @@ CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS", default=["http://localhost:3000"]
 )
 
-# Almacenamiento de archivos (S3/MinIO). Los binarios nunca se guardan en Postgres,
-# sólo referencias/URLs firmadas (ver apps.memories.models.Archivo).
+# Almacenamiento de archivos (S3/MinIO). Los binarios nunca se guardan en la base
+# de datos, sólo referencias/URLs firmadas (ver apps.memories.models.Archivo).
 AWS_ACCESS_KEY_ID = env("S3_ACCESS_KEY", default="reviive")
 AWS_SECRET_ACCESS_KEY = env("S3_SECRET_KEY", default="reviive123")
 AWS_STORAGE_BUCKET_NAME = env("S3_BUCKET", default="reviive-media")

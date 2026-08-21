@@ -4,10 +4,11 @@ from django.db import models
 class Producto(models.Model):
     """Línea de servicio del portafolio (mín. 5 exigidas por el enunciado académico).
 
-    NOTA: el campo de embedding (pgvector) para búsqueda semántica del catálogo
-    se documenta en la arquitectura pero se difiere de este entorno de desarrollo
-    local porque la extensión `vector` no tiene binario oficial para PostgreSQL
-    en Windows. Se reactiva en el despliegue con Docker (imagen pgvector/pgvector).
+    NOTA: la búsqueda semántica del catálogo (embeddings) queda documentada en la
+    arquitectura pero diferida de este entorno: la base de datos de negocio es
+    MySQL y no ofrece un tipo vectorial nativo. Si se retoma, se resolverá con un
+    servicio de búsqueda externo (p. ej. un índice vectorial dedicado) en lugar
+    de un campo en este modelo.
     """
 
     nombre = models.CharField(max_length=150)
