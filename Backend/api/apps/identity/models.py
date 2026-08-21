@@ -3,7 +3,16 @@ from django.db import models
 
 
 class Usuario(AbstractUser):
-    """Usuario de la plataforma. AUTH_USER_MODEL."""
+    """Usuario de la plataforma. AUTH_USER_MODEL.
+
+    Se autentica por correo (no por username): toda la UX del producto
+    (login, registro, recuperación de clave) gira alrededor del correo.
+    """
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
+
+    email = models.EmailField("email address", unique=True)
 
     class Rol(models.TextChoices):
         VISITANTE = "visitante", "Visitante"
