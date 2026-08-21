@@ -95,7 +95,9 @@ curl -X POST http://127.0.0.1:5678/api/v1/workflows/<id>/activate -H "X-N8N-API-
 
 ## Workflow implementado: "Orquestador - Chat con Alma"
 
-Cubre de punta a punta el flujo de chat (agente `acompanamiento`):
+Cubre de punta a punta el flujo de chat, con un **Orquestador real** (no
+siempre llama al mismo agente — clasifica y enruta, como pide la sección 11
+del Documento de Arquitectura):
 
 1. **Webhook** recibe `{ access_token, conversacion_id, mensaje }` (el
    `access_token` es el JWT del usuario ya autenticado en Django; la
@@ -103,18 +105,42 @@ Cubre de punta a punta el flujo de chat (agente `acompanamiento`):
    `POST /api/v1/conversations/`).
 2. Guarda el mensaje del usuario con `POST /conversations/{id}/messages`
    (usando el JWT del usuario — Django fuerza `rol=usuario`).
-3. Firma y llama `POST /agent-runs/request` (HMAC) para registrar el inicio
-   de la ejecución del agente.
-4. Llama a OpenAI (`gpt-4o-mini`) con la persona de Alma.
-5. Firma y llama `POST /agent-runs/{run_id}/complete` (HMAC) con la
+3. **Clasifica** el mensaje con OpenAI (`response_format: json_object`) en
+   `riesgo` (bajo/medio/alto) e `intencion` (`acompanamiento` / `pedidos` /
+   `proveedores`).
+4. Trae contexto real de Django: `GET /orders/` (pedidos del usuario) y
+   `GET /providers/` (proveedores validados) — siempre, sea cual sea la
+   intención, para que el modelo sólo pueda citar datos reales y nunca
+   invente un estado de pedido o un proveedor (RN-10).
+5. Firma y llama `POST /agent-runs/request` (HMAC), con `agente` = el
+   resultado de la clasificación (`acompanamiento`, `pedidos`,
+   `proveedores`, o `seguridad` si el riesgo es alto).
+6. **Si el riesgo es alto**: no se llama a OpenAI para generar una respuesta
+   creativa — se responde con un mensaje fijo de contención (línea de
+   ayuda) y se marca `evaluation.flags: ["riesgo_emocional"]`, siguiendo
+   RN-14 ("los casos de riesgo emocional deben escalarse y suspender
+   automatismos comerciales") y el control "no presentarse como psicóloga"
+   de la sección 12.2 del Documento de Definición Estratégica.
+7. **En cualquier otro caso**: llama a OpenAI (`gpt-4o-mini`) con la persona
+   de Alma + los pedidos/proveedores reales como contexto, instruyendo
+   explícitamente a no inventar nada que no esté en ese contexto.
+8. Firma y llama `POST /agent-runs/{run_id}/complete` (HMAC) con la
    respuesta; Django crea automáticamente el `Mensaje` de Alma en la
    conversación (ver `apps.agents.views.AgentRunCompleteView`) — n8n nunca
    escribe el mensaje directo, sólo reporta el resultado del agente.
-6. Responde al webhook con `{ conversacion_id, run_id, reply, estado }`.
+9. Responde al webhook con `{ conversacion_id, run_id, reply, estado }`.
 
 Si OpenAI falla (por ejemplo, sin crédito o key inválida), el workflow no se
 cae: registra la ejecución como `fallido` con una respuesta de repaldo de
 Alma, para que el chat nunca quede colgado.
+
+Los 4 agentes cubiertos por este workflow (Orquestador, Acompañamiento,
+Pedidos/Seguimiento, Proveedores, Seguridad) están tomados literalmente de
+la tabla de agentes de `Reviive_Documento_Arquitectura_y_Diseno_Tecnico_v1`
+(sección 11.1) y `Reviive_Documento_Definicion_Estrategica_y_Funcional_v1`
+(sección 12). Los que faltan (Extracción, Creativo, Viabilidad, Cotización,
+Memorial, Evaluador) se pueden agregar como nuevas ramas de intención en el
+mismo patrón: clasificar → traer contexto real → responder o actuar.
 
 ## Workflow implementado: "Agente - Recomendacion"
 
