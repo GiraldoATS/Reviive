@@ -526,6 +526,35 @@ export function IconCorreo(props: IconProps) {
   );
 }
 
+export function IconEscudoCorazon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 3.5 5 6v5.5c0 4.2 2.8 7.4 7 9 4.2-1.6 7-4.8 7-9V6l-7-2.5Z" />
+      <path d="M12 9.3c-.8-1.4-2.6-1.9-3.5-.8-.9 1-.8 2.5.2 3.4C9.6 12.8 12 14.5 12 14.5s2.4-1.7 3.3-2.6c1-1 1.1-2.4.2-3.4-.9-1.1-2.7-.6-3.5.8Z" />
+    </svg>
+  );
+}
+
+export function IconPincel(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M14 4c1.2-1.2 3-1.2 4 0s1.2 3 0 4L9 17l-4 1 1-4Z" />
+      <path d="M13 6l4 4" />
+    </svg>
+  );
+}
+
+export function IconCamisa(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M9 4 5 6.5l2 3.2 2.2-1.4" />
+      <path d="M15 4l4 2.5-2 3.2-2.2-1.4" />
+      <path d="M9 4c1 1.2 2 1.8 3 1.8s2-.6 3-1.8" />
+      <path d="M8.6 7.8V20h6.8V7.8" />
+    </svg>
+  );
+}
+
 export const productIcons: Record<string, (props: IconProps) => React.ReactElement> = {
   reloj: IconReloj,
   joya: IconJoya,

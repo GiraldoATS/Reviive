@@ -2,35 +2,51 @@ import Link from "next/link";
 import Image from "next/image";
 import SiteShell from "@/components/SiteShell";
 import Button from "@/components/Button";
-import { IconMessage, IconPlus } from "@/components/icons";
+import BeforeAfterSlider from "@/components/BeforeAfterSlider";
+import {
+  IconMessage,
+  IconPlus,
+  IconSearch,
+  IconEscudoCorazon,
+  IconPincel,
+  IconReloj,
+  IconManosCorazon,
+  IconAnillo,
+  IconFotografia,
+  IconTextil,
+  IconPeluche,
+  IconVasija,
+  IconSilla,
+  IconCamisa,
+} from "@/components/icons";
 
 const tiposServicio = [
   {
-    icono: "/images/servicios/icon-restauracion.png",
+    Icono: IconSearch,
     titulo: "Restauración",
     texto: "Recuperamos el estado, funcionalidad o apariencia de objetos deteriorados.",
     ideal: ["Muebles y maderas", "Joyas y relojes", "Fotografías", "Objetos decorativos"],
   },
   {
-    icono: "/images/servicios/icon-preservacion.png",
+    Icono: IconEscudoCorazon,
     titulo: "Preservación",
     texto: "Protegemos tus recuerdos para evitar que continúen deteriorándose.",
     ideal: ["Fotografías y cartas", "Documentos", "Textiles y telas", "Objetos familiares"],
   },
   {
-    icono: "/images/como-funciona/icon-restauramos.png",
+    Icono: IconPincel,
     titulo: "Transformación",
     texto: "Convertimos un objeto significativo en una nueva pieza conservando su esencia.",
     ideal: ["Prendas de vestir", "Textiles y telas", "Cartas y documentos", "Objetos especiales"],
   },
   {
-    icono: "/images/servicios/icon-mantenimiento.png",
+    Icono: IconReloj,
     titulo: "Mantenimiento",
     texto: "Cuidamos objetos restaurados o especiales para prolongar su conservación.",
     ideal: ["Muebles", "Cuero y textiles", "Joyas y relojes", "Piezas restauradas"],
   },
   {
-    icono: "/images/servicios/icon-evaluacion.png",
+    Icono: IconManosCorazon,
     titulo: "Evaluación",
     texto: "Analizamos tu objeto y te recomendamos la mejor opción para conservarlo.",
     ideal: ["Objetos con daño", "No sabes qué hacer", "Dudas sobre intervención"],
@@ -38,20 +54,40 @@ const tiposServicio = [
 ];
 
 const categorias = [
-  { icono: "/images/servicios/cat-joyas.png", titulo: "Joyas y relojes" },
-  { icono: "/images/servicios/cat-fotos.png", titulo: "Fotografías y cartas" },
-  { icono: "/images/servicios/cat-textiles.png", titulo: "Textiles y telas" },
-  { icono: "/images/servicios/cat-peluches.png", titulo: "Peluches y juguetes" },
-  { icono: "/images/servicios/cat-objetos.png", titulo: "Objetos decorativos" },
-  { icono: "/images/servicios/cat-muebles.png", titulo: "Muebles y maderas" },
-  { icono: "/images/servicios/cat-prendas.png", titulo: "Prendas de vestir" },
+  { Icono: IconAnillo, titulo: "Joyas y relojes" },
+  { Icono: IconFotografia, titulo: "Fotografías y cartas" },
+  { Icono: IconTextil, titulo: "Textiles y telas" },
+  { Icono: IconPeluche, titulo: "Peluches y juguetes" },
+  { Icono: IconVasija, titulo: "Objetos decorativos" },
+  { Icono: IconSilla, titulo: "Muebles y maderas" },
+  { Icono: IconCamisa, titulo: "Prendas de vestir" },
 ];
 
 const transformaciones = [
-  { foto: "/images/servicios/transform-camisa.png", titulo: "Camisa → Peluche memoria", texto: "De una prenda llena de significado a un nuevo abrazo para siempre." },
-  { foto: "/images/servicios/transform-prenda.png", titulo: "Prenda → Cojín memoria", texto: "Un pedacito de tu historia que decora y acompaña." },
-  { foto: "/images/servicios/transform-fotos.png", titulo: "Fotografías → Álbum restaurado", texto: "Recuperamos imágenes para que los recuerdos nunca se borren." },
-  { foto: "/images/servicios/transform-mueble.png", titulo: "Mueble familiar → Pieza restaurada", texto: "Conservamos su esencia, devolviéndole su belleza." },
+  {
+    before: "/images/servicios/before-after/camisa-before.png",
+    after: "/images/servicios/before-after/camisa-after.png",
+    titulo: "Camisa → Peluche memoria",
+    texto: "De una prenda llena de significado a un nuevo abrazo para siempre.",
+  },
+  {
+    before: "/images/servicios/before-after/prenda-before.png",
+    after: "/images/servicios/before-after/prenda-after.png",
+    titulo: "Prenda → Cojín memoria",
+    texto: "Un pedacito de tu historia que decora y acompaña.",
+  },
+  {
+    before: "/images/servicios/before-after/fotos-before.png",
+    after: "/images/servicios/before-after/fotos-after.png",
+    titulo: "Fotografías → Álbum restaurado",
+    texto: "Recuperamos imágenes para que los recuerdos nunca se borren.",
+  },
+  {
+    before: "/images/servicios/before-after/mueble-before.png",
+    after: "/images/servicios/before-after/mueble-after.png",
+    titulo: "Mueble familiar → Pieza restaurada",
+    texto: "Conservamos su esencia, devolviéndole su belleza.",
+  },
 ];
 
 const pasos = [
@@ -141,8 +177,8 @@ export default function ServiciosPage() {
         <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {tiposServicio.map((s) => (
             <div key={s.titulo} className="rounded-2xl border border-greige/60 bg-white/70 p-6 flex flex-col text-left">
-              <div className="relative h-14 w-14 mx-auto">
-                <Image src={s.icono} alt="" fill sizes="56px" className="object-contain" />
+              <div className="h-14 w-14 mx-auto rounded-full bg-rosa/40 flex items-center justify-center">
+                <s.Icono className="h-6 w-6 text-borgona" />
               </div>
               <h3 className="mt-3 font-display text-base text-borgona text-center">{s.titulo}</h3>
               <p className="mt-1.5 text-xs text-carbon/60 text-center">{s.texto}</p>
@@ -178,8 +214,8 @@ export default function ServiciosPage() {
                 href="/catalogo"
                 className="flex flex-col items-center gap-2 w-24 group"
               >
-                <div className="relative h-14 w-14 transition-transform duration-200 group-hover:scale-105">
-                  <Image src={c.icono} alt="" fill sizes="56px" className="object-contain" />
+                <div className="h-14 w-14 rounded-full bg-rosa/40 flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
+                  <c.Icono className="h-6 w-6 text-borgona" />
                 </div>
                 <span className="text-xs text-carbon/70 text-center">{c.titulo}</span>
               </Link>
@@ -195,9 +231,7 @@ export default function ServiciosPage() {
         <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {transformaciones.map((t) => (
             <div key={t.titulo} className="text-left">
-              <div className="relative h-24 w-full rounded-xl overflow-hidden">
-                <Image src={t.foto} alt="" fill sizes="220px" className="object-cover" />
-              </div>
+              <BeforeAfterSlider before={t.before} after={t.after} className="h-28 w-full rounded-xl" />
               <h3 className="mt-3 font-display text-sm text-borgona">{t.titulo}</h3>
               <p className="mt-1 text-xs text-carbon/60">{t.texto}</p>
             </div>
