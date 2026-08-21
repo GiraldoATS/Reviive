@@ -13,3 +13,9 @@ Backend/api/.env
 Frontend/node_modules/
 Frontend/.next/
 Frontend/.env*.local
+
+# n8n (runtime local, no se versiona; los workflows exportados si)
+Backend/automation/n8n/.env
+Backend/automation/n8n/.data/
+Backend/automation/n8n/cookies.txt
+Backend/automation/n8n/*.log

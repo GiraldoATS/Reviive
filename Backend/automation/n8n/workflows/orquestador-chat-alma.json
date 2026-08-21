@@ -1,0 +1,220 @@
+{
+  "name": "Orquestador - Chat con Alma",
+  "nodes": [
+    {
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "webhookId": "reviive-conversations-message",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "reviive/conversations/message",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "guardar-mensaje-usuario",
+      "name": "Guardar mensaje usuario",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [260, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/conversations/{{ $json.body.conversacion_id }}/messages",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $json.body.access_token }}" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ { contenido: $json.body.mensaje } }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "construir-firma-request",
+      "name": "Construir firma request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [520, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const conversacionId = $('Webhook').item.json.body.conversacion_id;\nconst body = {\n  conversacion_id: conversacionId,\n  agente: 'acompanamiento',\n  agent_version: 'v1'\n};\nreturn [{ json: { bodyString: JSON.stringify(body) } }];"
+      }
+    },
+    {
+      "id": "firmar-request",
+      "name": "Firmar request",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [780, 0],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ $json.bodyString }}",
+        "dataPropertyName": "signature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": { "id": "fG3VUKNiYE9P68kJ", "name": "Reviive HMAC" }
+      }
+    },
+    {
+      "id": "registrar-inicio-agente",
+      "name": "Registrar inicio de agente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1040, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/agent-runs/request",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Reviive-Signature", "value": "={{ $json.signature }}" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.bodyString }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "preparar-prompt-alma",
+      "name": "Preparar prompt Alma",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const mensaje = $('Webhook').item.json.body.mensaje;\nconst systemPrompt = `Eres Alma, la asistente de inteligencia artificial de Reviive, un taller que restaura objetos con valor emocional (relojes, joyas, fotografias, textiles, muebles, peluches, cartas). Acompanas al cliente desde que cuenta la historia de su recuerdo hasta la entrega del objeto restaurado. Tu tono es calido, cercano, elegante y profesional, nunca frio ni robotico. Respondes siempre en espanol, en 2 a 4 frases. Nunca confirmes precios ni tiempos de entrega exactos: eso lo define un taller validado en una cotizacion formal; si te preguntan por precio o tiempo, indica que un taller le enviara una cotizacion.`;\n\nreturn [{\n  json: {\n    conversacion_id: $('Webhook').item.json.body.conversacion_id,\n    access_token: $('Webhook').item.json.body.access_token,\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    openaiPayload: {\n      model: 'gpt-4o-mini',\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: mensaje }\n      ],\n      temperature: 0.7,\n      max_tokens: 300\n    }\n  }\n}];"
+      }
+    },
+    {
+      "id": "llamar-openai",
+      "name": "Llamar a OpenAI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1560, 0],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.openaiPayload }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": { "id": "8kXUBb43FVoTNqhA", "name": "OpenAI Reviive" }
+      }
+    },
+    {
+      "id": "procesar-respuesta-openai",
+      "name": "Procesar respuesta OpenAI",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1820, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const resp = $json;\nlet reply, statusValue, inputTokens = null, outputTokens = null;\n\nif (resp.error || !resp.choices || !resp.choices.length) {\n  statusValue = 'fallido';\n  reply = 'Estoy teniendo un problema tecnico para responder en este momento. Por favor intenta de nuevo en unos minutos, o cuentame de otra forma en que puedo ayudarte con tu recuerdo.';\n} else {\n  statusValue = 'completado';\n  reply = resp.choices[0].message.content.trim();\n  if (resp.usage) {\n    inputTokens = resp.usage.prompt_tokens;\n    outputTokens = resp.usage.completion_tokens;\n  }\n}\n\nreturn [{\n  json: {\n    conversacion_id: $('Webhook').item.json.body.conversacion_id,\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    reply,\n    status: statusValue,\n    input_tokens: inputTokens,\n    output_tokens: outputTokens\n  }\n}];"
+      }
+    },
+    {
+      "id": "construir-firma-complete",
+      "name": "Construir firma complete",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2080, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const body = {\n  status: $json.status,\n  reply: $json.reply\n};\nif ($json.input_tokens != null || $json.output_tokens != null) {\n  body.metrics = {\n    input_tokens: $json.input_tokens,\n    output_tokens: $json.output_tokens\n  };\n}\n\nreturn [{\n  json: {\n    run_id: $json.run_id,\n    conversacion_id: $json.conversacion_id,\n    bodyString: JSON.stringify(body)\n  }\n}];"
+      }
+    },
+    {
+      "id": "firmar-complete",
+      "name": "Firmar complete",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [2340, 0],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ $json.bodyString }}",
+        "dataPropertyName": "signature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": { "id": "fG3VUKNiYE9P68kJ", "name": "Reviive HMAC" }
+      }
+    },
+    {
+      "id": "completar-ejecucion-agente",
+      "name": "Completar ejecucion de agente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2600, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/agent-runs/{{ $json.run_id }}/complete",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Reviive-Signature", "value": "={{ $json.signature }}" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.bodyString }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "responder-frontend",
+      "name": "Responder al frontend",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [2860, 0],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { conversacion_id: $('Preparar prompt Alma').item.json.conversacion_id, run_id: $json.run_id, reply: $json.reply, estado: $json.estado } }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Guardar mensaje usuario", "type": "main", "index": 0 }]] },
+    "Guardar mensaje usuario": { "main": [[{ "node": "Construir firma request", "type": "main", "index": 0 }]] },
+    "Construir firma request": { "main": [[{ "node": "Firmar request", "type": "main", "index": 0 }]] },
+    "Firmar request": { "main": [[{ "node": "Registrar inicio de agente", "type": "main", "index": 0 }]] },
+    "Registrar inicio de agente": { "main": [[{ "node": "Preparar prompt Alma", "type": "main", "index": 0 }]] },
+    "Preparar prompt Alma": { "main": [[{ "node": "Llamar a OpenAI", "type": "main", "index": 0 }]] },
+    "Llamar a OpenAI": { "main": [[{ "node": "Procesar respuesta OpenAI", "type": "main", "index": 0 }]] },
+    "Procesar respuesta OpenAI": { "main": [[{ "node": "Construir firma complete", "type": "main", "index": 0 }]] },
+    "Construir firma complete": { "main": [[{ "node": "Firmar complete", "type": "main", "index": 0 }]] },
+    "Firmar complete": { "main": [[{ "node": "Completar ejecucion de agente", "type": "main", "index": 0 }]] },
+    "Completar ejecucion de agente": { "main": [[{ "node": "Responder al frontend", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

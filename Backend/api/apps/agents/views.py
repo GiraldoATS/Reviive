@@ -5,7 +5,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.conversations.models import Conversacion
+from apps.conversations.models import Conversacion, Mensaje
 
 from .models import EjecucionAgente
 from .permissions import IsN8nOrchestrator
@@ -65,5 +65,15 @@ class AgentRunCompleteView(APIView):
 
         ejecucion.completado_en = timezone.now()
         ejecucion.save()
+
+        # La respuesta de un agente conversacional se convierte en el mensaje
+        # de Alma en la conversación; así n8n nunca escribe Mensaje directo,
+        # sólo reporta el resultado del agente y Django lo traduce al chat.
+        if ejecucion.estado == EjecucionAgente.Estado.COMPLETADO and ejecucion.reply:
+            Mensaje.objects.create(
+                conversacion=ejecucion.conversacion,
+                rol=Mensaje.Rol.ALMA,
+                contenido=ejecucion.reply,
+            )
 
         return Response(EjecucionAgenteSerializer(ejecucion).data)
