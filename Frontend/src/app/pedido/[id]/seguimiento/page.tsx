@@ -1,13 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import SiteShell from "@/components/SiteShell";
 import Card from "@/components/Card";
+import Button from "@/components/Button";
 import { IconReloj } from "@/components/icons";
 import { useAuth } from "@/lib/AuthContext";
 import { API_URL } from "@/lib/api";
+
+const MEMORIAL_WEBHOOK_URL =
+  process.env.NEXT_PUBLIC_N8N_MEMORIAL_WEBHOOK_URL ??
+  "http://127.0.0.1:5678/webhook/reviive/memorials/memorial-creado";
+
+function generarSlug(base: string): string {
+  const limpio = base
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+  const sufijo = Math.random().toString(36).slice(2, 8);
+  return `${limpio || "memorial"}-${sufijo}`;
+}
 
 const ordenEstados = [
   "recibido",
@@ -39,15 +55,61 @@ interface PedidoApi {
   id: string;
   codigo: string;
   estado: string;
-  resumen: { objeto: string; proveedor: string };
+  resumen: {
+    recuerdo_id: string;
+    objeto: string;
+    proveedor: string;
+    memorial_slug: string | null;
+  };
   eventos: EventoApi[];
 }
 
 export default function SeguimientoPedidoPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const { accessToken, cargando: cargandoSesion } = useAuth();
   const [pedido, setPedido] = useState<PedidoApi | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [creandoMemorial, setCreandoMemorial] = useState(false);
+  const [errorMemorial, setErrorMemorial] = useState<string | null>(null);
+
+  async function crearMemorial() {
+    if (!pedido || !accessToken) return;
+    setCreandoMemorial(true);
+    setErrorMemorial(null);
+    try {
+      const slug = generarSlug(pedido.resumen.objeto || pedido.codigo);
+      const res = await fetch(`${API_URL}/memorials/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          recuerdo: pedido.resumen.recuerdo_id,
+          slug,
+          visibilidad: "con_enlace",
+        }),
+      });
+      if (!res.ok) throw new Error("No se pudo crear el memorial.");
+      const memorial = await res.json();
+
+      try {
+        await fetch(MEMORIAL_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ access_token: accessToken, memorial_id: memorial.id }),
+        });
+      } catch {
+        // si el agente no responde, el memorial ya existe; se puede ver igual
+      }
+
+      router.push(`/memorial/${slug}`);
+    } catch (err) {
+      setErrorMemorial(err instanceof Error ? err.message : "No se pudo crear el memorial.");
+      setCreandoMemorial(false);
+    }
+  }
 
   useEffect(() => {
     if (cargandoSesion || !accessToken) return;
@@ -157,6 +219,40 @@ export default function SeguimientoPedidoPage() {
             </div>
           </Card>
         </div>
+
+        {pedido.estado === "entregado" && (
+          <Card className="mt-6 bg-gradient-to-br from-rosa/30 to-marfil">
+            <h2 className="font-display text-lg text-borgona">Memorial digital</h2>
+            {pedido.resumen.memorial_slug ? (
+              <>
+                <p className="mt-2 text-sm text-carbon/65">
+                  Ya tienes un memorial digital para este recuerdo.
+                </p>
+                <Link
+                  href={`/memorial/${pedido.resumen.memorial_slug}`}
+                  className="mt-3 inline-block text-xs text-borgona underline"
+                >
+                  Ver memorial →
+                </Link>
+              </>
+            ) : (
+              <>
+                <p className="mt-2 text-sm text-carbon/65">
+                  Tu pedido fue entregado. Si quieres, Alma puede redactar un memorial digital
+                  con la historia de este recuerdo para conservarlo o compartirlo.
+                </p>
+                {errorMemorial && <p className="mt-2 text-sm text-borgona">{errorMemorial}</p>}
+                <Button
+                  variant="primary"
+                  className="mt-3"
+                  onClick={crearMemorial}
+                >
+                  {creandoMemorial ? "Creando memorial…" : "Crear memorial digital"}
+                </Button>
+              </>
+            )}
+          </Card>
+        )}
       </div>
     </SiteShell>
   );

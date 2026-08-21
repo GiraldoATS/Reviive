@@ -49,8 +49,11 @@ class PedidoSerializer(serializers.ModelSerializer):
     def get_resumen(self, obj: Pedido) -> dict:
         recuerdo = obj.cotizacion.recuerdo
         primer_objeto = recuerdo.objetos.first()
+        memorial = getattr(recuerdo, "memorial", None)
         return {
+            "recuerdo_id": str(recuerdo.id),
             "objeto": primer_objeto.tipo if primer_objeto else "",
             "historia": recuerdo.historia,
             "proveedor": obj.cotizacion.proveedor.nombre_taller,
+            "memorial_slug": memorial.slug if memorial else None,
         }
