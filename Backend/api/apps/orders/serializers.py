@@ -28,6 +28,9 @@ class EventoPedidoSerializer(serializers.ModelSerializer):
 
 class PedidoSerializer(serializers.ModelSerializer):
     eventos = EventoPedidoSerializer(many=True, read_only=True)
+    # Evita que el frontend tenga que encadenar quotations -> memories/providers
+    # solo para mostrar "qué objeto es" y "qué taller lo tiene".
+    resumen = serializers.SerializerMethodField()
 
     class Meta:
         model = Pedido
@@ -35,9 +38,19 @@ class PedidoSerializer(serializers.ModelSerializer):
             "id",
             "codigo",
             "cotizacion",
+            "resumen",
             "estado",
             "total",
             "eventos",
             "creado_en",
         ]
         read_only_fields = ["id", "codigo", "estado", "total", "creado_en"]
+
+    def get_resumen(self, obj: Pedido) -> dict:
+        recuerdo = obj.cotizacion.recuerdo
+        primer_objeto = recuerdo.objetos.first()
+        return {
+            "objeto": primer_objeto.tipo if primer_objeto else "",
+            "historia": recuerdo.historia,
+            "proveedor": obj.cotizacion.proveedor.nombre_taller,
+        }

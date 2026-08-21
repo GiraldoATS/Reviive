@@ -1,9 +1,22 @@
-import { notFound } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 import SiteShell from "@/components/SiteShell";
 import Card from "@/components/Card";
-import Button from "@/components/Button";
-import { pedidos } from "@/data/mock";
 import { IconReloj } from "@/components/icons";
+import { useAuth } from "@/lib/AuthContext";
+import { API_URL } from "@/lib/api";
+
+const ordenEstados = [
+  "recibido",
+  "en_evaluacion",
+  "en_proceso",
+  "control_de_calidad",
+  "en_camino",
+  "entregado",
+];
 
 const etiquetas: Record<string, string> = {
   recibido: "Recibido",
@@ -12,18 +25,74 @@ const etiquetas: Record<string, string> = {
   control_de_calidad: "Control de calidad",
   en_camino: "En camino",
   entregado: "Entregado",
+  cancelado: "Cancelado",
 };
 
-export default async function SeguimientoPedidoPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const pedido = pedidos.find((p) => p.id === id);
-  if (!pedido) notFound();
+interface EventoApi {
+  id: number;
+  estado: string;
+  fecha: string;
+  descripcion: string;
+}
 
-  const indiceActual = pedido.eventos.findIndex((e) => e.estado === pedido.estado);
+interface PedidoApi {
+  id: string;
+  codigo: string;
+  estado: string;
+  resumen: { objeto: string; proveedor: string };
+  eventos: EventoApi[];
+}
+
+export default function SeguimientoPedidoPage() {
+  const { id } = useParams<{ id: string }>();
+  const { accessToken, cargando: cargandoSesion } = useAuth();
+  const [pedido, setPedido] = useState<PedidoApi | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (cargandoSesion || !accessToken) return;
+    fetch(`${API_URL}/orders/${id}/`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+      .then((res) => {
+        if (res.status === 404 || res.status === 403) throw new Error("No encontramos ese pedido, o no tienes acceso a él.");
+        if (!res.ok) throw new Error("No se pudo cargar el seguimiento.");
+        return res.json();
+      })
+      .then(setPedido)
+      .catch((err) => setError(err instanceof Error ? err.message : "Error inesperado."));
+  }, [accessToken, cargandoSesion, id]);
+
+  if (!cargandoSesion && !accessToken) {
+    return (
+      <SiteShell>
+        <div className="mx-auto max-w-3xl px-6 py-14 text-center">
+          <p className="text-carbon/70 mb-4">Inicia sesión para ver el seguimiento.</p>
+          <Link href="/auth/login" className="text-borgona underline text-sm">Iniciar sesión →</Link>
+        </div>
+      </SiteShell>
+    );
+  }
+
+  if (error) {
+    return (
+      <SiteShell>
+        <div className="mx-auto max-w-3xl px-6 py-14 text-center text-borgona">{error}</div>
+      </SiteShell>
+    );
+  }
+
+  if (!pedido) {
+    return (
+      <SiteShell>
+        <div className="mx-auto max-w-3xl px-6 py-14 text-center text-carbon/60">Cargando el seguimiento…</div>
+      </SiteShell>
+    );
+  }
+
+  const indiceActual = ordenEstados.indexOf(pedido.estado);
+  const eventosPorEstado = new Map(pedido.eventos.map((e) => [e.estado, e]));
+  const ultimoEvento = pedido.eventos[pedido.eventos.length - 1];
 
   return (
     <SiteShell>
@@ -35,11 +104,12 @@ export default async function SeguimientoPedidoPage({
 
         <div className="mt-10 flex justify-between relative">
           <div className="absolute top-3 left-3 right-3 h-px bg-greige/70" />
-          {pedido.eventos.map((evento, i) => {
+          {ordenEstados.map((estado, i) => {
+            const evento = eventosPorEstado.get(estado);
             const estadoRelativo =
               i < indiceActual ? "completado" : i === indiceActual ? "actual" : "pendiente";
             return (
-              <div key={evento.estado} className="relative z-10 flex flex-col items-center gap-2 text-center w-24">
+              <div key={estado} className="relative z-10 flex flex-col items-center gap-2 text-center w-24">
                 <div
                   className={`h-6 w-6 rounded-full border-2 flex items-center justify-center text-[10px] ${
                     estadoRelativo === "completado"
@@ -51,8 +121,12 @@ export default async function SeguimientoPedidoPage({
                 >
                   {estadoRelativo === "completado" ? "✓" : i + 1}
                 </div>
-                <span className="text-xs text-carbon/70">{etiquetas[evento.estado]}</span>
-                <span className="text-[10px] text-carbon/45">{evento.fecha}</span>
+                <span className="text-xs text-carbon/70">{etiquetas[estado]}</span>
+                {evento && (
+                  <span className="text-[10px] text-carbon/45">
+                    {new Date(evento.fecha).toLocaleDateString("es-CO")}
+                  </span>
+                )}
               </div>
             );
           })}
@@ -64,12 +138,9 @@ export default async function SeguimientoPedidoPage({
               Estado actual
             </h2>
             <p className="text-sm text-carbon/75">
-              Nuestro taller está trabajando en la restauración de tu objeto con el
-              mayor cuidado.
+              {ultimoEvento?.descripcion ||
+                "Tu pedido fue recibido; el taller aún no ha registrado avances."}
             </p>
-            <Button href="#" variant="ghost" className="mt-3 px-0 text-xs">
-              Ver detalle del proceso →
-            </Button>
           </Card>
           <Card>
             <h2 className="text-xs uppercase tracking-wide text-carbon/50 mb-2">
@@ -80,8 +151,8 @@ export default async function SeguimientoPedidoPage({
                 <IconReloj className="h-7 w-7 text-borgona" />
               </div>
               <div>
-                <p className="text-sm font-medium text-carbon">{pedido.objeto}</p>
-                <p className="text-xs text-carbon/50">{pedido.proveedor}</p>
+                <p className="text-sm font-medium text-carbon">{pedido.resumen.objeto || "Objeto sin especificar"}</p>
+                <p className="text-xs text-carbon/50">{pedido.resumen.proveedor}</p>
               </div>
             </div>
           </Card>
