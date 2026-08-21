@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.request import Request
@@ -24,7 +25,9 @@ class AgentRunRequestView(APIView):
         payload = AgentRunRequestSerializer(data=request.data)
         payload.is_valid(raise_exception=True)
 
-        conversacion = Conversacion.objects.get(pk=payload.validated_data["conversacion_id"])
+        conversacion = get_object_or_404(
+            Conversacion, pk=payload.validated_data["conversacion_id"]
+        )
         ejecucion = EjecucionAgente.objects.create(
             conversacion=conversacion,
             agente=payload.validated_data["agente"],
@@ -45,7 +48,7 @@ class AgentRunCompleteView(APIView):
         payload.is_valid(raise_exception=True)
         data = payload.validated_data
 
-        ejecucion = EjecucionAgente.objects.get(pk=run_id)
+        ejecucion = get_object_or_404(EjecucionAgente, pk=run_id)
         ejecucion.estado = data["status"]
         ejecucion.reply = data.get("reply", "")
         ejecucion.structured_data = data.get("structured_data", {})

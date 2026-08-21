@@ -11,7 +11,7 @@ from .serializers import EjemploDatasetSerializer
 class EsSupervisorIA(BasePermission):
     message = "Sólo un supervisor de IA puede aprobar ejemplos de dataset (RN-11)."
 
-    def has_permission(self, request) -> bool:
+    def has_permission(self, request, view) -> bool:
         return request.user.is_authenticated and request.user.rol in {
             "supervisor_ia",
             "administrador",

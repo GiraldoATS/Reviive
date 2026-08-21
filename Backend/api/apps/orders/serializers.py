@@ -28,4 +28,4 @@ class PedidoSerializer(serializers.ModelSerializer):
             "eventos",
             "creado_en",
         ]
-        read_only_fields = ["id", "codigo", "estado", "creado_en"]
+        read_only_fields = ["id", "codigo", "estado", "total", "creado_en"]

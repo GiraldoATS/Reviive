@@ -14,7 +14,7 @@ class IsN8nOrchestrator(BasePermission):
 
     message = "Firma HMAC inválida o ausente."
 
-    def has_permission(self, request) -> bool:
+    def has_permission(self, request, view) -> bool:
         signature = request.headers.get("X-Reviive-Signature", "")
         expected = hmac.new(
             settings.N8N_WEBHOOK_SECRET.encode(),
