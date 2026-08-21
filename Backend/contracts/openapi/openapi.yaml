@@ -9,6 +9,10 @@ info:
 servers:
   - url: /api/v1
 paths:
+  /auth/register:
+    post:
+      summary: Crear una cuenta de cliente o proveedor (RN-01: exige consentimiento)
+      tags: [identity]
   /auth/login:
     post:
       summary: Obtener par de tokens JWT (access/refresh)
