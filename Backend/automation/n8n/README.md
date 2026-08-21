@@ -20,6 +20,7 @@ n8n recibe los eventos externos y dispara los workflows correspondientes:
 | `/webhook/reviive/telegram/update` | Telegram Bot API | Workflow Orquestador (canal Telegram) |
 | `/webhook/reviive/email/inbound` | Correo entrante (IMAP) | Workflow Orquestador (canal correo) |
 | `/webhook/reviive/orders/status-changed` | API Django (evento saliente) | Workflow de notificaciones al cliente |
+| `/webhook/reviive/memories/recuerdo-creado` | Web (tras registrar un recuerdo) | Workflow Agente - Recomendación |
 
 Todos los webhooks se firman con HMAC-SHA256 usando `N8N_WEBHOOK_SECRET`
 (la misma variable que Django usa para validar las llamadas entrantes a
@@ -69,17 +70,20 @@ de por la interfaz visual.
 
 ### Credenciales que hay que crear en cada instancia
 
-El workflow `workflows/orquestador-chat-alma.json` referencia dos
-credenciales por nombre — hay que crearlas una vez (vía UI, o por API con
-`POST /api/v1/credentials`) y volver a enlazarlas en los nodos si se
-reimporta el JSON en una instancia nueva:
+Ambos workflows (`orquestador-chat-alma.json` y `agente-recomendacion.json`)
+referencian las mismas dos credenciales por nombre — hay que crearlas una
+vez (vía UI, o por API con `POST /api/v1/credentials`) y volver a
+enlazarlas en los nodos si se reimporta el JSON en una instancia nueva:
 
 | Nombre | Tipo | Uso |
 |---|---|---|
 | `OpenAI Reviive` | `httpHeaderAuth` (header `Authorization: Bearer <OPENAI_API_KEY>`) | Nodo "Llamar a OpenAI" |
 | `Reviive HMAC` | `crypto` (campo `hmacSecret` = mismo valor que `N8N_WEBHOOK_SECRET`) | Nodos "Firmar request" / "Firmar complete" |
 
-### Importar y activar el workflow
+### Importar y activar un workflow
+
+Repetir por cada archivo en `workflows/` (`orquestador-chat-alma.json`,
+`agente-recomendacion.json`):
 
 ```bash
 curl -X POST http://127.0.0.1:5678/api/v1/workflows \
@@ -88,9 +92,6 @@ curl -X POST http://127.0.0.1:5678/api/v1/workflows \
 # copiar el "id" de la respuesta y activarlo:
 curl -X POST http://127.0.0.1:5678/api/v1/workflows/<id>/activate -H "X-N8N-API-KEY: $N8N_API_KEY"
 ```
-
-El webhook queda escuchando en
-`http://127.0.0.1:5678/webhook/reviive/conversations/message`.
 
 ## Workflow implementado: "Orquestador - Chat con Alma"
 
@@ -115,8 +116,41 @@ Si OpenAI falla (por ejemplo, sin crédito o key inválida), el workflow no se
 cae: registra la ejecución como `fallido` con una respuesta de repaldo de
 Alma, para que el chat nunca quede colgado.
 
-Los demás agentes (Extracción, Creativo, Viabilidad, Recomendación,
-Proveedores, Cotización, Pedidos, Memorial, Seguridad, Evaluador) se pueden
-construir como workflows adicionales siguiendo el mismo patrón: firmar y
-llamar `agent-runs/request` → hacer el trabajo (LLM y/o llamadas a los demás
-endpoints de la API) → firmar y llamar `agent-runs/{id}/complete`.
+## Workflow implementado: "Agente - Recomendacion"
+
+Se dispara justo después de que el cliente registra un recuerdo (no es un
+agente conversacional, por eso `EjecucionAgente.conversacion` es opcional):
+
+1. **Webhook** recibe `{ access_token, recuerdo_id }`.
+2. Lee el recuerdo completo (`GET /memories/{id}/`, con el JWT del cliente)
+   y el catálogo real de servicios (`GET /products/`).
+3. Firma y llama `POST /agent-runs/request` (agente `recomendacion`, sin
+   `conversacion_id`).
+4. Llama a OpenAI (`gpt-4o-mini`, `response_format: json_object`) con la
+   historia del recuerdo + el catálogo, pidiendo hasta 3 recomendaciones en
+   JSON (`{producto_id, titulo, justificacion, puntaje}`). El prompt exige
+   que el `producto_id` exista en el catálogo dado y prohíbe confirmar
+   precios/tiempos (RN-10).
+5. Firma y llama `POST /agent-runs/{run_id}/complete` con
+   `structured_data: { recuerdo_id, recomendaciones }`; Django crea las
+   filas reales de `Recomendacion` como efecto de ese POST (ver
+   `apps.agents.views._crear_recomendaciones`) — de nuevo, n8n nunca
+   escribe la tabla de negocio directo.
+6. Responde al webhook con `{ recuerdo_id, run_id, estado }`; el frontend
+   lee las recomendaciones ya guardadas con
+   `GET /recommendations/?recuerdo=<id>`.
+
+**El catálogo (`Producto`) tiene que tener datos reales para que esto
+funcione** — si está vacío, OpenAI correctamente no recomienda nada (el
+prompt le prohíbe inventar productos). Los 8 servicios base se cargaron una
+vez a mano desde `apps.catalog.management.commands.seed_demo.PRODUCTOS`
+(sólo esas filas, sin los usuarios/proveedor/pedido de ejemplo que trae ese
+comando completo).
+
+Los demás agentes (Extracción, Creativo, Viabilidad, Proveedores,
+Cotización, Pedidos, Memorial, Seguridad, Evaluador) se pueden construir
+como workflows adicionales siguiendo el mismo patrón: firmar y llamar
+`agent-runs/request` → hacer el trabajo (LLM y/o llamadas a los demás
+endpoints de la API) → firmar y llamar `agent-runs/{id}/complete`, y decidir
+ahí qué efecto de negocio dispara esa finalización (igual que el mensaje de
+Alma o las recomendaciones).
