@@ -15,7 +15,7 @@ export default function Navbar() {
         <nav className="hidden lg:flex items-center gap-7 text-sm">
           <NavLink href="/">Inicio</NavLink>
           <NavLink href="/como-funciona">Cómo funciona</NavLink>
-          <NavLink href="/catalogo">Servicios</NavLink>
+          <NavLink href="/servicios">Servicios</NavLink>
           <CategoriesMenu />
           <NavLink href="/historias">Historias</NavLink>
           <NavLink href="/sobre-reviive">Sobre Reviive</NavLink>

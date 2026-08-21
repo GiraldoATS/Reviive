@@ -12,7 +12,7 @@ const redes = [
 
 const navegacion = [
   { href: "/como-funciona", label: "Cómo funciona" },
-  { href: "/catalogo", label: "Servicios" },
+  { href: "/servicios", label: "Servicios" },
   { href: "/catalogo", label: "Categorías" },
   { href: "/historias", label: "Historias" },
   { href: "/sobre-reviive", label: "Sobre Reviive" },
