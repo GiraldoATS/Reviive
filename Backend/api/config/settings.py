@@ -112,6 +112,33 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+# Usado para armar el enlace de restablecimiento de contraseña
+# (FRONTEND_URL + /auth/restablecer?uid=...&token=...) en el correo.
+FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:3000")
+
+# El enlace de restablecimiento de contraseña es válido por 24h (coincide
+# con el texto de Backend/api/apps/identity/templates/identity/emails/
+# restablecer_contrasena.html). default_token_generator.check_token lo
+# valida contra esto automáticamente.
+PASSWORD_RESET_TIMEOUT = 60 * 60 * 24
+
+# Sin credenciales SMTP reales configuradas (desarrollo), los correos se
+# imprimen en la consola del servidor en vez de enviarse -- se puede
+# probar el flujo completo sin depender de una cuenta de correo real.
+# Al configurar EMAIL_HOST_USER/EMAIL_HOST_PASSWORD en .env, se envían de
+# verdad automáticamente (sin necesidad de tocar tambien EMAIL_BACKEND).
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Reviive <no-responder@reviive.com>")
+EMAIL_BACKEND = (
+    "django.core.mail.backends.smtp.EmailBackend"
+    if EMAIL_HOST_USER
+    else "django.core.mail.backends.console.EmailBackend"
+)
+
 LANGUAGE_CODE = "es-co"
 TIME_ZONE = "America/Bogota"
 USE_I18N = True

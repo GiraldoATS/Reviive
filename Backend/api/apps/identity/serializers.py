@@ -1,4 +1,9 @@
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.tokens import default_token_generator
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 
 from .models import Perfil, Usuario
@@ -102,3 +107,56 @@ class RegistroSerializer(serializers.Serializer):
             )
 
         return usuario
+
+
+class SolicitarRestablecimientoSerializer(serializers.Serializer):
+    """POST /api/v1/auth/password-reset/solicitar"""
+
+    email = serializers.EmailField()
+
+
+class ConfirmarRestablecimientoSerializer(serializers.Serializer):
+    """POST /api/v1/auth/password-reset/confirmar
+
+    uid/token vienen del enlace que se envió por correo (ver
+    `_enviar_correo_restablecimiento` en views.py). Todas las validaciones
+    (enlace válido, no expirado, contraseñas coinciden, contraseña cumple
+    las reglas de AUTH_PASSWORD_VALIDATORS) se hacen aquí para que
+    is_valid(raise_exception=True) las reporte de forma uniforme.
+    """
+
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+    password_confirmar = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        try:
+            pk = force_str(urlsafe_base64_decode(attrs["uid"]))
+            usuario = Usuario.objects.get(pk=pk)
+        except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
+            raise serializers.ValidationError(
+                {"uid": "El enlace de restablecimiento no es válido."}
+            )
+
+        # default_token_generator.check_token ya valida expiración
+        # (PASSWORD_RESET_TIMEOUT, 24h) y que la contraseña no haya sido
+        # cambiada desde que se generó el enlace (el token deja de ser
+        # válido apenas se usa una vez, por diseño).
+        if not default_token_generator.check_token(usuario, attrs["token"]):
+            raise serializers.ValidationError(
+                {"token": "El enlace de restablecimiento no es válido o ya expiró. Solicita uno nuevo."}
+            )
+
+        if attrs["password"] != attrs["password_confirmar"]:
+            raise serializers.ValidationError(
+                {"password_confirmar": "Las contraseñas no coinciden."}
+            )
+
+        try:
+            validate_password(attrs["password"], user=usuario)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError({"password": list(exc.messages)})
+
+        attrs["usuario"] = usuario
+        return attrs
