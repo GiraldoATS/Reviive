@@ -1,55 +1,337 @@
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import SiteShell from "@/components/SiteShell";
-import ProductPhoto from "@/components/ProductPhoto";
+import Button from "@/components/Button";
+import BeforeAfterSlider from "@/components/BeforeAfterSlider";
+import { IconArrowLeft, IconArrowRight, IconChevronDown } from "@/components/icons";
+
+const categorias = [
+  "Joyas y Relojes",
+  "Memorias en Papel",
+  "Objetos Decorativos",
+  "Cuero y Textiles",
+  "Muebles y Maderas",
+];
+
+const iconoPorCategoria: Record<string, string> = {
+  "Joyas y Relojes": "/images/servicios/cat-joyas.png",
+  "Memorias en Papel": "/images/servicios/cat-fotos.png",
+  "Objetos Decorativos": "/images/servicios/cat-objetos.png",
+  "Cuero y Textiles": "/images/servicios/cat-textiles.png",
+  "Muebles y Maderas": "/images/servicios/cat-muebles.png",
+};
 
 const historias = [
   {
-    photo: "/images/hero-watch.png",
+    id: "reloj",
+    categoria: "Joyas y Relojes",
     titulo: "El reloj de mi abuelo",
-    texto: "Después de 40 años parado, el reloj de bolsillo de Omega de mi abuelo vuelve a marcar el tiempo en mi muñeca.",
-    autor: "Carolina M., Bogotá",
+    texto: "Este reloj no solo marcaba el tiempo, marcaba nuestras reuniones familiares. Hoy vuelve a latir.",
   },
   {
-    icono: "compartido",
-    titulo: "El anillo de mamá",
-    texto: "Restauramos el anillo de compromiso de mi madre para dárselo a mi hija el día de su boda.",
-    autor: "Andrés P., Medellín",
+    id: "cartas",
+    categoria: "Memorias en Papel",
+    titulo: "Cartas que vuelven a hablar",
+    texto: "Conservar las cartas de mamá era devolverme su voz. Cada página restaurada es un abrazo.",
   },
   {
-    icono: "libro",
-    titulo: "Fotografías que casi se pierden",
-    texto: "La humedad casi destruye el único álbum familiar que teníamos. Hoy está digitalizado y restaurado.",
-    autor: "Laura G., Cali",
+    id: "taza",
+    categoria: "Objetos Decorativos",
+    titulo: "La taza de los domingos",
+    texto: "Esa taza de porcelana sobrevivió a todo. La restauramos para que siga acompañando nuestros domingos.",
+  },
+  {
+    id: "bolso",
+    categoria: "Cuero y Textiles",
+    titulo: "Mi bolso, mi historia",
+    texto: "Este bolso me acompañó en cada etapa importante. Lo restauramos y ahora estoy lista para seguir.",
+  },
+  {
+    id: "silla",
+    categoria: "Muebles y Maderas",
+    titulo: "La silla de la abuela",
+    texto: "Donde ella contaba historias, hoy mis hijos escuchan las suyas. La restauramos con amor.",
+  },
+  {
+    id: "bandeja",
+    categoria: "Objetos Decorativos",
+    titulo: "Brillo que vuelve",
+    texto: "Esta bandeja estuvo opaca durante años. Hoy vuelve a brillar en nuestras celebraciones.",
+  },
+  {
+    id: "retrato",
+    categoria: "Memorias en Papel",
+    titulo: "Una foto, mil recuerdos",
+    texto: "Estaba deteriorada por el tiempo, pero su valor era incalculable. Hoy vuelve a sonreír como ese día.",
+  },
+  {
+    id: "bordado",
+    categoria: "Cuero y Textiles",
+    titulo: "Bordado de generaciones",
+    texto: "Este bordado pasó por tres generaciones. Lo restauramos para que siga contando nuestra historia.",
+  },
+];
+
+const testimonios = [
+  {
+    nombre: "Mariana G.",
+    foto: "/images/historias/cliente-mariana.png",
+    texto: "Me devolvieron más que un objeto, me devolvieron recuerdos que creía perdidos.",
+  },
+  {
+    nombre: "Andrés P.",
+    foto: "/images/historias/cliente-andres.png",
+    texto: "El cuidado y la dedicación se notan en cada detalle. Un servicio extraordinario.",
+  },
+  {
+    nombre: "Lucía T.",
+    foto: "/images/historias/cliente-lucia.png",
+    texto: "Profesionales cálidos, atentos y apasionados por lo que hacen. Los recomiendo siempre.",
   },
 ];
 
 export default function HistoriasPage() {
+  const [categoriaActiva, setCategoriaActiva] = useState<string | null>(null);
+  const [orden, setOrden] = useState<"recientes" | "antiguas">("recientes");
+  const filtrosRef = useRef<HTMLDivElement>(null);
+  const [filtrosScroll, setFiltrosScroll] = useState({ left: false, right: false });
+
+  function updateFiltrosScroll() {
+    const el = filtrosRef.current;
+    if (!el) return;
+    setFiltrosScroll({
+      left: el.scrollLeft > 4,
+      right: el.scrollLeft < el.scrollWidth - el.clientWidth - 4,
+    });
+  }
+
+  useEffect(() => {
+    const el = filtrosRef.current;
+    if (!el) return;
+    updateFiltrosScroll();
+    const raf = requestAnimationFrame(updateFiltrosScroll);
+    document.fonts?.ready.then(updateFiltrosScroll);
+    window.addEventListener("resize", updateFiltrosScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", updateFiltrosScroll);
+    };
+  }, []);
+
+  function scrollFiltros(amount: number) {
+    filtrosRef.current?.scrollBy({ left: amount, behavior: "smooth" });
+  }
+
+  const filtroArrowClass = (enabled: boolean) =>
+    `flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors ${
+      enabled
+        ? "border-borgona/50 text-borgona bg-rosa/20 hover:bg-rosa/40"
+        : "border-greige/60 text-carbon/30 cursor-default"
+    }`;
+
+  const historiasFiltradas = useMemo(() => {
+    const filtradas = categoriaActiva
+      ? historias.filter((h) => h.categoria === categoriaActiva)
+      : historias;
+    return orden === "recientes" ? filtradas : [...filtradas].reverse();
+  }, [categoriaActiva, orden]);
+
   return (
     <SiteShell>
-      <div className="mx-auto max-w-4xl px-6 py-16 text-center">
-        <h1 className="font-display text-4xl text-carbon">Historias que inspiran</h1>
-        <p className="mt-3 text-carbon/65 max-w-xl mx-auto">
-          Proyectos reales que han marcado momentos en la vida de nuestros clientes.
-        </p>
+      <div className="mx-auto max-w-6xl px-6 pt-4 text-xs text-carbon/50">
+        <Link href="/" className="hover:text-borgona transition-colors">Inicio</Link>
+        <span className="mx-1.5">›</span>
+        <span className="text-carbon/70">Historias</span>
       </div>
-      <div className="mx-auto max-w-5xl px-6 pb-24 grid md:grid-cols-3 gap-6">
-        {historias.map((h) => (
-          <div key={h.titulo} className="rounded-2xl border border-greige/70 bg-white/60 overflow-hidden">
-            {h.photo ? (
-              <div className="relative h-40 w-full">
-                <Image src={h.photo} alt="" fill sizes="360px" className="object-cover" />
-              </div>
-            ) : (
-              <ProductPhoto icono={h.icono!} className="h-40 w-full" />
-            )}
-            <div className="p-6">
-              <h3 className="font-display text-lg text-carbon">{h.titulo}</h3>
-              <p className="mt-2 text-sm text-carbon/65">{h.texto}</p>
-              <p className="mt-4 text-xs text-carbon/45">— {h.autor}</p>
+
+      <section className="relative overflow-hidden grid lg:grid-cols-2 lg:items-center">
+        <div className="pointer-events-none absolute -left-4 top-0 hidden h-full w-36 opacity-25 sm:block md:w-44">
+          <Image src="/images/historias/rama-hero.png" alt="" fill sizes="176px" className="object-contain object-top" unoptimized />
+        </div>
+        <div className="relative px-6 py-12 lg:py-16 flex flex-col justify-center lg:pl-[max(1.5rem,calc((100vw-72rem)/2))]">
+          <h1 className="font-display text-4xl md:text-5xl leading-tight text-borgona max-w-md">
+            Historias que permanecen
+          </h1>
+          <p className="mt-5 text-carbon/75 max-w-md">
+            Objetos que guardan recuerdos. Historias que merecen seguir vivas. Descubre cómo el cuidado y la restauración pueden devolverles su lugar en la vida y en el corazón.
+          </p>
+          <span className="relative mt-3 h-5 w-10 block">
+            <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="40px" className="object-contain" />
+          </span>
+        </div>
+        <div className="relative h-64 w-full lg:h-auto lg:aspect-[1348/850]">
+          <Image
+            src="/images/historias/hero.png"
+            alt="Objetos con historia restaurados por Reviive"
+            fill
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="object-cover"
+            unoptimized
+            priority
+          />
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 py-10">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            aria-label="Anterior"
+            disabled={!filtrosScroll.left}
+            onClick={() => scrollFiltros(-240)}
+            className={filtroArrowClass(filtrosScroll.left)}
+          >
+            <IconArrowLeft className="h-4 w-4" />
+          </button>
+          <div
+            ref={filtrosRef}
+            onScroll={updateFiltrosScroll}
+            className="no-scrollbar flex-1 flex items-center gap-3 overflow-x-auto scroll-smooth"
+          >
+            <button
+              type="button"
+              onClick={() => setCategoriaActiva(null)}
+              className={`shrink-0 rounded-full px-4 py-2.5 text-sm border transition-colors ${
+                categoriaActiva === null
+                  ? "bg-borgona text-marfil border-borgona"
+                  : "bg-white/60 text-carbon/75 border-greige/60 hover:border-borgona/40"
+              }`}
+            >
+              Todas las historias
+            </button>
+            {categorias.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setCategoriaActiva(c)}
+                className={`shrink-0 rounded-full px-4 py-2 text-sm border transition-colors ${
+                  categoriaActiva === c
+                    ? "bg-borgona text-marfil border-borgona"
+                    : "bg-white/60 text-carbon/75 border-greige/60 hover:border-borgona/40"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+            <div className="relative shrink-0">
+              <select
+                value={orden}
+                onChange={(e) => setOrden(e.target.value as "recientes" | "antiguas")}
+                className="appearance-none rounded-full border border-greige/60 bg-white/70 pl-4 pr-9 py-2.5 text-sm text-carbon/75 focus:outline-none focus:border-borgona/50"
+              >
+                <option value="recientes">Más recientes</option>
+                <option value="antiguas">Más antiguas</option>
+              </select>
+              <IconChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-carbon/40" />
             </div>
           </div>
-        ))}
-      </div>
+          <button
+            type="button"
+            aria-label="Siguiente"
+            disabled={!filtrosScroll.right}
+            onClick={() => scrollFiltros(240)}
+            className={filtroArrowClass(filtrosScroll.right)}
+          >
+            <IconArrowRight className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {historiasFiltradas.map((h) => (
+            <div key={h.id} className="rounded-2xl border border-greige/60 bg-white/70 overflow-hidden flex flex-col text-left">
+              <BeforeAfterSlider
+                before={`/images/historias/${h.id}-antes.png`}
+                after={`/images/historias/${h.id}-despues.png`}
+                alt={h.titulo}
+                className="aspect-[4/3] w-full"
+              />
+              <div className="p-5 flex flex-col flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="relative h-4 w-4 shrink-0">
+                    <Image src={iconoPorCategoria[h.categoria]} alt="" fill sizes="16px" className="object-contain" unoptimized />
+                  </span>
+                  <span className="text-[11px] uppercase tracking-wide text-dorado-suave">{h.categoria}</span>
+                </div>
+                <h3 className="mt-2 font-display text-base text-borgona">{h.titulo}</h3>
+                <p className="mt-1.5 text-xs text-carbon/60 flex-1">{h.texto}</p>
+                <Link
+                  href="/recuerdos/nuevo"
+                  className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-borgona hover:text-borgona-dark transition-colors"
+                >
+                  Leer historia →
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-16">
+        <div className="relative overflow-hidden rounded-2xl bg-greige/20 border border-greige/50 p-8 grid md:grid-cols-[1fr_320px] gap-8 items-center">
+          <div className="pointer-events-none absolute -left-10 -top-16 hidden h-64 w-48 opacity-20 sm:block">
+            <Image src="/images/historias/rama-secundaria.png" alt="" fill sizes="192px" className="object-contain" unoptimized />
+          </div>
+          <div className="relative">
+            <p className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-dorado-suave">
+              Historia destacada
+              <span className="relative h-4 w-8 shrink-0">
+                <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="32px" className="object-contain" />
+              </span>
+            </p>
+            <h2 className="mt-2 font-display text-2xl text-borgona">El tocador de mi mamá</h2>
+            <p className="mt-3 text-sm text-carbon/70 max-w-md">
+              Mi mamá lo usaba todos los días. El espejo estaba opaco, la madera dañada por el tiempo. Pensé en dejarlo, pero algo me dijo que aún podía brillar. Reviive lo restauró con un cuidado que emocionó mi alma.
+            </p>
+            <p className="mt-4 font-display text-lg text-borgona italic max-w-md">
+              &ldquo;No es solo un mueble, es el espejo donde crecí.&rdquo;
+            </p>
+            <p className="mt-1 text-xs text-carbon/50">— Valeria G.</p>
+            <Button href="/recuerdos/nuevo" variant="primary" className="mt-5">
+              Leer historia completa
+            </Button>
+          </div>
+          <div className="relative flex flex-col gap-3 w-full">
+            <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
+              <Image src="/images/historias/destacada-tocador-completo.png" alt="El tocador de mi mamá" fill sizes="320px" className="object-cover" unoptimized />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
+                <Image src="/images/historias/destacada-detalle-1.png" alt="" fill sizes="210px" className="object-cover" unoptimized />
+              </div>
+              <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
+                <Image src="/images/historias/destacada-detalle-2.png" alt="" fill sizes="210px" className="object-cover" unoptimized />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-rosa/25 py-14">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <p className="font-display text-2xl md:text-3xl text-borgona-dark leading-snug">
+            Cada objeto restaurado es una historia que vuelve a tener voz.
+          </p>
+          <div className="relative mx-auto mt-4 h-6 w-40">
+            <Image src="/images/historias/divisor-cita.png" alt="" fill sizes="160px" className="object-contain" unoptimized />
+          </div>
+        </div>
+        <div className="mx-auto max-w-5xl px-6 mt-10 grid sm:grid-cols-3 gap-6">
+          {testimonios.map((t) => (
+            <div key={t.nombre} className="flex items-start gap-4 text-left">
+              <div className="relative h-14 w-14 rounded-full overflow-hidden shrink-0 ring-2 ring-white">
+                <Image src={t.foto} alt={t.nombre} fill sizes="56px" className="object-cover" unoptimized />
+              </div>
+              <div>
+                <p className="text-sm text-carbon/75 italic">&ldquo;{t.texto}&rdquo;</p>
+                <p className="mt-1.5 text-xs font-medium text-borgona">{t.nombre}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </SiteShell>
   );
 }

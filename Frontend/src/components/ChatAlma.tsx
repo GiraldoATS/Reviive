@@ -157,17 +157,17 @@ export default function ChatAlma() {
 
   if (!accessToken) {
     return (
-      <div className="mx-auto max-w-lg border border-greige/70 rounded-2xl bg-white/70 shadow-sm flex flex-col items-center justify-center h-[640px] gap-4 px-8 text-center">
-        <div className="relative h-14 w-14 rounded-full overflow-hidden">
-          <Image src="/images/alma-chat-v2.png" alt="Alma" fill sizes="56px" className="object-cover" />
+      <div className="mx-auto max-w-lg border border-greige/60 rounded-[2.5rem] bg-marfil shadow-sm flex flex-col items-center justify-center h-[640px] gap-5 px-10 text-center">
+        <div className="relative h-32 w-32 rounded-full overflow-hidden ring-4 ring-rosa/30">
+          <Image src="/images/alma-chat-v2.png" alt="Alma" fill sizes="128px" className="object-cover" />
         </div>
-        <p className="font-display text-lg text-borgona">Inicia sesión para hablar con Alma</p>
-        <p className="text-sm text-carbon/60">
+        <p className="font-display text-2xl text-borgona">Inicia sesión para hablar con Alma</p>
+        <p className="text-sm text-carbon/60 max-w-xs">
           Alma acompaña tu recuerdo desde el registro hasta la entrega; para eso necesita saber quién eres.
         </p>
         <Link
           href="/auth/login"
-          className="inline-flex items-center justify-center rounded-full bg-borgona text-marfil px-6 py-2.5 text-sm"
+          className="inline-flex items-center justify-center rounded-full bg-borgona text-marfil px-8 py-3 text-sm hover:bg-borgona-dark transition-colors"
         >
           Iniciar sesión →
         </Link>

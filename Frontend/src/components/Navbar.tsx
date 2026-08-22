@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Logo from "./Logo";
 import Button from "./Button";
-import CategoriesMenu from "./CategoriesMenu";
 import NavLink from "./NavLink";
 import { IconUserCircle } from "./icons";
 
@@ -16,7 +15,7 @@ export default function Navbar() {
           <NavLink href="/">Inicio</NavLink>
           <NavLink href="/como-funciona">Cómo funciona</NavLink>
           <NavLink href="/servicios">Servicios</NavLink>
-          <CategoriesMenu />
+          <NavLink href="/catalogo">Categorías</NavLink>
           <NavLink href="/historias">Historias</NavLink>
           <NavLink href="/sobre-reviive">Sobre Reviive</NavLink>
           <NavLink href="/contacto">Contacto</NavLink>

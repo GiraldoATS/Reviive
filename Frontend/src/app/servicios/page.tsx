@@ -3,50 +3,35 @@ import Image from "next/image";
 import SiteShell from "@/components/SiteShell";
 import Button from "@/components/Button";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
-import {
-  IconMessage,
-  IconPlus,
-  IconSearch,
-  IconEscudoCorazon,
-  IconPincel,
-  IconReloj,
-  IconManosCorazon,
-  IconAnillo,
-  IconFotografia,
-  IconTextil,
-  IconPeluche,
-  IconVasija,
-  IconSilla,
-  IconCamisa,
-} from "@/components/icons";
+import { IconMessage, IconPlus } from "@/components/icons";
 
 const tiposServicio = [
   {
-    Icono: IconSearch,
+    icono: "/images/servicios/icon-restauracion.png",
     titulo: "Restauración",
     texto: "Recuperamos el estado, funcionalidad o apariencia de objetos deteriorados.",
     ideal: ["Muebles y maderas", "Joyas y relojes", "Fotografías", "Objetos decorativos"],
   },
   {
-    Icono: IconEscudoCorazon,
+    icono: "/images/servicios/icon-preservacion.png",
     titulo: "Preservación",
     texto: "Protegemos tus recuerdos para evitar que continúen deteriorándose.",
     ideal: ["Fotografías y cartas", "Documentos", "Textiles y telas", "Objetos familiares"],
   },
   {
-    Icono: IconPincel,
+    icono: "/images/servicios/icon-transformacion.png",
     titulo: "Transformación",
     texto: "Convertimos un objeto significativo en una nueva pieza conservando su esencia.",
     ideal: ["Prendas de vestir", "Textiles y telas", "Cartas y documentos", "Objetos especiales"],
   },
   {
-    Icono: IconReloj,
+    icono: "/images/servicios/icon-mantenimiento.png",
     titulo: "Mantenimiento",
     texto: "Cuidamos objetos restaurados o especiales para prolongar su conservación.",
     ideal: ["Muebles", "Cuero y textiles", "Joyas y relojes", "Piezas restauradas"],
   },
   {
-    Icono: IconManosCorazon,
+    icono: "/images/servicios/icon-evaluacion.png",
     titulo: "Evaluación",
     texto: "Analizamos tu objeto y te recomendamos la mejor opción para conservarlo.",
     ideal: ["Objetos con daño", "No sabes qué hacer", "Dudas sobre intervención"],
@@ -54,13 +39,13 @@ const tiposServicio = [
 ];
 
 const categorias = [
-  { Icono: IconAnillo, titulo: "Joyas y relojes" },
-  { Icono: IconFotografia, titulo: "Fotografías y cartas" },
-  { Icono: IconTextil, titulo: "Textiles y telas" },
-  { Icono: IconPeluche, titulo: "Peluches y juguetes" },
-  { Icono: IconVasija, titulo: "Objetos decorativos" },
-  { Icono: IconSilla, titulo: "Muebles y maderas" },
-  { Icono: IconCamisa, titulo: "Prendas de vestir" },
+  { icono: "/images/servicios/cat-joyas.png", titulo: "Joyas y relojes" },
+  { icono: "/images/servicios/cat-fotos.png", titulo: "Fotografías y cartas" },
+  { icono: "/images/servicios/cat-textiles.png", titulo: "Textiles y telas" },
+  { icono: "/images/servicios/cat-peluches.png", titulo: "Peluches y juguetes" },
+  { icono: "/images/servicios/cat-objetos.png", titulo: "Objetos decorativos" },
+  { icono: "/images/servicios/cat-muebles.png", titulo: "Muebles y maderas" },
+  { icono: "/images/servicios/cat-prendas.png", titulo: "Prendas de vestir" },
 ];
 
 const transformaciones = [
@@ -134,10 +119,12 @@ export default function ServiciosPage() {
         <span className="text-carbon/70">Servicios</span>
       </div>
 
-      <section className="grid lg:grid-cols-2 items-stretch">
-        <div className="px-6 py-12 lg:py-16 flex flex-col justify-center lg:pl-[max(1.5rem,calc((100vw-72rem)/2))]">
+      <section className="relative overflow-hidden grid lg:grid-cols-2 items-stretch">
+        <div className="pointer-events-none absolute -left-4 top-0 hidden h-full w-36 opacity-25 sm:block md:w-44">
+          <Image src="/images/sobre-reviive/rama-hero.png" alt="" fill sizes="176px" className="object-contain object-top" unoptimized />
+        </div>
+        <div className="relative px-6 py-12 lg:py-16 flex flex-col justify-center lg:pl-[max(1.5rem,calc((100vw-72rem)/2))]">
           <p className="flex items-center gap-2 text-xs uppercase tracking-widest text-dorado-suave">
-            Servicios
             <span className="relative h-5 w-10 shrink-0">
               <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="40px" className="object-contain" />
             </span>
@@ -166,19 +153,20 @@ export default function ServiciosPage() {
             sizes="(min-width: 1024px) 50vw, 100vw"
             className="object-cover"
             priority
+            unoptimized
           />
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-16 text-center">
-        <h2 className="font-display text-2xl md:text-3xl font-medium text-borgona-dark">
+        <h2 className="font-display text-2xl md:text-3xl font-medium text-borgona">
           ¿Qué quieres hacer con tu recuerdo?
         </h2>
         <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {tiposServicio.map((s) => (
             <div key={s.titulo} className="rounded-2xl border border-greige/60 bg-white/70 p-6 flex flex-col text-left">
-              <div className="h-14 w-14 mx-auto rounded-full bg-rosa/40 flex items-center justify-center">
-                <s.Icono className="h-6 w-6 text-borgona" />
+              <div className="relative h-14 w-14 mx-auto">
+                <Image src={s.icono} alt="" fill sizes="96px" className="object-contain" unoptimized />
               </div>
               <h3 className="mt-3 font-display text-base text-borgona text-center">{s.titulo}</h3>
               <p className="mt-1.5 text-xs text-carbon/60 text-center">{s.texto}</p>
@@ -201,9 +189,12 @@ export default function ServiciosPage() {
 
       <section className="bg-greige/20 py-16">
         <div className="mx-auto max-w-6xl px-6 text-center">
-          <h2 className="font-display text-2xl md:text-3xl font-medium text-borgona-dark">
+          <h2 className="font-display text-2xl md:text-3xl font-medium text-borgona">
             Encuentra una solución según tu recuerdo
           </h2>
+          <div className="relative mx-auto mt-2 h-6 w-44 md:w-56">
+            <Image src="/images/servicios/divider-rama.png" alt="" fill sizes="224px" className="object-contain" unoptimized />
+          </div>
           <p className="mt-2 text-sm text-carbon/60">
             Selecciona una categoría y te mostraremos qué servicios aplican a tu objeto.
           </p>
@@ -214,8 +205,8 @@ export default function ServiciosPage() {
                 href="/catalogo"
                 className="flex flex-col items-center gap-2 w-24 group"
               >
-                <div className="h-14 w-14 rounded-full bg-rosa/40 flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
-                  <c.Icono className="h-6 w-6 text-borgona" />
+                <div className="relative h-14 w-14 transition-transform duration-200 group-hover:scale-105">
+                  <Image src={c.icono} alt="" fill sizes="96px" className="object-contain" unoptimized />
                 </div>
                 <span className="text-xs text-carbon/70 text-center">{c.titulo}</span>
               </Link>
@@ -225,13 +216,16 @@ export default function ServiciosPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-16 text-center">
-        <h2 className="font-display text-2xl md:text-3xl font-medium text-borgona-dark">
+        <h2 className="inline-flex items-center gap-2 font-display text-2xl md:text-3xl font-medium text-borgona">
           Lo que puede volver a ser
+          <span className="relative h-5 w-8 shrink-0">
+            <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="32px" className="object-contain" />
+          </span>
         </h2>
         <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {transformaciones.map((t) => (
             <div key={t.titulo} className="text-left">
-              <BeforeAfterSlider before={t.before} after={t.after} className="h-28 w-full rounded-xl" />
+              <BeforeAfterSlider before={t.before} after={t.after} alt={t.titulo} className="aspect-[4/3] w-full rounded-2xl" />
               <h3 className="mt-3 font-display text-sm text-borgona">{t.titulo}</h3>
               <p className="mt-1 text-xs text-carbon/60">{t.texto}</p>
             </div>
@@ -243,31 +237,44 @@ export default function ServiciosPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-16">
-        <div className="rounded-2xl bg-greige/20 border border-greige/50 p-8 grid md:grid-cols-[auto_1fr_auto] gap-6 items-center relative overflow-hidden">
-          <div className="relative h-20 w-20 rounded-full overflow-hidden shrink-0 mx-auto md:mx-0">
-            <Image src="/images/servicios/alma-ayuda.png" alt="Alma" fill sizes="80px" className="object-cover" />
+        <div className="rounded-2xl bg-greige/20 border border-greige/50 p-8 md:p-10 relative overflow-hidden">
+          <div className="pointer-events-none absolute -right-4 -bottom-6 hidden h-56 w-44 opacity-60 sm:block md:h-64 md:w-52">
+            <Image src="/images/servicios/card-rama-alma.png" alt="" fill sizes="208px" className="object-contain object-bottom" unoptimized />
           </div>
-          <div className="text-center md:text-left">
-            <h3 className="font-display text-xl text-borgona">¿No sabes qué servicio necesitas?</h3>
-            <p className="mt-1 text-sm text-carbon/70">
-              Hola, soy Alma. Cuéntame sobre ese objeto tan especial, quién era importante para ti y qué te gustaría conservar de él. Te ayudaré a descubrir la mejor opción para darle una nueva vida.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row md:flex-col gap-3 justify-center">
-            <Button href="/chat" variant="primary" className="inline-flex items-center gap-2 justify-center">
-              <IconMessage className="h-4 w-4" />
-              Hablar con Alma
-            </Button>
-            <Button href="/recuerdos/nuevo" variant="secondary" className="justify-center">
-              Subir una fotografía
-            </Button>
+          <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-6">
+            <div className="relative h-28 w-28 md:h-32 md:w-32 shrink-0">
+              <div className="h-28 w-28 md:h-32 md:w-32 rounded-full overflow-hidden ring-2 ring-white">
+                <Image src="/images/servicios/alma-ayuda.png" alt="Alma" fill sizes="128px" className="object-cover" unoptimized />
+              </div>
+              <span className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-full bg-rosa/70 text-borgona ring-2 ring-marfil">
+                <IconMessage className="h-4 w-4" />
+              </span>
+            </div>
+            <div className="relative flex-1 text-center sm:text-left max-w-xl">
+              <h3 className="font-display text-xl text-borgona">¿No sabes qué servicio necesitas?</h3>
+              <p className="mt-2 text-sm text-carbon/70 leading-relaxed">
+                Hola, soy Alma. Cuéntame sobre ese objeto tan especial, quién era importante para ti y qué te gustaría conservar de él. Te ayudaré a descubrir la mejor opción para darle una nueva vida.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3 justify-center sm:justify-start">
+                <Button href="/chat" variant="primary" className="inline-flex items-center gap-2 justify-center">
+                  <IconMessage className="h-4 w-4" />
+                  Hablar con Alma
+                </Button>
+                <Button href="/recuerdos/nuevo" variant="secondary" className="justify-center">
+                  Subir una fotografía
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-16 text-center">
-        <h2 className="font-display text-2xl md:text-3xl font-medium text-borgona-dark">
+        <h2 className="inline-flex items-center gap-2 font-display text-2xl md:text-3xl font-medium text-borgona">
           Así es nuestro proceso
+          <span className="relative h-5 w-8 shrink-0">
+            <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="32px" className="object-contain" />
+          </span>
         </h2>
         <div className="relative z-0 mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-12">
           <div className="hidden lg:block absolute left-[8%] right-[8%] top-8 -z-10 border-t-2 border-dotted border-dorado-suave/50" />
@@ -288,14 +295,17 @@ export default function ServiciosPage() {
 
       <section className="bg-greige/20 py-16">
         <div className="mx-auto max-w-6xl px-6 text-center">
-          <h2 className="font-display text-2xl md:text-3xl font-medium text-borgona-dark">
+          <h2 className="inline-flex items-center gap-2 font-display text-2xl md:text-3xl font-medium text-borgona">
             Soluciones destacadas
+            <span className="relative h-5 w-8 shrink-0">
+              <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="32px" className="object-contain" />
+            </span>
           </h2>
           <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {soluciones.map((s) => (
               <div key={s.titulo} className="rounded-2xl border border-greige/60 bg-white/70 overflow-hidden flex flex-col text-left">
-                <div className="relative h-32 w-full">
-                  <Image src={s.foto} alt="" fill sizes="300px" className="object-cover" />
+                <div className="relative aspect-[4/3] w-full">
+                  <Image src={s.foto} alt="" fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover" unoptimized />
                 </div>
                 <div className="p-5 flex flex-col flex-1">
                   <h3 className="font-display text-base text-borgona">{s.titulo}</h3>
@@ -314,8 +324,11 @@ export default function ServiciosPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-16 text-center">
-        <h2 className="font-display text-2xl md:text-3xl font-medium text-borgona-dark">
+        <h2 className="inline-flex items-center gap-2 font-display text-2xl md:text-3xl font-medium text-borgona">
           Ellos confiaron en Reviive para conservar sus recuerdos
+          <span className="relative h-5 w-8 shrink-0">
+            <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="32px" className="object-contain" />
+          </span>
         </h2>
         <div className="mt-10 grid sm:grid-cols-3 gap-6">
           {testimonios.map((t) => (
@@ -333,8 +346,11 @@ export default function ServiciosPage() {
       </section>
 
       <section className="mx-auto max-w-4xl px-6 pb-20">
-        <h2 className="text-center font-display text-2xl md:text-3xl font-medium text-borgona-dark">
+        <h2 className="flex items-center justify-center gap-2 font-display text-2xl md:text-3xl font-medium text-borgona">
           Preguntas frecuentes
+          <span className="relative h-5 w-8 shrink-0">
+            <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="32px" className="object-contain" />
+          </span>
         </h2>
         <div className="mt-8 grid sm:grid-cols-2 gap-x-8">
           {preguntas.map((p) => (
@@ -348,8 +364,14 @@ export default function ServiciosPage() {
         </div>
       </section>
 
-      <section className="bg-borgona py-12">
-        <div className="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+      <section className="relative overflow-hidden bg-borgona py-7">
+        <div className="pointer-events-none absolute bottom-0 left-0 h-32 w-24 opacity-40 md:h-40 md:w-28">
+          <Image src="/images/servicios/cta-rama-izquierda.png" alt="" fill sizes="112px" className="object-contain object-left-bottom" unoptimized />
+        </div>
+        <div className="pointer-events-none absolute bottom-0 right-0 h-32 w-24 opacity-40 md:h-40 md:w-28">
+          <Image src="/images/servicios/cta-rama-derecha.png" alt="" fill sizes="112px" className="object-contain object-right-bottom" unoptimized />
+        </div>
+        <div className="relative mx-auto max-w-6xl px-6 flex flex-col items-center gap-3 text-center">
           <div>
             <p className="font-display text-xl text-marfil">Cada recuerdo merece una oportunidad de permanecer.</p>
             <p className="mt-1 text-sm text-marfil/70">Cuéntanos qué tienes y te ayudaremos a encontrar la mejor forma de conservarlo.</p>
