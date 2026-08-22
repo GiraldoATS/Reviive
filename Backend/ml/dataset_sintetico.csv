@@ -1,0 +1,1501 @@
+tipo_objeto,material,estado,uso_deseado,presupuesto,cantidad,transformacion,ciudad,preferencia,producto_recomendado
+prenda_textil,tela,danado,restaurar,105665,1,ninguna,Bucaramanga,fisico,Almohada Abrazo
+reloj_instrumento,tela,bueno,conservar,58600,1,ninguna,Bucaramanga,fisico,Caja del Tiempo
+reloj_instrumento,metal,muy_danado,recordar_digitalmente,121265,1,ninguna,Medellin,fisico,Restauración Especial
+mueble,vidrio,regular,restaurar,127919,4,moderada,Bogota,fisico,Restauración Especial
+prenda_textil,peluche_sintetico,danado,recordar_digitalmente,30000,1,ninguna,Barranquilla,fisico,Almohada Abrazo
+reloj_instrumento,papel,danado,recordar_digitalmente,49423,3,moderada,Bucaramanga,fisico,Restauración Especial
+prenda_textil,tela,regular,transformar,99474,5,leve,Bogota,fisico,Almohada Abrazo
+otro_objeto,peluche_sintetico,regular,transformar,83931,1,moderada,Bogota,fisico,Restauración Especial
+fotografia,metal,regular,compartir,94411,1,leve,Cali,digital,Memorial Digital
+peluche,metal,bueno,transformar,65143,1,ninguna,Medellin,digital,Memorial Digital
+mueble,metal,muy_danado,compartir,125778,3,total,Medellin,fisico,Recuerdo Compartido
+joya_pequena,vidrio,muy_danado,recordar_digitalmente,122222,1,leve,Medellin,fisico,Libro de Memorias
+prenda_textil,tela,bueno,restaurar,97311,2,total,Bucaramanga,fisico,Almohada Abrazo
+reloj_instrumento,mixto,danado,recordar_digitalmente,134453,3,ninguna,Bogota,fisico,Recuerdo Compartido
+carta_documento,peluche_sintetico,bueno,transformar,111362,1,total,Bogota,digital,Memorial Digital
+carta_documento,madera,bueno,transformar,64924,3,leve,Medellin,fisico,Libro de Memorias
+fotografia,tela,danado,compartir,107906,1,moderada,Cali,fisico,Cuadro de Historia
+joya_pequena,papel,bueno,compartir,61439,3,leve,Medellin,fisico,Recuerdo Compartido
+fotografia,vidrio,muy_danado,restaurar,125745,4,leve,Cali,fisico,Cuadro de Historia
+mueble,mixto,muy_danado,conservar,93252,1,ninguna,Cali,fisico,Almohada Abrazo
+joya_pequena,metal,bueno,conservar,88529,2,ninguna,Medellin,fisico,Caja del Tiempo
+peluche,peluche_sintetico,bueno,recordar_digitalmente,71167,1,total,Medellin,fisico,Peluche Memoria
+otro_objeto,metal,muy_danado,compartir,137788,1,ninguna,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,mixto,bueno,conservar,89591,1,moderada,Bogota,fisico,Restauración Especial
+joya_pequena,mixto,regular,compartir,80008,1,total,Medellin,digital,Memorial Digital
+prenda_textil,mixto,bueno,conservar,82675,2,ninguna,Bogota,digital,Memorial Digital
+joya_pequena,madera,muy_danado,compartir,113630,1,total,Bogota,fisico,Caja del Tiempo
+peluche,cuero,danado,compartir,107790,1,total,Medellin,fisico,Restauración Especial
+joya_pequena,tela,bueno,transformar,109445,1,total,Bucaramanga,digital,Memorial Digital
+fotografia,tela,bueno,restaurar,110078,1,ninguna,Medellin,fisico,Cuadro de Historia
+joya_pequena,tela,bueno,compartir,169957,2,moderada,Cali,fisico,Recuerdo Compartido
+mueble,metal,danado,compartir,80775,1,moderada,Barranquilla,fisico,Restauración Especial
+prenda_textil,tela,muy_danado,recordar_digitalmente,77071,5,ninguna,Bogota,fisico,Almohada Abrazo
+carta_documento,madera,danado,conservar,66517,3,moderada,Cali,fisico,Libro de Memorias
+carta_documento,tela,danado,conservar,116559,4,leve,Cali,fisico,Libro de Memorias
+prenda_textil,madera,danado,transformar,134514,2,moderada,Medellin,fisico,Almohada Abrazo
+carta_documento,mixto,danado,conservar,91011,1,total,Cali,fisico,Libro de Memorias
+mueble,madera,danado,restaurar,65594,2,total,Bucaramanga,fisico,Restauración Especial
+prenda_textil,madera,bueno,transformar,66143,2,leve,Barranquilla,fisico,Almohada Abrazo
+carta_documento,peluche_sintetico,bueno,transformar,117770,1,leve,Bogota,fisico,Libro de Memorias
+reloj_instrumento,madera,regular,restaurar,121013,5,leve,Barranquilla,fisico,Restauración Especial
+mueble,cuero,regular,transformar,114010,1,ninguna,Barranquilla,digital,Memorial Digital
+otro_objeto,metal,regular,compartir,71707,1,leve,Medellin,fisico,Restauración Especial
+joya_pequena,cuero,danado,transformar,103125,3,moderada,Cali,fisico,Caja del Tiempo
+reloj_instrumento,peluche_sintetico,bueno,conservar,99084,3,moderada,Medellin,fisico,Caja del Tiempo
+carta_documento,tela,bueno,recordar_digitalmente,102654,1,moderada,Barranquilla,fisico,Libro de Memorias
+prenda_textil,cuero,regular,transformar,125500,1,total,Bogota,fisico,Almohada Abrazo
+joya_pequena,peluche_sintetico,muy_danado,conservar,102825,4,moderada,Bucaramanga,fisico,Caja del Tiempo
+prenda_textil,vidrio,danado,compartir,118761,1,moderada,Bucaramanga,fisico,Almohada Abrazo
+reloj_instrumento,cuero,regular,recordar_digitalmente,97365,2,total,Bucaramanga,digital,Memorial Digital
+carta_documento,vidrio,regular,compartir,105119,2,moderada,Barranquilla,fisico,Libro de Memorias
+joya_pequena,mixto,regular,conservar,117095,1,moderada,Bogota,digital,Memorial Digital
+joya_pequena,vidrio,regular,restaurar,43999,1,ninguna,Medellin,digital,Memorial Digital
+prenda_textil,mixto,muy_danado,recordar_digitalmente,83811,1,total,Barranquilla,fisico,Almohada Abrazo
+fotografia,tela,bueno,compartir,78536,1,total,Bogota,fisico,Cuadro de Historia
+prenda_textil,mixto,regular,compartir,72639,2,moderada,Barranquilla,fisico,Almohada Abrazo
+reloj_instrumento,mixto,regular,compartir,85370,1,leve,Cali,fisico,Restauración Especial
+otro_objeto,metal,danado,compartir,147322,1,moderada,Medellin,fisico,Restauración Especial
+mueble,papel,regular,restaurar,64695,1,leve,Medellin,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,muy_danado,compartir,128889,1,total,Barranquilla,digital,Memorial Digital
+peluche,cuero,muy_danado,conservar,36099,4,moderada,Barranquilla,digital,Memorial Digital
+reloj_instrumento,metal,muy_danado,restaurar,83279,1,total,Bogota,fisico,Restauración Especial
+reloj_instrumento,madera,muy_danado,restaurar,100696,5,ninguna,Barranquilla,fisico,Restauración Especial
+peluche,papel,muy_danado,restaurar,115517,3,leve,Bogota,fisico,Restauración Especial
+mueble,metal,muy_danado,transformar,119892,1,total,Cali,fisico,Restauración Especial
+reloj_instrumento,vidrio,bueno,compartir,122767,1,ninguna,Cali,fisico,Restauración Especial
+prenda_textil,tela,bueno,restaurar,82794,1,ninguna,Bucaramanga,fisico,Almohada Abrazo
+fotografia,mixto,bueno,recordar_digitalmente,78817,4,total,Cali,fisico,Cuadro de Historia
+fotografia,papel,regular,transformar,125029,1,ninguna,Cali,fisico,Cuadro de Historia
+reloj_instrumento,cuero,regular,conservar,88304,2,leve,Bogota,fisico,Caja del Tiempo
+carta_documento,papel,bueno,transformar,50350,1,moderada,Bogota,fisico,Libro de Memorias
+mueble,tela,muy_danado,compartir,55334,1,moderada,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,madera,danado,recordar_digitalmente,62819,3,total,Barranquilla,fisico,Restauración Especial
+carta_documento,peluche_sintetico,regular,conservar,112400,1,total,Medellin,fisico,Libro de Memorias
+reloj_instrumento,peluche_sintetico,bueno,compartir,99984,3,leve,Barranquilla,fisico,Recuerdo Compartido
+carta_documento,peluche_sintetico,danado,recordar_digitalmente,119166,2,moderada,Bucaramanga,fisico,Libro de Memorias
+joya_pequena,papel,regular,compartir,80046,1,leve,Barranquilla,fisico,Caja del Tiempo
+otro_objeto,mixto,bueno,conservar,100548,1,total,Medellin,fisico,Restauración Especial
+mueble,mixto,danado,compartir,116895,5,moderada,Cali,fisico,Recuerdo Compartido
+carta_documento,vidrio,danado,restaurar,84172,1,leve,Cali,fisico,Libro de Memorias
+fotografia,metal,regular,compartir,110987,1,moderada,Bogota,digital,Memorial Digital
+carta_documento,metal,danado,restaurar,71832,1,leve,Cali,fisico,Libro de Memorias
+peluche,vidrio,regular,compartir,82293,1,ninguna,Bucaramanga,fisico,Peluche Memoria
+otro_objeto,mixto,danado,restaurar,81639,5,moderada,Barranquilla,fisico,Restauración Especial
+prenda_textil,cuero,muy_danado,conservar,53145,2,ninguna,Medellin,fisico,Almohada Abrazo
+carta_documento,papel,regular,conservar,112044,2,total,Bucaramanga,fisico,Libro de Memorias
+joya_pequena,cuero,muy_danado,compartir,78570,1,total,Cali,fisico,Caja del Tiempo
+peluche,papel,regular,restaurar,95437,1,ninguna,Medellin,fisico,Peluche Memoria
+prenda_textil,madera,bueno,compartir,111826,1,total,Cali,fisico,Almohada Abrazo
+carta_documento,vidrio,muy_danado,conservar,110628,2,moderada,Bucaramanga,fisico,Libro de Memorias
+joya_pequena,cuero,bueno,recordar_digitalmente,118288,1,leve,Cali,digital,Memorial Digital
+prenda_textil,tela,regular,transformar,91553,2,moderada,Barranquilla,fisico,Almohada Abrazo
+carta_documento,cuero,danado,recordar_digitalmente,80184,1,total,Bogota,fisico,Libro de Memorias
+reloj_instrumento,peluche_sintetico,danado,conservar,92209,1,ninguna,Cali,fisico,Restauración Especial
+fotografia,mixto,muy_danado,transformar,35943,1,total,Barranquilla,digital,Memorial Digital
+otro_objeto,peluche_sintetico,muy_danado,transformar,44351,1,ninguna,Medellin,fisico,Restauración Especial
+otro_objeto,vidrio,muy_danado,recordar_digitalmente,48705,1,ninguna,Cali,fisico,Restauración Especial
+prenda_textil,cuero,bueno,recordar_digitalmente,60096,1,ninguna,Medellin,fisico,Almohada Abrazo
+otro_objeto,mixto,bueno,restaurar,108992,1,leve,Cali,fisico,Restauración Especial
+otro_objeto,papel,bueno,recordar_digitalmente,63308,2,leve,Cali,fisico,Restauración Especial
+reloj_instrumento,papel,regular,conservar,81764,1,ninguna,Medellin,fisico,Restauración Especial
+carta_documento,vidrio,muy_danado,compartir,140472,5,leve,Barranquilla,fisico,Libro de Memorias
+reloj_instrumento,metal,regular,conservar,82530,1,total,Cali,digital,Memorial Digital
+carta_documento,tela,danado,transformar,120813,3,total,Medellin,fisico,Libro de Memorias
+otro_objeto,peluche_sintetico,danado,recordar_digitalmente,62323,2,total,Barranquilla,digital,Memorial Digital
+joya_pequena,metal,muy_danado,restaurar,87809,3,total,Bogota,fisico,Caja del Tiempo
+otro_objeto,cuero,muy_danado,restaurar,61749,1,ninguna,Medellin,fisico,Restauración Especial
+mueble,papel,muy_danado,conservar,83133,1,total,Bogota,fisico,Restauración Especial
+reloj_instrumento,madera,bueno,compartir,124410,2,moderada,Cali,fisico,Recuerdo Compartido
+reloj_instrumento,papel,danado,recordar_digitalmente,34543,1,moderada,Barranquilla,digital,Memorial Digital
+peluche,papel,regular,transformar,110204,5,ninguna,Barranquilla,digital,Memorial Digital
+prenda_textil,mixto,regular,transformar,103320,4,ninguna,Cali,fisico,Almohada Abrazo
+carta_documento,peluche_sintetico,danado,compartir,74204,1,total,Bucaramanga,fisico,Libro de Memorias
+fotografia,madera,regular,conservar,44387,2,total,Bucaramanga,fisico,Libro de Memorias
+otro_objeto,madera,regular,compartir,97524,2,total,Cali,fisico,Recuerdo Compartido
+otro_objeto,vidrio,regular,conservar,76467,1,moderada,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,vidrio,muy_danado,transformar,103143,1,total,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,danado,transformar,95764,1,total,Cali,fisico,Restauración Especial
+peluche,mixto,danado,restaurar,151062,2,moderada,Medellin,fisico,Restauración Especial
+carta_documento,madera,bueno,conservar,86622,1,total,Bogota,fisico,Libro de Memorias
+fotografia,papel,danado,transformar,59177,2,leve,Medellin,fisico,Cuadro de Historia
+mueble,vidrio,regular,transformar,101274,4,total,Cali,fisico,Restauración Especial
+mueble,papel,muy_danado,conservar,102699,1,leve,Barranquilla,digital,Memorial Digital
+mueble,papel,muy_danado,conservar,142571,1,ninguna,Barranquilla,fisico,Restauración Especial
+carta_documento,cuero,danado,conservar,124228,2,total,Bogota,fisico,Libro de Memorias
+mueble,metal,bueno,compartir,107490,4,moderada,Barranquilla,fisico,Recuerdo Compartido
+peluche,tela,danado,compartir,146215,1,leve,Bucaramanga,fisico,Restauración Especial
+otro_objeto,peluche_sintetico,muy_danado,recordar_digitalmente,53393,2,leve,Barranquilla,fisico,Restauración Especial
+otro_objeto,cuero,danado,conservar,72608,2,leve,Barranquilla,fisico,Caja del Tiempo
+joya_pequena,peluche_sintetico,bueno,transformar,62569,1,moderada,Bogota,fisico,Caja del Tiempo
+joya_pequena,papel,muy_danado,conservar,81356,2,ninguna,Bogota,fisico,Caja del Tiempo
+joya_pequena,madera,regular,conservar,46815,3,leve,Bucaramanga,fisico,Caja del Tiempo
+joya_pequena,peluche_sintetico,regular,recordar_digitalmente,117230,1,leve,Medellin,fisico,Caja del Tiempo
+fotografia,papel,bueno,restaurar,87222,1,leve,Bucaramanga,fisico,Cuadro de Historia
+fotografia,vidrio,bueno,restaurar,43521,2,ninguna,Bogota,fisico,Peluche Memoria
+mueble,papel,muy_danado,recordar_digitalmente,59454,1,ninguna,Bucaramanga,fisico,Restauración Especial
+peluche,tela,muy_danado,compartir,105972,1,ninguna,Barranquilla,fisico,Restauración Especial
+otro_objeto,papel,bueno,transformar,124334,2,ninguna,Medellin,fisico,Restauración Especial
+mueble,cuero,danado,compartir,164885,1,total,Bogota,fisico,Restauración Especial
+prenda_textil,metal,muy_danado,compartir,196985,3,total,Cali,digital,Memorial Digital
+reloj_instrumento,cuero,bueno,transformar,109504,1,moderada,Cali,digital,Memorial Digital
+otro_objeto,papel,bueno,conservar,60366,1,ninguna,Cali,digital,Memorial Digital
+peluche,peluche_sintetico,bueno,compartir,30000,1,total,Bogota,digital,Memorial Digital
+carta_documento,peluche_sintetico,bueno,recordar_digitalmente,104369,1,leve,Barranquilla,fisico,Libro de Memorias
+prenda_textil,peluche_sintetico,danado,conservar,66547,2,leve,Barranquilla,digital,Memorial Digital
+peluche,vidrio,bueno,restaurar,80462,1,moderada,Cali,fisico,Peluche Memoria
+fotografia,madera,muy_danado,conservar,73576,1,ninguna,Bogota,fisico,Cuadro de Historia
+joya_pequena,cuero,muy_danado,compartir,90072,1,moderada,Cali,fisico,Caja del Tiempo
+prenda_textil,tela,regular,restaurar,132309,2,ninguna,Bogota,fisico,Almohada Abrazo
+reloj_instrumento,mixto,muy_danado,compartir,100496,1,ninguna,Cali,fisico,Restauración Especial
+carta_documento,mixto,danado,conservar,89447,1,ninguna,Bogota,fisico,Libro de Memorias
+joya_pequena,madera,danado,transformar,58752,1,ninguna,Barranquilla,fisico,Caja del Tiempo
+fotografia,madera,muy_danado,recordar_digitalmente,36386,2,moderada,Bogota,fisico,Cuadro de Historia
+peluche,cuero,bueno,compartir,77979,4,moderada,Bucaramanga,fisico,Peluche Memoria
+reloj_instrumento,cuero,danado,conservar,93117,1,moderada,Medellin,digital,Memorial Digital
+otro_objeto,peluche_sintetico,bueno,compartir,156877,3,leve,Barranquilla,fisico,Recuerdo Compartido
+prenda_textil,cuero,danado,transformar,99559,1,leve,Bogota,fisico,Almohada Abrazo
+prenda_textil,metal,danado,transformar,129395,2,leve,Medellin,fisico,Almohada Abrazo
+carta_documento,metal,regular,recordar_digitalmente,77524,1,ninguna,Medellin,digital,Memorial Digital
+otro_objeto,mixto,muy_danado,recordar_digitalmente,53526,2,moderada,Cali,fisico,Restauración Especial
+prenda_textil,mixto,muy_danado,transformar,61220,2,ninguna,Cali,fisico,Almohada Abrazo
+carta_documento,mixto,muy_danado,conservar,69617,1,moderada,Bogota,fisico,Libro de Memorias
+prenda_textil,cuero,muy_danado,recordar_digitalmente,169496,2,ninguna,Barranquilla,digital,Memorial Digital
+joya_pequena,peluche_sintetico,muy_danado,recordar_digitalmente,66251,1,ninguna,Barranquilla,fisico,Caja del Tiempo
+mueble,papel,regular,conservar,124347,1,total,Barranquilla,fisico,Restauración Especial
+fotografia,peluche_sintetico,danado,transformar,63397,1,moderada,Bucaramanga,fisico,Cuadro de Historia
+mueble,papel,danado,conservar,127605,2,total,Cali,fisico,Restauración Especial
+fotografia,peluche_sintetico,bueno,recordar_digitalmente,108473,2,moderada,Cali,digital,Memorial Digital
+reloj_instrumento,madera,bueno,transformar,89517,2,moderada,Medellin,fisico,Restauración Especial
+prenda_textil,cuero,danado,conservar,93573,1,leve,Medellin,fisico,Almohada Abrazo
+otro_objeto,metal,regular,restaurar,72082,1,moderada,Bogota,fisico,Restauración Especial
+peluche,peluche_sintetico,regular,recordar_digitalmente,110612,1,leve,Medellin,digital,Memorial Digital
+fotografia,mixto,bueno,compartir,79075,1,leve,Barranquilla,fisico,Cuadro de Historia
+otro_objeto,metal,regular,transformar,52103,5,total,Medellin,fisico,Restauración Especial
+otro_objeto,mixto,danado,compartir,50272,1,total,Medellin,digital,Memorial Digital
+fotografia,vidrio,bueno,compartir,101040,3,ninguna,Bucaramanga,digital,Memorial Digital
+carta_documento,papel,regular,transformar,150268,1,leve,Barranquilla,fisico,Libro de Memorias
+joya_pequena,mixto,danado,conservar,100599,1,total,Bucaramanga,fisico,Caja del Tiempo
+reloj_instrumento,papel,danado,restaurar,90847,1,ninguna,Cali,fisico,Restauración Especial
+fotografia,tela,danado,compartir,105003,2,leve,Barranquilla,fisico,Cuadro de Historia
+peluche,papel,bueno,transformar,140710,1,leve,Bucaramanga,digital,Memorial Digital
+reloj_instrumento,papel,danado,restaurar,102678,1,ninguna,Medellin,fisico,Restauración Especial
+otro_objeto,papel,bueno,compartir,80617,2,ninguna,Bucaramanga,fisico,Recuerdo Compartido
+fotografia,vidrio,muy_danado,conservar,133720,2,leve,Bucaramanga,fisico,Cuadro de Historia
+prenda_textil,peluche_sintetico,bueno,recordar_digitalmente,110006,1,ninguna,Barranquilla,digital,Memorial Digital
+peluche,cuero,danado,transformar,148751,2,moderada,Bogota,fisico,Restauración Especial
+prenda_textil,peluche_sintetico,regular,conservar,101413,1,moderada,Medellin,digital,Memorial Digital
+otro_objeto,mixto,regular,restaurar,52143,1,total,Bogota,fisico,Restauración Especial
+peluche,metal,bueno,transformar,47114,4,total,Bucaramanga,fisico,Peluche Memoria
+peluche,metal,danado,transformar,152782,3,ninguna,Cali,fisico,Restauración Especial
+mueble,cuero,muy_danado,compartir,155328,3,total,Cali,digital,Memorial Digital
+otro_objeto,mixto,danado,recordar_digitalmente,88716,1,ninguna,Barranquilla,fisico,Restauración Especial
+fotografia,vidrio,danado,conservar,81588,1,moderada,Cali,fisico,Cuadro de Historia
+reloj_instrumento,madera,muy_danado,transformar,146150,1,moderada,Bucaramanga,digital,Cuadro de Historia
+carta_documento,tela,bueno,compartir,56253,1,leve,Bogota,fisico,Libro de Memorias
+otro_objeto,tela,regular,conservar,63684,1,moderada,Cali,fisico,Restauración Especial
+peluche,madera,muy_danado,transformar,117516,1,ninguna,Bucaramanga,fisico,Restauración Especial
+mueble,cuero,danado,transformar,81188,1,ninguna,Bogota,fisico,Restauración Especial
+otro_objeto,cuero,bueno,transformar,94820,2,total,Medellin,digital,Memorial Digital
+carta_documento,mixto,regular,conservar,89279,1,ninguna,Barranquilla,fisico,Libro de Memorias
+otro_objeto,papel,danado,transformar,106815,2,moderada,Cali,digital,Memorial Digital
+fotografia,peluche_sintetico,regular,conservar,144261,5,leve,Medellin,fisico,Cuadro de Historia
+peluche,peluche_sintetico,danado,compartir,98170,3,leve,Bucaramanga,digital,Memorial Digital
+prenda_textil,vidrio,muy_danado,compartir,117537,1,total,Bucaramanga,fisico,Almohada Abrazo
+mueble,papel,muy_danado,compartir,30000,2,moderada,Medellin,digital,Memorial Digital
+fotografia,madera,muy_danado,recordar_digitalmente,93294,4,ninguna,Bogota,fisico,Cuadro de Historia
+carta_documento,madera,regular,transformar,65486,4,leve,Cali,digital,Memorial Digital
+carta_documento,papel,danado,restaurar,52341,2,moderada,Medellin,fisico,Libro de Memorias
+prenda_textil,madera,regular,restaurar,64264,2,moderada,Bucaramanga,fisico,Almohada Abrazo
+peluche,papel,bueno,recordar_digitalmente,83305,1,leve,Bucaramanga,fisico,Peluche Memoria
+peluche,mixto,danado,transformar,127056,1,total,Cali,fisico,Memorial Digital
+peluche,madera,muy_danado,compartir,48576,1,leve,Cali,fisico,Restauración Especial
+mueble,peluche_sintetico,danado,compartir,96072,1,moderada,Bucaramanga,fisico,Restauración Especial
+mueble,metal,muy_danado,conservar,78054,1,leve,Medellin,fisico,Restauración Especial
+carta_documento,cuero,muy_danado,restaurar,83531,5,leve,Cali,digital,Memorial Digital
+mueble,metal,regular,compartir,130096,5,total,Barranquilla,digital,Memorial Digital
+otro_objeto,tela,bueno,compartir,113834,1,leve,Medellin,fisico,Restauración Especial
+peluche,tela,danado,compartir,141808,2,total,Cali,fisico,Recuerdo Compartido
+prenda_textil,cuero,regular,transformar,89592,2,total,Cali,fisico,Almohada Abrazo
+peluche,metal,danado,recordar_digitalmente,70642,1,total,Bucaramanga,fisico,Restauración Especial
+carta_documento,papel,regular,conservar,87164,1,moderada,Bucaramanga,digital,Memorial Digital
+fotografia,metal,muy_danado,recordar_digitalmente,103487,1,ninguna,Medellin,fisico,Cuadro de Historia
+otro_objeto,mixto,regular,recordar_digitalmente,101180,3,leve,Cali,digital,Almohada Abrazo
+mueble,madera,muy_danado,recordar_digitalmente,57046,2,moderada,Bucaramanga,fisico,Restauración Especial
+otro_objeto,vidrio,muy_danado,conservar,98167,1,ninguna,Barranquilla,fisico,Restauración Especial
+peluche,mixto,danado,recordar_digitalmente,102987,2,ninguna,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,madera,regular,conservar,183111,2,ninguna,Medellin,fisico,Caja del Tiempo
+mueble,cuero,regular,compartir,160689,2,total,Bucaramanga,fisico,Recuerdo Compartido
+otro_objeto,tela,regular,recordar_digitalmente,65136,1,moderada,Barranquilla,fisico,Recuerdo Compartido
+mueble,madera,muy_danado,recordar_digitalmente,84941,1,moderada,Cali,fisico,Restauración Especial
+joya_pequena,metal,danado,recordar_digitalmente,43779,1,moderada,Cali,fisico,Caja del Tiempo
+otro_objeto,peluche_sintetico,muy_danado,transformar,74325,2,moderada,Cali,fisico,Restauración Especial
+reloj_instrumento,cuero,danado,restaurar,106046,1,moderada,Bogota,fisico,Restauración Especial
+otro_objeto,vidrio,muy_danado,restaurar,137204,1,moderada,Bucaramanga,fisico,Restauración Especial
+fotografia,papel,regular,restaurar,69482,1,leve,Medellin,fisico,Cuadro de Historia
+reloj_instrumento,peluche_sintetico,muy_danado,conservar,72104,2,leve,Bogota,digital,Memorial Digital
+fotografia,cuero,muy_danado,compartir,30000,2,moderada,Cali,fisico,Cuadro de Historia
+peluche,papel,regular,recordar_digitalmente,89306,2,ninguna,Medellin,fisico,Peluche Memoria
+fotografia,tela,muy_danado,compartir,57815,1,moderada,Bogota,fisico,Cuadro de Historia
+prenda_textil,peluche_sintetico,danado,compartir,76469,5,total,Medellin,digital,Memorial Digital
+otro_objeto,vidrio,regular,conservar,64309,1,total,Cali,fisico,Restauración Especial
+peluche,peluche_sintetico,danado,recordar_digitalmente,91700,2,leve,Medellin,fisico,Restauración Especial
+reloj_instrumento,cuero,danado,conservar,33479,1,ninguna,Medellin,digital,Memorial Digital
+otro_objeto,peluche_sintetico,regular,conservar,43653,1,leve,Barranquilla,fisico,Restauración Especial
+mueble,vidrio,bueno,transformar,169523,2,leve,Bogota,fisico,Restauración Especial
+otro_objeto,vidrio,regular,compartir,49940,2,moderada,Bogota,fisico,Recuerdo Compartido
+carta_documento,peluche_sintetico,regular,restaurar,56612,4,total,Medellin,fisico,Libro de Memorias
+mueble,cuero,muy_danado,recordar_digitalmente,159291,3,leve,Medellin,fisico,Restauración Especial
+prenda_textil,mixto,danado,conservar,196677,4,ninguna,Bogota,digital,Memorial Digital
+joya_pequena,madera,regular,transformar,53995,3,total,Bogota,fisico,Caja del Tiempo
+otro_objeto,papel,muy_danado,conservar,82111,1,total,Barranquilla,fisico,Restauración Especial
+otro_objeto,vidrio,bueno,compartir,106954,1,ninguna,Medellin,fisico,Restauración Especial
+peluche,cuero,danado,conservar,155504,1,ninguna,Bogota,digital,Memorial Digital
+otro_objeto,tela,danado,compartir,60460,1,leve,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,mixto,muy_danado,compartir,86415,1,leve,Cali,fisico,Restauración Especial
+reloj_instrumento,madera,regular,conservar,122206,2,moderada,Barranquilla,fisico,Caja del Tiempo
+reloj_instrumento,cuero,regular,restaurar,110216,1,leve,Cali,fisico,Restauración Especial
+prenda_textil,tela,muy_danado,recordar_digitalmente,81834,2,ninguna,Medellin,fisico,Almohada Abrazo
+prenda_textil,tela,muy_danado,recordar_digitalmente,90316,2,ninguna,Medellin,fisico,Almohada Abrazo
+reloj_instrumento,mixto,regular,recordar_digitalmente,46878,1,ninguna,Medellin,fisico,Restauración Especial
+carta_documento,metal,danado,recordar_digitalmente,86663,2,moderada,Medellin,fisico,Libro de Memorias
+fotografia,metal,muy_danado,transformar,85676,1,leve,Barranquilla,fisico,Cuadro de Historia
+peluche,peluche_sintetico,muy_danado,recordar_digitalmente,103125,1,total,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,madera,muy_danado,restaurar,75563,3,moderada,Medellin,digital,Memorial Digital
+peluche,cuero,muy_danado,recordar_digitalmente,111503,1,total,Medellin,fisico,Restauración Especial
+mueble,papel,muy_danado,transformar,130445,1,leve,Bogota,fisico,Restauración Especial
+peluche,papel,regular,recordar_digitalmente,100440,2,leve,Barranquilla,fisico,Peluche Memoria
+mueble,vidrio,bueno,restaurar,107311,4,ninguna,Barranquilla,digital,Memorial Digital
+joya_pequena,cuero,regular,recordar_digitalmente,96860,1,moderada,Barranquilla,fisico,Caja del Tiempo
+mueble,vidrio,danado,transformar,95002,1,total,Barranquilla,fisico,Restauración Especial
+otro_objeto,peluche_sintetico,regular,transformar,69745,1,ninguna,Bucaramanga,digital,Memorial Digital
+fotografia,tela,danado,recordar_digitalmente,106077,4,total,Cali,fisico,Cuadro de Historia
+mueble,metal,muy_danado,recordar_digitalmente,91594,3,total,Bucaramanga,fisico,Restauración Especial
+mueble,vidrio,muy_danado,compartir,168260,1,moderada,Medellin,fisico,Restauración Especial
+otro_objeto,madera,bueno,recordar_digitalmente,150067,1,ninguna,Bogota,fisico,Restauración Especial
+reloj_instrumento,madera,regular,conservar,108504,2,ninguna,Medellin,fisico,Caja del Tiempo
+mueble,tela,muy_danado,compartir,68292,1,total,Bogota,fisico,Restauración Especial
+carta_documento,vidrio,bueno,recordar_digitalmente,56065,3,total,Medellin,fisico,Libro de Memorias
+prenda_textil,madera,regular,restaurar,136690,2,moderada,Cali,fisico,Almohada Abrazo
+reloj_instrumento,papel,danado,compartir,104196,1,leve,Medellin,fisico,Restauración Especial
+prenda_textil,tela,bueno,compartir,111805,1,total,Bogota,fisico,Almohada Abrazo
+fotografia,papel,muy_danado,compartir,33939,2,moderada,Bucaramanga,digital,Memorial Digital
+prenda_textil,tela,regular,restaurar,127460,4,total,Cali,fisico,Almohada Abrazo
+prenda_textil,vidrio,bueno,restaurar,110904,4,moderada,Bogota,digital,Memorial Digital
+fotografia,cuero,bueno,transformar,56134,1,leve,Bucaramanga,digital,Memorial Digital
+reloj_instrumento,peluche_sintetico,muy_danado,restaurar,78496,2,ninguna,Bucaramanga,fisico,Restauración Especial
+mueble,tela,bueno,compartir,104230,1,ninguna,Cali,fisico,Almohada Abrazo
+reloj_instrumento,peluche_sintetico,bueno,transformar,96836,2,total,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,cuero,regular,recordar_digitalmente,84774,2,ninguna,Bucaramanga,fisico,Restauración Especial
+joya_pequena,papel,bueno,transformar,91377,1,leve,Barranquilla,fisico,Caja del Tiempo
+prenda_textil,papel,bueno,transformar,86180,1,moderada,Bogota,fisico,Almohada Abrazo
+fotografia,cuero,muy_danado,recordar_digitalmente,100339,2,total,Bogota,fisico,Cuadro de Historia
+mueble,papel,danado,compartir,146502,1,total,Barranquilla,fisico,Restauración Especial
+joya_pequena,madera,muy_danado,restaurar,30000,1,moderada,Cali,fisico,Caja del Tiempo
+prenda_textil,madera,muy_danado,transformar,86710,1,total,Bogota,fisico,Almohada Abrazo
+joya_pequena,mixto,regular,compartir,101177,1,moderada,Bogota,digital,Memorial Digital
+mueble,cuero,danado,compartir,105359,1,leve,Cali,fisico,Recuerdo Compartido
+joya_pequena,mixto,danado,restaurar,81982,5,moderada,Cali,fisico,Caja del Tiempo
+otro_objeto,metal,danado,compartir,33514,1,total,Cali,fisico,Restauración Especial
+joya_pequena,madera,bueno,compartir,106479,4,leve,Barranquilla,fisico,Recuerdo Compartido
+prenda_textil,cuero,muy_danado,restaurar,155457,2,leve,Cali,fisico,Almohada Abrazo
+reloj_instrumento,cuero,bueno,compartir,41314,5,total,Bucaramanga,fisico,Recuerdo Compartido
+reloj_instrumento,tela,danado,recordar_digitalmente,125233,2,ninguna,Bogota,fisico,Restauración Especial
+mueble,madera,bueno,recordar_digitalmente,83501,5,total,Cali,digital,Memorial Digital
+reloj_instrumento,papel,bueno,conservar,92853,1,leve,Barranquilla,fisico,Restauración Especial
+otro_objeto,madera,danado,conservar,58148,1,moderada,Barranquilla,digital,Memorial Digital
+prenda_textil,papel,regular,transformar,83294,1,total,Medellin,fisico,Almohada Abrazo
+mueble,mixto,bueno,compartir,140501,2,total,Cali,fisico,Recuerdo Compartido
+peluche,papel,bueno,transformar,115392,2,leve,Medellin,fisico,Peluche Memoria
+fotografia,peluche_sintetico,muy_danado,compartir,155630,1,total,Medellin,fisico,Cuadro de Historia
+reloj_instrumento,cuero,bueno,recordar_digitalmente,136209,3,total,Bucaramanga,fisico,Restauración Especial
+peluche,metal,regular,transformar,110368,2,ninguna,Bucaramanga,fisico,Peluche Memoria
+fotografia,peluche_sintetico,danado,restaurar,156037,1,moderada,Barranquilla,fisico,Cuadro de Historia
+mueble,cuero,muy_danado,recordar_digitalmente,110364,1,moderada,Barranquilla,fisico,Restauración Especial
+carta_documento,papel,regular,transformar,123979,1,moderada,Bogota,fisico,Libro de Memorias
+fotografia,cuero,muy_danado,recordar_digitalmente,84620,1,total,Barranquilla,fisico,Cuadro de Historia
+fotografia,madera,muy_danado,transformar,97329,1,moderada,Barranquilla,fisico,Restauración Especial
+mueble,tela,muy_danado,restaurar,70590,1,total,Bucaramanga,fisico,Restauración Especial
+otro_objeto,cuero,muy_danado,compartir,129635,2,total,Barranquilla,fisico,Recuerdo Compartido
+peluche,metal,danado,conservar,53759,1,moderada,Medellin,fisico,Restauración Especial
+otro_objeto,papel,bueno,transformar,122382,2,moderada,Bucaramanga,digital,Caja del Tiempo
+peluche,mixto,regular,compartir,88327,1,leve,Cali,digital,Cuadro de Historia
+peluche,mixto,danado,transformar,135993,3,ninguna,Barranquilla,digital,Memorial Digital
+prenda_textil,metal,regular,recordar_digitalmente,121280,2,total,Medellin,fisico,Restauración Especial
+joya_pequena,metal,bueno,recordar_digitalmente,158722,1,moderada,Bucaramanga,fisico,Caja del Tiempo
+mueble,vidrio,danado,recordar_digitalmente,120577,1,ninguna,Medellin,digital,Memorial Digital
+reloj_instrumento,tela,danado,restaurar,39978,2,leve,Medellin,fisico,Restauración Especial
+mueble,metal,muy_danado,compartir,92656,1,moderada,Barranquilla,fisico,Restauración Especial
+prenda_textil,papel,muy_danado,recordar_digitalmente,53979,2,moderada,Barranquilla,digital,Memorial Digital
+mueble,tela,bueno,compartir,76860,2,moderada,Bogota,fisico,Recuerdo Compartido
+reloj_instrumento,metal,muy_danado,restaurar,147892,1,moderada,Cali,fisico,Restauración Especial
+fotografia,mixto,danado,conservar,117313,1,total,Bogota,fisico,Cuadro de Historia
+fotografia,mixto,muy_danado,conservar,70537,5,total,Medellin,digital,Memorial Digital
+fotografia,vidrio,regular,transformar,59519,1,moderada,Cali,fisico,Cuadro de Historia
+fotografia,tela,muy_danado,transformar,96147,2,leve,Barranquilla,fisico,Restauración Especial
+prenda_textil,tela,regular,compartir,52420,1,leve,Bucaramanga,fisico,Almohada Abrazo
+peluche,tela,danado,conservar,71510,5,total,Medellin,fisico,Caja del Tiempo
+joya_pequena,cuero,bueno,conservar,105920,1,moderada,Cali,fisico,Caja del Tiempo
+fotografia,madera,bueno,recordar_digitalmente,135435,2,leve,Barranquilla,fisico,Cuadro de Historia
+joya_pequena,madera,muy_danado,recordar_digitalmente,116306,2,leve,Bogota,digital,Memorial Digital
+fotografia,papel,muy_danado,transformar,30000,5,moderada,Medellin,fisico,Cuadro de Historia
+prenda_textil,metal,danado,conservar,105652,3,moderada,Medellin,fisico,Almohada Abrazo
+joya_pequena,cuero,danado,conservar,97521,2,leve,Barranquilla,fisico,Caja del Tiempo
+joya_pequena,mixto,bueno,recordar_digitalmente,109486,3,ninguna,Cali,digital,Memorial Digital
+fotografia,cuero,muy_danado,transformar,151567,1,leve,Barranquilla,digital,Memorial Digital
+prenda_textil,tela,bueno,conservar,30000,1,ninguna,Bogota,digital,Memorial Digital
+reloj_instrumento,vidrio,muy_danado,compartir,74311,2,ninguna,Bucaramanga,fisico,Recuerdo Compartido
+fotografia,vidrio,bueno,transformar,115681,1,leve,Medellin,fisico,Cuadro de Historia
+reloj_instrumento,papel,danado,compartir,39644,2,leve,Bogota,fisico,Recuerdo Compartido
+reloj_instrumento,papel,muy_danado,recordar_digitalmente,146658,2,moderada,Medellin,fisico,Restauración Especial
+fotografia,tela,regular,compartir,107892,4,moderada,Medellin,fisico,Cuadro de Historia
+carta_documento,papel,bueno,transformar,124630,3,moderada,Bucaramanga,fisico,Restauración Especial
+prenda_textil,mixto,muy_danado,recordar_digitalmente,75016,1,total,Bucaramanga,fisico,Almohada Abrazo
+fotografia,vidrio,bueno,recordar_digitalmente,123481,2,ninguna,Medellin,fisico,Cuadro de Historia
+peluche,tela,bueno,restaurar,132396,1,moderada,Barranquilla,digital,Memorial Digital
+fotografia,tela,muy_danado,restaurar,103150,1,total,Cali,fisico,Cuadro de Historia
+prenda_textil,peluche_sintetico,bueno,recordar_digitalmente,103204,2,ninguna,Medellin,fisico,Almohada Abrazo
+peluche,cuero,bueno,compartir,104462,3,moderada,Cali,fisico,Peluche Memoria
+otro_objeto,tela,danado,restaurar,64782,1,moderada,Bucaramanga,fisico,Restauración Especial
+mueble,mixto,regular,recordar_digitalmente,89836,2,leve,Medellin,fisico,Restauración Especial
+reloj_instrumento,tela,regular,recordar_digitalmente,89661,1,ninguna,Cali,fisico,Restauración Especial
+reloj_instrumento,vidrio,bueno,restaurar,108418,1,leve,Barranquilla,fisico,Almohada Abrazo
+peluche,madera,danado,conservar,129993,1,leve,Bucaramanga,fisico,Restauración Especial
+mueble,mixto,bueno,recordar_digitalmente,57951,1,leve,Barranquilla,fisico,Restauración Especial
+peluche,cuero,regular,restaurar,90624,1,moderada,Barranquilla,fisico,Peluche Memoria
+mueble,peluche_sintetico,muy_danado,transformar,146850,1,leve,Medellin,fisico,Restauración Especial
+prenda_textil,madera,bueno,restaurar,68974,1,moderada,Barranquilla,fisico,Libro de Memorias
+mueble,metal,muy_danado,transformar,66221,1,ninguna,Bogota,fisico,Restauración Especial
+carta_documento,tela,regular,transformar,102080,1,leve,Cali,fisico,Libro de Memorias
+peluche,vidrio,danado,restaurar,124553,1,total,Barranquilla,fisico,Restauración Especial
+joya_pequena,papel,muy_danado,conservar,95399,3,leve,Bogota,fisico,Caja del Tiempo
+joya_pequena,madera,regular,compartir,141513,1,ninguna,Bucaramanga,fisico,Caja del Tiempo
+prenda_textil,tela,bueno,restaurar,124987,4,total,Medellin,fisico,Almohada Abrazo
+mueble,papel,bueno,compartir,124463,1,total,Barranquilla,fisico,Caja del Tiempo
+reloj_instrumento,cuero,regular,transformar,114394,1,leve,Cali,fisico,Peluche Memoria
+fotografia,tela,regular,transformar,176467,1,total,Bogota,fisico,Cuadro de Historia
+reloj_instrumento,madera,muy_danado,restaurar,87819,2,leve,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,muy_danado,recordar_digitalmente,30000,2,moderada,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,vidrio,regular,conservar,151148,1,leve,Bogota,digital,Memorial Digital
+carta_documento,tela,muy_danado,recordar_digitalmente,78980,1,leve,Medellin,fisico,Libro de Memorias
+joya_pequena,vidrio,bueno,restaurar,98775,2,total,Cali,digital,Memorial Digital
+fotografia,madera,regular,recordar_digitalmente,140834,1,moderada,Bucaramanga,fisico,Cuadro de Historia
+mueble,madera,regular,compartir,38920,1,leve,Barranquilla,fisico,Restauración Especial
+peluche,metal,regular,conservar,51192,1,ninguna,Cali,digital,Memorial Digital
+joya_pequena,madera,danado,restaurar,38955,4,moderada,Bogota,fisico,Caja del Tiempo
+fotografia,papel,danado,conservar,67205,1,total,Bucaramanga,fisico,Cuadro de Historia
+carta_documento,peluche_sintetico,regular,restaurar,110387,2,total,Barranquilla,fisico,Libro de Memorias
+fotografia,peluche_sintetico,regular,recordar_digitalmente,113346,3,total,Cali,fisico,Cuadro de Historia
+carta_documento,madera,regular,conservar,104669,4,total,Bucaramanga,fisico,Libro de Memorias
+mueble,metal,bueno,compartir,45553,1,ninguna,Medellin,fisico,Restauración Especial
+mueble,madera,bueno,transformar,30000,1,moderada,Medellin,fisico,Restauración Especial
+prenda_textil,peluche_sintetico,danado,conservar,96902,2,ninguna,Barranquilla,fisico,Almohada Abrazo
+reloj_instrumento,madera,muy_danado,compartir,78487,3,moderada,Bucaramanga,fisico,Recuerdo Compartido
+otro_objeto,metal,regular,compartir,111078,1,ninguna,Cali,fisico,Almohada Abrazo
+carta_documento,papel,bueno,transformar,119568,1,total,Medellin,fisico,Libro de Memorias
+prenda_textil,peluche_sintetico,muy_danado,conservar,99838,1,leve,Bucaramanga,digital,Memorial Digital
+fotografia,tela,bueno,transformar,121604,1,leve,Barranquilla,fisico,Libro de Memorias
+carta_documento,vidrio,danado,restaurar,103022,1,total,Bucaramanga,fisico,Libro de Memorias
+otro_objeto,madera,bueno,transformar,113552,1,ninguna,Cali,digital,Cuadro de Historia
+otro_objeto,metal,bueno,conservar,70336,1,moderada,Bogota,fisico,Restauración Especial
+prenda_textil,vidrio,muy_danado,compartir,88713,1,moderada,Bogota,fisico,Almohada Abrazo
+reloj_instrumento,madera,danado,compartir,101887,1,total,Bogota,fisico,Restauración Especial
+otro_objeto,vidrio,regular,transformar,123718,2,leve,Bogota,fisico,Restauración Especial
+mueble,cuero,regular,recordar_digitalmente,81219,1,total,Bucaramanga,fisico,Restauración Especial
+otro_objeto,metal,muy_danado,transformar,113240,1,ninguna,Bucaramanga,fisico,Restauración Especial
+fotografia,papel,muy_danado,restaurar,85695,4,leve,Medellin,digital,Memorial Digital
+fotografia,tela,muy_danado,conservar,90886,5,total,Medellin,digital,Memorial Digital
+fotografia,vidrio,danado,conservar,124033,1,total,Bucaramanga,fisico,Cuadro de Historia
+carta_documento,mixto,bueno,recordar_digitalmente,30000,2,total,Bogota,fisico,Libro de Memorias
+fotografia,papel,bueno,recordar_digitalmente,49623,2,moderada,Bucaramanga,digital,Memorial Digital
+reloj_instrumento,vidrio,muy_danado,compartir,43123,2,total,Bogota,fisico,Recuerdo Compartido
+reloj_instrumento,madera,muy_danado,conservar,30000,1,moderada,Medellin,fisico,Restauración Especial
+otro_objeto,vidrio,danado,conservar,71260,1,moderada,Cali,fisico,Restauración Especial
+otro_objeto,papel,regular,restaurar,121230,1,total,Cali,fisico,Restauración Especial
+reloj_instrumento,papel,regular,compartir,85029,1,total,Barranquilla,fisico,Restauración Especial
+mueble,tela,regular,conservar,101922,1,total,Medellin,fisico,Restauración Especial
+peluche,madera,regular,restaurar,133122,3,leve,Bogota,fisico,Peluche Memoria
+mueble,metal,danado,transformar,141469,3,total,Bogota,fisico,Restauración Especial
+joya_pequena,peluche_sintetico,muy_danado,recordar_digitalmente,92580,1,total,Bucaramanga,fisico,Caja del Tiempo
+mueble,madera,danado,conservar,142375,1,total,Bogota,fisico,Restauración Especial
+joya_pequena,metal,regular,restaurar,98224,1,total,Bucaramanga,fisico,Caja del Tiempo
+peluche,mixto,regular,restaurar,65691,2,ninguna,Medellin,fisico,Peluche Memoria
+carta_documento,vidrio,muy_danado,compartir,74195,3,total,Cali,fisico,Libro de Memorias
+carta_documento,cuero,bueno,conservar,43181,1,moderada,Bucaramanga,fisico,Libro de Memorias
+carta_documento,vidrio,bueno,compartir,63915,1,moderada,Cali,digital,Memorial Digital
+carta_documento,vidrio,regular,restaurar,82469,1,leve,Bogota,digital,Memorial Digital
+reloj_instrumento,peluche_sintetico,regular,conservar,123125,2,moderada,Cali,digital,Memorial Digital
+reloj_instrumento,cuero,bueno,recordar_digitalmente,155226,2,leve,Cali,fisico,Restauración Especial
+joya_pequena,mixto,danado,recordar_digitalmente,46623,1,leve,Bucaramanga,fisico,Caja del Tiempo
+prenda_textil,mixto,regular,transformar,108748,2,leve,Cali,fisico,Almohada Abrazo
+joya_pequena,peluche_sintetico,regular,transformar,58580,1,moderada,Cali,fisico,Cuadro de Historia
+carta_documento,mixto,bueno,compartir,111614,1,ninguna,Barranquilla,digital,Memorial Digital
+prenda_textil,cuero,danado,compartir,90411,1,leve,Medellin,digital,Memorial Digital
+mueble,cuero,muy_danado,restaurar,30918,1,leve,Bogota,fisico,Restauración Especial
+fotografia,peluche_sintetico,bueno,conservar,127490,1,leve,Medellin,fisico,Cuadro de Historia
+fotografia,mixto,bueno,restaurar,73824,2,total,Barranquilla,fisico,Cuadro de Historia
+otro_objeto,cuero,bueno,conservar,76313,1,moderada,Bogota,digital,Peluche Memoria
+joya_pequena,tela,bueno,restaurar,57558,1,moderada,Cali,fisico,Caja del Tiempo
+reloj_instrumento,vidrio,regular,conservar,72100,3,moderada,Cali,fisico,Caja del Tiempo
+mueble,cuero,regular,transformar,109976,5,total,Cali,fisico,Restauración Especial
+fotografia,cuero,bueno,restaurar,88376,1,leve,Medellin,fisico,Memorial Digital
+fotografia,papel,danado,conservar,106503,1,moderada,Bucaramanga,fisico,Cuadro de Historia
+peluche,papel,bueno,conservar,107667,2,total,Barranquilla,fisico,Peluche Memoria
+carta_documento,mixto,regular,restaurar,141223,2,ninguna,Cali,fisico,Libro de Memorias
+prenda_textil,vidrio,regular,compartir,83002,3,ninguna,Bucaramanga,fisico,Almohada Abrazo
+prenda_textil,vidrio,bueno,conservar,43309,1,leve,Cali,digital,Memorial Digital
+joya_pequena,peluche_sintetico,muy_danado,transformar,132352,1,total,Medellin,fisico,Caja del Tiempo
+otro_objeto,peluche_sintetico,regular,conservar,83397,1,ninguna,Bogota,digital,Memorial Digital
+otro_objeto,madera,bueno,recordar_digitalmente,134010,1,ninguna,Cali,fisico,Restauración Especial
+otro_objeto,vidrio,danado,compartir,108418,1,leve,Bogota,digital,Memorial Digital
+mueble,peluche_sintetico,muy_danado,conservar,90410,1,ninguna,Bogota,digital,Memorial Digital
+fotografia,peluche_sintetico,danado,compartir,107207,4,moderada,Bogota,fisico,Cuadro de Historia
+mueble,madera,bueno,compartir,163285,1,total,Cali,digital,Memorial Digital
+otro_objeto,cuero,regular,conservar,167694,1,ninguna,Medellin,fisico,Restauración Especial
+otro_objeto,mixto,regular,recordar_digitalmente,97428,1,moderada,Bucaramanga,fisico,Restauración Especial
+fotografia,mixto,muy_danado,conservar,100606,3,total,Bogota,fisico,Cuadro de Historia
+mueble,tela,regular,transformar,132668,1,ninguna,Barranquilla,fisico,Restauración Especial
+joya_pequena,mixto,danado,compartir,65401,1,ninguna,Bogota,fisico,Caja del Tiempo
+fotografia,mixto,muy_danado,restaurar,106657,1,total,Cali,fisico,Cuadro de Historia
+carta_documento,tela,regular,recordar_digitalmente,94094,2,total,Medellin,fisico,Libro de Memorias
+otro_objeto,mixto,bueno,compartir,105986,1,ninguna,Barranquilla,fisico,Restauración Especial
+peluche,papel,muy_danado,compartir,65832,1,ninguna,Bogota,fisico,Restauración Especial
+carta_documento,metal,muy_danado,transformar,39365,1,ninguna,Medellin,digital,Memorial Digital
+mueble,mixto,danado,compartir,30000,1,leve,Bogota,fisico,Restauración Especial
+carta_documento,peluche_sintetico,bueno,conservar,55891,3,total,Medellin,digital,Memorial Digital
+reloj_instrumento,papel,danado,recordar_digitalmente,78946,1,ninguna,Barranquilla,fisico,Restauración Especial
+joya_pequena,peluche_sintetico,bueno,compartir,84738,1,ninguna,Barranquilla,fisico,Caja del Tiempo
+fotografia,mixto,bueno,recordar_digitalmente,162803,2,total,Bucaramanga,fisico,Cuadro de Historia
+fotografia,madera,regular,conservar,133709,1,moderada,Bucaramanga,digital,Recuerdo Compartido
+reloj_instrumento,metal,danado,compartir,61326,5,moderada,Barranquilla,digital,Memorial Digital
+fotografia,cuero,danado,recordar_digitalmente,107169,3,leve,Medellin,fisico,Cuadro de Historia
+carta_documento,peluche_sintetico,regular,restaurar,80752,1,moderada,Bogota,fisico,Libro de Memorias
+otro_objeto,cuero,danado,compartir,85047,3,ninguna,Bogota,fisico,Recuerdo Compartido
+peluche,tela,regular,transformar,101486,2,leve,Cali,fisico,Peluche Memoria
+fotografia,tela,danado,restaurar,116670,2,ninguna,Cali,digital,Restauración Especial
+prenda_textil,metal,muy_danado,restaurar,83125,1,moderada,Bogota,digital,Memorial Digital
+reloj_instrumento,cuero,danado,recordar_digitalmente,132234,1,moderada,Medellin,fisico,Restauración Especial
+otro_objeto,metal,danado,recordar_digitalmente,55032,1,leve,Medellin,fisico,Restauración Especial
+fotografia,papel,regular,restaurar,95221,2,ninguna,Barranquilla,fisico,Cuadro de Historia
+carta_documento,vidrio,regular,restaurar,185918,2,moderada,Bogota,fisico,Libro de Memorias
+fotografia,tela,regular,transformar,102807,2,moderada,Barranquilla,fisico,Cuadro de Historia
+mueble,papel,danado,recordar_digitalmente,145162,1,leve,Bucaramanga,fisico,Restauración Especial
+fotografia,cuero,muy_danado,conservar,98203,1,leve,Cali,fisico,Cuadro de Historia
+carta_documento,metal,muy_danado,recordar_digitalmente,115327,3,ninguna,Bogota,fisico,Libro de Memorias
+otro_objeto,metal,regular,conservar,93012,2,moderada,Barranquilla,digital,Memorial Digital
+prenda_textil,cuero,danado,recordar_digitalmente,89035,2,ninguna,Bucaramanga,digital,Memorial Digital
+mueble,mixto,muy_danado,conservar,67718,1,leve,Cali,fisico,Restauración Especial
+prenda_textil,madera,bueno,conservar,110060,1,leve,Barranquilla,digital,Memorial Digital
+joya_pequena,cuero,bueno,restaurar,65196,1,moderada,Bogota,fisico,Caja del Tiempo
+peluche,madera,danado,recordar_digitalmente,118295,1,leve,Cali,fisico,Restauración Especial
+otro_objeto,cuero,muy_danado,transformar,132985,1,ninguna,Bucaramanga,fisico,Restauración Especial
+prenda_textil,tela,bueno,transformar,107828,4,ninguna,Cali,fisico,Almohada Abrazo
+carta_documento,papel,danado,compartir,84981,1,ninguna,Barranquilla,fisico,Libro de Memorias
+joya_pequena,madera,muy_danado,recordar_digitalmente,110888,1,leve,Cali,fisico,Caja del Tiempo
+mueble,tela,regular,conservar,84196,1,total,Bucaramanga,fisico,Restauración Especial
+prenda_textil,vidrio,regular,transformar,127744,1,leve,Medellin,fisico,Almohada Abrazo
+carta_documento,metal,bueno,restaurar,30900,2,ninguna,Bucaramanga,fisico,Libro de Memorias
+prenda_textil,vidrio,bueno,transformar,83253,1,total,Cali,fisico,Almohada Abrazo
+joya_pequena,papel,danado,recordar_digitalmente,30000,1,leve,Cali,fisico,Caja del Tiempo
+mueble,vidrio,regular,recordar_digitalmente,42672,2,moderada,Barranquilla,fisico,Restauración Especial
+mueble,metal,regular,compartir,142735,1,moderada,Medellin,fisico,Restauración Especial
+mueble,mixto,muy_danado,compartir,126331,1,moderada,Barranquilla,fisico,Restauración Especial
+fotografia,papel,danado,restaurar,69818,3,leve,Cali,fisico,Cuadro de Historia
+prenda_textil,papel,bueno,recordar_digitalmente,42412,2,total,Bucaramanga,fisico,Almohada Abrazo
+peluche,vidrio,muy_danado,restaurar,30000,1,leve,Bucaramanga,fisico,Restauración Especial
+carta_documento,madera,muy_danado,recordar_digitalmente,75977,1,total,Cali,fisico,Libro de Memorias
+joya_pequena,madera,regular,compartir,179714,1,leve,Barranquilla,digital,Memorial Digital
+peluche,metal,muy_danado,restaurar,110220,1,moderada,Medellin,fisico,Restauración Especial
+joya_pequena,peluche_sintetico,muy_danado,compartir,75414,4,ninguna,Bogota,digital,Memorial Digital
+mueble,papel,danado,transformar,111277,2,leve,Barranquilla,fisico,Cuadro de Historia
+mueble,papel,danado,compartir,40366,5,leve,Bucaramanga,fisico,Recuerdo Compartido
+mueble,mixto,muy_danado,recordar_digitalmente,84593,1,leve,Barranquilla,fisico,Restauración Especial
+prenda_textil,vidrio,regular,restaurar,98481,1,moderada,Bucaramanga,fisico,Almohada Abrazo
+prenda_textil,metal,muy_danado,transformar,91986,2,total,Barranquilla,fisico,Almohada Abrazo
+fotografia,cuero,bueno,restaurar,122678,1,leve,Medellin,fisico,Cuadro de Historia
+peluche,madera,bueno,restaurar,107062,1,leve,Bucaramanga,digital,Cuadro de Historia
+peluche,vidrio,bueno,restaurar,118391,1,total,Barranquilla,fisico,Peluche Memoria
+reloj_instrumento,madera,regular,recordar_digitalmente,70906,2,moderada,Medellin,fisico,Restauración Especial
+mueble,mixto,bueno,restaurar,126423,1,leve,Bogota,fisico,Restauración Especial
+reloj_instrumento,madera,bueno,restaurar,152012,1,ninguna,Bucaramanga,fisico,Restauración Especial
+prenda_textil,papel,muy_danado,restaurar,61044,4,ninguna,Barranquilla,fisico,Almohada Abrazo
+mueble,tela,muy_danado,restaurar,63930,4,total,Barranquilla,fisico,Restauración Especial
+prenda_textil,cuero,regular,transformar,141752,1,leve,Bogota,fisico,Almohada Abrazo
+reloj_instrumento,vidrio,regular,conservar,88302,2,ninguna,Bucaramanga,fisico,Caja del Tiempo
+peluche,cuero,regular,transformar,144133,1,ninguna,Medellin,fisico,Peluche Memoria
+carta_documento,vidrio,muy_danado,recordar_digitalmente,79511,1,moderada,Barranquilla,fisico,Libro de Memorias
+reloj_instrumento,mixto,regular,transformar,145926,2,total,Cali,digital,Memorial Digital
+mueble,cuero,regular,conservar,99602,2,total,Medellin,fisico,Caja del Tiempo
+reloj_instrumento,peluche_sintetico,bueno,restaurar,104038,1,ninguna,Bogota,digital,Memorial Digital
+otro_objeto,cuero,bueno,conservar,149765,1,moderada,Bogota,fisico,Restauración Especial
+reloj_instrumento,cuero,danado,recordar_digitalmente,82338,1,leve,Barranquilla,fisico,Restauración Especial
+joya_pequena,vidrio,regular,conservar,62060,2,leve,Bucaramanga,fisico,Caja del Tiempo
+peluche,peluche_sintetico,regular,conservar,79300,5,ninguna,Cali,fisico,Peluche Memoria
+mueble,cuero,muy_danado,recordar_digitalmente,110831,1,ninguna,Bogota,digital,Memorial Digital
+carta_documento,peluche_sintetico,danado,transformar,40198,1,leve,Barranquilla,digital,Memorial Digital
+peluche,vidrio,regular,compartir,117311,1,ninguna,Bucaramanga,fisico,Peluche Memoria
+prenda_textil,vidrio,danado,compartir,76143,5,total,Medellin,fisico,Almohada Abrazo
+otro_objeto,mixto,bueno,compartir,135173,1,ninguna,Barranquilla,fisico,Restauración Especial
+joya_pequena,metal,danado,compartir,30000,4,ninguna,Cali,fisico,Peluche Memoria
+prenda_textil,cuero,danado,conservar,67470,2,leve,Barranquilla,fisico,Almohada Abrazo
+joya_pequena,vidrio,regular,restaurar,35973,1,leve,Medellin,fisico,Caja del Tiempo
+carta_documento,metal,regular,restaurar,66081,3,moderada,Medellin,fisico,Almohada Abrazo
+prenda_textil,papel,muy_danado,recordar_digitalmente,103668,1,ninguna,Barranquilla,fisico,Almohada Abrazo
+mueble,mixto,danado,compartir,88727,1,moderada,Barranquilla,fisico,Restauración Especial
+fotografia,tela,muy_danado,compartir,86131,4,ninguna,Bucaramanga,fisico,Cuadro de Historia
+fotografia,mixto,bueno,recordar_digitalmente,89428,1,ninguna,Bogota,fisico,Cuadro de Historia
+reloj_instrumento,papel,danado,transformar,102118,2,moderada,Medellin,fisico,Restauración Especial
+joya_pequena,vidrio,muy_danado,recordar_digitalmente,59701,1,leve,Barranquilla,fisico,Caja del Tiempo
+reloj_instrumento,peluche_sintetico,danado,compartir,119739,1,leve,Bucaramanga,fisico,Restauración Especial
+joya_pequena,papel,danado,restaurar,118193,2,total,Medellin,fisico,Caja del Tiempo
+fotografia,mixto,bueno,restaurar,108476,1,leve,Bucaramanga,fisico,Cuadro de Historia
+mueble,mixto,danado,transformar,114478,2,ninguna,Barranquilla,fisico,Memorial Digital
+fotografia,tela,regular,transformar,105374,1,ninguna,Barranquilla,fisico,Cuadro de Historia
+carta_documento,peluche_sintetico,danado,recordar_digitalmente,166227,2,moderada,Cali,fisico,Libro de Memorias
+prenda_textil,peluche_sintetico,regular,recordar_digitalmente,91951,2,leve,Cali,fisico,Recuerdo Compartido
+otro_objeto,mixto,bueno,compartir,84252,2,total,Medellin,digital,Memorial Digital
+mueble,cuero,muy_danado,conservar,68626,1,moderada,Medellin,fisico,Restauración Especial
+carta_documento,vidrio,muy_danado,transformar,58870,3,moderada,Bucaramanga,fisico,Libro de Memorias
+otro_objeto,cuero,regular,restaurar,51443,3,leve,Medellin,fisico,Restauración Especial
+prenda_textil,metal,regular,compartir,63892,1,ninguna,Barranquilla,fisico,Almohada Abrazo
+peluche,cuero,bueno,conservar,92526,1,leve,Bogota,fisico,Peluche Memoria
+reloj_instrumento,vidrio,regular,restaurar,106700,2,total,Medellin,fisico,Restauración Especial
+fotografia,tela,bueno,transformar,96789,3,moderada,Barranquilla,fisico,Cuadro de Historia
+carta_documento,mixto,regular,recordar_digitalmente,68206,1,total,Bucaramanga,fisico,Caja del Tiempo
+carta_documento,peluche_sintetico,muy_danado,recordar_digitalmente,126506,1,ninguna,Barranquilla,fisico,Libro de Memorias
+reloj_instrumento,vidrio,regular,transformar,120879,1,leve,Cali,fisico,Restauración Especial
+peluche,mixto,muy_danado,transformar,89412,1,total,Cali,fisico,Restauración Especial
+peluche,peluche_sintetico,regular,compartir,72147,3,total,Barranquilla,fisico,Peluche Memoria
+reloj_instrumento,cuero,regular,transformar,114194,1,leve,Bucaramanga,fisico,Restauración Especial
+carta_documento,vidrio,danado,compartir,101579,1,ninguna,Medellin,fisico,Libro de Memorias
+prenda_textil,mixto,muy_danado,transformar,44315,2,total,Medellin,fisico,Almohada Abrazo
+fotografia,tela,bueno,restaurar,92620,5,moderada,Cali,fisico,Cuadro de Historia
+otro_objeto,tela,regular,conservar,104171,1,total,Medellin,fisico,Restauración Especial
+carta_documento,mixto,danado,compartir,63510,2,ninguna,Cali,fisico,Libro de Memorias
+fotografia,tela,danado,compartir,101644,1,total,Medellin,fisico,Cuadro de Historia
+carta_documento,cuero,bueno,conservar,44081,5,leve,Barranquilla,fisico,Libro de Memorias
+otro_objeto,metal,bueno,restaurar,141766,1,ninguna,Bucaramanga,fisico,Restauración Especial
+joya_pequena,mixto,muy_danado,transformar,138678,4,leve,Bogota,fisico,Caja del Tiempo
+prenda_textil,vidrio,muy_danado,transformar,86161,1,ninguna,Medellin,digital,Memorial Digital
+joya_pequena,cuero,danado,conservar,107720,1,moderada,Bucaramanga,fisico,Caja del Tiempo
+joya_pequena,tela,bueno,recordar_digitalmente,30000,2,total,Bucaramanga,fisico,Caja del Tiempo
+prenda_textil,metal,regular,compartir,54527,1,moderada,Bogota,fisico,Caja del Tiempo
+fotografia,papel,regular,compartir,84717,1,moderada,Barranquilla,fisico,Cuadro de Historia
+peluche,cuero,danado,restaurar,57475,1,ninguna,Barranquilla,fisico,Restauración Especial
+carta_documento,mixto,regular,recordar_digitalmente,120003,1,moderada,Cali,fisico,Libro de Memorias
+carta_documento,madera,bueno,recordar_digitalmente,164905,1,moderada,Cali,fisico,Libro de Memorias
+otro_objeto,tela,muy_danado,restaurar,53818,3,moderada,Bucaramanga,fisico,Restauración Especial
+prenda_textil,cuero,regular,recordar_digitalmente,65688,2,leve,Bucaramanga,fisico,Almohada Abrazo
+reloj_instrumento,peluche_sintetico,bueno,conservar,103240,1,ninguna,Bogota,digital,Memorial Digital
+fotografia,madera,bueno,restaurar,151389,1,leve,Bogota,fisico,Cuadro de Historia
+reloj_instrumento,mixto,danado,conservar,52216,1,ninguna,Bogota,digital,Memorial Digital
+joya_pequena,mixto,bueno,compartir,103716,3,ninguna,Cali,fisico,Recuerdo Compartido
+reloj_instrumento,peluche_sintetico,bueno,recordar_digitalmente,158745,1,ninguna,Bogota,digital,Memorial Digital
+prenda_textil,metal,bueno,conservar,37188,2,total,Medellin,fisico,Almohada Abrazo
+joya_pequena,madera,muy_danado,conservar,50162,2,moderada,Barranquilla,fisico,Caja del Tiempo
+reloj_instrumento,papel,regular,restaurar,80173,1,moderada,Medellin,fisico,Restauración Especial
+otro_objeto,peluche_sintetico,danado,recordar_digitalmente,76779,5,moderada,Cali,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,regular,recordar_digitalmente,123441,1,total,Bucaramanga,digital,Memorial Digital
+carta_documento,peluche_sintetico,muy_danado,compartir,103458,4,ninguna,Bogota,digital,Memorial Digital
+peluche,madera,danado,conservar,32876,1,leve,Medellin,digital,Memorial Digital
+peluche,vidrio,regular,conservar,113039,1,moderada,Medellin,fisico,Peluche Memoria
+mueble,metal,regular,transformar,74786,3,ninguna,Bucaramanga,fisico,Restauración Especial
+joya_pequena,papel,danado,compartir,139605,1,ninguna,Bucaramanga,fisico,Caja del Tiempo
+peluche,cuero,bueno,conservar,73034,4,moderada,Cali,digital,Memorial Digital
+reloj_instrumento,cuero,bueno,restaurar,72718,2,ninguna,Barranquilla,fisico,Restauración Especial
+peluche,peluche_sintetico,regular,transformar,113939,1,leve,Medellin,fisico,Peluche Memoria
+reloj_instrumento,mixto,bueno,restaurar,121702,1,total,Medellin,fisico,Restauración Especial
+prenda_textil,mixto,bueno,recordar_digitalmente,110683,1,ninguna,Barranquilla,fisico,Almohada Abrazo
+fotografia,madera,muy_danado,recordar_digitalmente,36004,1,total,Bucaramanga,fisico,Cuadro de Historia
+joya_pequena,metal,bueno,transformar,113831,2,moderada,Bucaramanga,fisico,Caja del Tiempo
+reloj_instrumento,cuero,danado,transformar,58799,1,moderada,Bucaramanga,fisico,Restauración Especial
+carta_documento,madera,danado,recordar_digitalmente,103234,3,total,Bucaramanga,fisico,Libro de Memorias
+peluche,metal,regular,transformar,45169,1,ninguna,Bogota,fisico,Peluche Memoria
+joya_pequena,madera,danado,conservar,110621,1,ninguna,Cali,fisico,Peluche Memoria
+peluche,peluche_sintetico,regular,recordar_digitalmente,66769,1,moderada,Bucaramanga,fisico,Memorial Digital
+fotografia,tela,muy_danado,recordar_digitalmente,50107,4,ninguna,Cali,fisico,Cuadro de Historia
+carta_documento,metal,danado,conservar,119983,1,ninguna,Bogota,fisico,Libro de Memorias
+carta_documento,peluche_sintetico,bueno,conservar,103457,1,total,Medellin,digital,Memorial Digital
+prenda_textil,peluche_sintetico,muy_danado,recordar_digitalmente,73510,1,leve,Medellin,fisico,Almohada Abrazo
+otro_objeto,tela,bueno,restaurar,145791,4,moderada,Cali,fisico,Restauración Especial
+fotografia,tela,danado,transformar,79577,1,moderada,Medellin,digital,Memorial Digital
+carta_documento,tela,danado,compartir,96123,3,ninguna,Bucaramanga,digital,Recuerdo Compartido
+joya_pequena,madera,danado,compartir,104411,2,ninguna,Barranquilla,fisico,Recuerdo Compartido
+joya_pequena,cuero,regular,recordar_digitalmente,73311,1,moderada,Bucaramanga,fisico,Recuerdo Compartido
+fotografia,metal,regular,recordar_digitalmente,111489,1,leve,Medellin,fisico,Cuadro de Historia
+fotografia,cuero,regular,recordar_digitalmente,76329,4,moderada,Bogota,fisico,Recuerdo Compartido
+prenda_textil,madera,danado,restaurar,80592,2,moderada,Barranquilla,digital,Memorial Digital
+carta_documento,mixto,danado,restaurar,142692,2,ninguna,Medellin,fisico,Recuerdo Compartido
+carta_documento,metal,regular,restaurar,58579,2,moderada,Bogota,fisico,Libro de Memorias
+otro_objeto,madera,muy_danado,transformar,30000,1,total,Barranquilla,fisico,Cuadro de Historia
+fotografia,metal,regular,conservar,151382,1,ninguna,Cali,digital,Caja del Tiempo
+joya_pequena,metal,regular,conservar,184226,1,total,Bucaramanga,fisico,Caja del Tiempo
+mueble,mixto,regular,compartir,80815,1,ninguna,Bucaramanga,fisico,Peluche Memoria
+reloj_instrumento,peluche_sintetico,muy_danado,recordar_digitalmente,30000,4,ninguna,Bucaramanga,fisico,Restauración Especial
+otro_objeto,tela,regular,recordar_digitalmente,84133,1,ninguna,Bucaramanga,fisico,Restauración Especial
+peluche,metal,danado,compartir,84982,1,moderada,Cali,fisico,Restauración Especial
+reloj_instrumento,vidrio,bueno,recordar_digitalmente,88352,4,total,Barranquilla,fisico,Restauración Especial
+prenda_textil,madera,regular,compartir,56031,1,total,Bogota,fisico,Almohada Abrazo
+joya_pequena,mixto,bueno,transformar,115284,1,leve,Bogota,fisico,Caja del Tiempo
+otro_objeto,peluche_sintetico,bueno,recordar_digitalmente,113357,2,leve,Barranquilla,fisico,Restauración Especial
+peluche,madera,danado,recordar_digitalmente,42695,3,leve,Medellin,digital,Memorial Digital
+fotografia,tela,muy_danado,transformar,119471,1,total,Cali,fisico,Cuadro de Historia
+prenda_textil,madera,regular,conservar,166843,2,moderada,Bogota,fisico,Almohada Abrazo
+otro_objeto,tela,muy_danado,restaurar,101018,1,total,Barranquilla,fisico,Restauración Especial
+prenda_textil,tela,regular,recordar_digitalmente,83193,1,leve,Bogota,fisico,Almohada Abrazo
+peluche,peluche_sintetico,bueno,restaurar,90029,3,moderada,Cali,digital,Cuadro de Historia
+peluche,papel,muy_danado,restaurar,116533,1,moderada,Bucaramanga,fisico,Restauración Especial
+fotografia,mixto,danado,conservar,34426,1,moderada,Cali,fisico,Cuadro de Historia
+reloj_instrumento,papel,muy_danado,recordar_digitalmente,100753,1,total,Medellin,fisico,Restauración Especial
+carta_documento,peluche_sintetico,muy_danado,recordar_digitalmente,81333,1,leve,Bucaramanga,fisico,Libro de Memorias
+prenda_textil,mixto,danado,compartir,159673,2,moderada,Cali,fisico,Almohada Abrazo
+mueble,madera,muy_danado,recordar_digitalmente,88903,2,total,Barranquilla,digital,Memorial Digital
+joya_pequena,vidrio,regular,conservar,153376,1,total,Bogota,fisico,Caja del Tiempo
+joya_pequena,cuero,muy_danado,conservar,56369,1,leve,Bogota,fisico,Libro de Memorias
+carta_documento,vidrio,bueno,transformar,115554,1,moderada,Bogota,fisico,Libro de Memorias
+mueble,peluche_sintetico,muy_danado,recordar_digitalmente,106179,2,ninguna,Medellin,fisico,Caja del Tiempo
+mueble,mixto,muy_danado,conservar,64583,2,total,Medellin,fisico,Caja del Tiempo
+mueble,mixto,muy_danado,conservar,101208,3,moderada,Bucaramanga,fisico,Caja del Tiempo
+mueble,tela,regular,recordar_digitalmente,137438,2,moderada,Bogota,digital,Memorial Digital
+carta_documento,tela,danado,compartir,83667,2,leve,Bucaramanga,fisico,Libro de Memorias
+fotografia,papel,danado,transformar,35781,2,moderada,Barranquilla,fisico,Cuadro de Historia
+joya_pequena,peluche_sintetico,muy_danado,transformar,94385,1,moderada,Medellin,fisico,Caja del Tiempo
+peluche,metal,bueno,compartir,63415,1,total,Bucaramanga,fisico,Peluche Memoria
+mueble,mixto,danado,transformar,83018,1,ninguna,Bucaramanga,fisico,Peluche Memoria
+fotografia,metal,bueno,compartir,92144,1,ninguna,Bogota,fisico,Cuadro de Historia
+peluche,papel,danado,compartir,35302,3,ninguna,Bucaramanga,fisico,Recuerdo Compartido
+carta_documento,tela,danado,restaurar,38451,1,leve,Cali,fisico,Restauración Especial
+mueble,mixto,bueno,transformar,111872,1,moderada,Bogota,fisico,Restauración Especial
+prenda_textil,metal,danado,recordar_digitalmente,76704,1,leve,Cali,fisico,Almohada Abrazo
+fotografia,papel,danado,recordar_digitalmente,30000,3,total,Bogota,fisico,Cuadro de Historia
+otro_objeto,tela,bueno,compartir,122469,1,total,Barranquilla,fisico,Restauración Especial
+otro_objeto,peluche_sintetico,danado,transformar,104532,3,ninguna,Barranquilla,fisico,Restauración Especial
+prenda_textil,mixto,bueno,compartir,70014,1,total,Barranquilla,fisico,Almohada Abrazo
+joya_pequena,madera,danado,transformar,48910,1,moderada,Cali,fisico,Restauración Especial
+peluche,papel,muy_danado,conservar,124253,1,total,Medellin,fisico,Restauración Especial
+mueble,madera,bueno,compartir,107227,3,ninguna,Cali,fisico,Recuerdo Compartido
+prenda_textil,vidrio,muy_danado,compartir,178391,2,leve,Bucaramanga,fisico,Almohada Abrazo
+fotografia,mixto,muy_danado,conservar,109706,1,total,Barranquilla,fisico,Cuadro de Historia
+mueble,metal,regular,conservar,108569,2,total,Bogota,fisico,Caja del Tiempo
+otro_objeto,peluche_sintetico,bueno,compartir,89157,1,total,Bogota,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,muy_danado,conservar,123587,1,leve,Bucaramanga,digital,Memorial Digital
+peluche,madera,regular,compartir,116877,1,total,Bucaramanga,fisico,Peluche Memoria
+joya_pequena,metal,danado,transformar,138810,2,moderada,Barranquilla,fisico,Caja del Tiempo
+mueble,papel,bueno,recordar_digitalmente,76753,5,total,Medellin,digital,Restauración Especial
+peluche,peluche_sintetico,bueno,conservar,79760,2,moderada,Bogota,digital,Memorial Digital
+peluche,metal,muy_danado,recordar_digitalmente,78231,1,moderada,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,metal,regular,compartir,122678,1,total,Cali,digital,Memorial Digital
+fotografia,vidrio,regular,restaurar,147443,1,ninguna,Medellin,fisico,Cuadro de Historia
+otro_objeto,cuero,regular,conservar,78940,1,total,Barranquilla,digital,Memorial Digital
+reloj_instrumento,madera,muy_danado,recordar_digitalmente,80132,1,total,Barranquilla,fisico,Restauración Especial
+fotografia,cuero,bueno,recordar_digitalmente,105992,1,leve,Bucaramanga,fisico,Cuadro de Historia
+mueble,tela,bueno,recordar_digitalmente,86398,1,moderada,Bogota,fisico,Restauración Especial
+prenda_textil,madera,danado,compartir,128321,1,ninguna,Medellin,fisico,Almohada Abrazo
+prenda_textil,vidrio,bueno,transformar,30000,1,ninguna,Barranquilla,fisico,Almohada Abrazo
+otro_objeto,peluche_sintetico,muy_danado,transformar,66065,5,moderada,Cali,fisico,Restauración Especial
+carta_documento,vidrio,bueno,compartir,67615,2,ninguna,Cali,digital,Memorial Digital
+peluche,vidrio,muy_danado,conservar,30000,1,ninguna,Cali,fisico,Restauración Especial
+carta_documento,vidrio,danado,conservar,61272,2,leve,Bucaramanga,fisico,Libro de Memorias
+otro_objeto,peluche_sintetico,regular,transformar,62969,2,leve,Barranquilla,fisico,Recuerdo Compartido
+peluche,peluche_sintetico,bueno,restaurar,87961,2,leve,Barranquilla,fisico,Peluche Memoria
+reloj_instrumento,cuero,regular,compartir,133953,2,leve,Medellin,fisico,Recuerdo Compartido
+mueble,tela,danado,conservar,86422,1,total,Barranquilla,fisico,Libro de Memorias
+otro_objeto,metal,muy_danado,compartir,58921,1,leve,Bucaramanga,digital,Memorial Digital
+peluche,vidrio,muy_danado,compartir,93006,2,ninguna,Bogota,digital,Memorial Digital
+mueble,cuero,danado,transformar,131721,1,ninguna,Cali,fisico,Restauración Especial
+reloj_instrumento,mixto,regular,recordar_digitalmente,60841,2,moderada,Medellin,fisico,Restauración Especial
+peluche,tela,bueno,conservar,63129,1,ninguna,Barranquilla,fisico,Peluche Memoria
+carta_documento,vidrio,regular,conservar,114549,1,ninguna,Bogota,digital,Memorial Digital
+joya_pequena,papel,bueno,conservar,87246,3,leve,Barranquilla,fisico,Caja del Tiempo
+fotografia,papel,regular,transformar,117661,1,ninguna,Barranquilla,digital,Memorial Digital
+carta_documento,cuero,danado,transformar,94522,1,ninguna,Cali,fisico,Libro de Memorias
+reloj_instrumento,cuero,danado,conservar,119558,1,moderada,Medellin,fisico,Restauración Especial
+otro_objeto,metal,muy_danado,restaurar,58772,2,ninguna,Medellin,fisico,Restauración Especial
+reloj_instrumento,metal,bueno,compartir,94577,2,ninguna,Bogota,fisico,Recuerdo Compartido
+carta_documento,mixto,bueno,compartir,87625,1,ninguna,Bogota,fisico,Libro de Memorias
+carta_documento,madera,danado,compartir,52443,2,total,Barranquilla,fisico,Libro de Memorias
+prenda_textil,metal,bueno,compartir,40278,4,total,Bogota,fisico,Almohada Abrazo
+mueble,peluche_sintetico,danado,compartir,119001,1,ninguna,Cali,fisico,Restauración Especial
+mueble,papel,muy_danado,transformar,82716,2,leve,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,metal,danado,compartir,59220,3,moderada,Barranquilla,fisico,Recuerdo Compartido
+otro_objeto,metal,regular,conservar,91633,1,leve,Barranquilla,fisico,Restauración Especial
+carta_documento,mixto,muy_danado,conservar,134480,1,ninguna,Cali,fisico,Libro de Memorias
+peluche,cuero,bueno,restaurar,30000,3,total,Bucaramanga,fisico,Peluche Memoria
+joya_pequena,papel,bueno,restaurar,42617,1,ninguna,Barranquilla,digital,Memorial Digital
+peluche,metal,regular,conservar,62698,1,ninguna,Cali,digital,Recuerdo Compartido
+prenda_textil,mixto,regular,recordar_digitalmente,146141,1,ninguna,Bogota,fisico,Almohada Abrazo
+joya_pequena,papel,regular,compartir,104890,1,total,Cali,fisico,Caja del Tiempo
+fotografia,peluche_sintetico,regular,conservar,121856,2,moderada,Bogota,fisico,Cuadro de Historia
+fotografia,cuero,regular,transformar,55094,2,total,Medellin,digital,Memorial Digital
+peluche,madera,bueno,recordar_digitalmente,55816,1,leve,Bogota,digital,Memorial Digital
+prenda_textil,tela,bueno,restaurar,110673,4,moderada,Barranquilla,fisico,Almohada Abrazo
+otro_objeto,madera,regular,restaurar,97039,2,total,Barranquilla,fisico,Restauración Especial
+fotografia,tela,regular,compartir,114205,2,ninguna,Cali,fisico,Cuadro de Historia
+peluche,metal,regular,conservar,88431,5,ninguna,Bucaramanga,fisico,Peluche Memoria
+joya_pequena,mixto,regular,transformar,104735,1,ninguna,Medellin,fisico,Caja del Tiempo
+otro_objeto,mixto,regular,restaurar,100534,2,ninguna,Bogota,fisico,Restauración Especial
+carta_documento,metal,muy_danado,transformar,122221,1,total,Bogota,fisico,Libro de Memorias
+peluche,madera,regular,conservar,123245,1,ninguna,Bogota,digital,Memorial Digital
+otro_objeto,peluche_sintetico,muy_danado,restaurar,38304,2,moderada,Medellin,fisico,Restauración Especial
+mueble,metal,bueno,restaurar,30000,2,leve,Barranquilla,digital,Memorial Digital
+prenda_textil,mixto,muy_danado,conservar,130061,3,leve,Medellin,digital,Memorial Digital
+otro_objeto,madera,muy_danado,transformar,136570,1,leve,Cali,digital,Memorial Digital
+joya_pequena,peluche_sintetico,regular,conservar,59278,2,ninguna,Cali,fisico,Caja del Tiempo
+otro_objeto,mixto,muy_danado,restaurar,30000,2,leve,Cali,fisico,Restauración Especial
+fotografia,metal,bueno,compartir,98466,3,total,Medellin,fisico,Cuadro de Historia
+otro_objeto,vidrio,bueno,compartir,127579,2,leve,Medellin,fisico,Recuerdo Compartido
+joya_pequena,madera,bueno,compartir,157915,5,ninguna,Barranquilla,fisico,Recuerdo Compartido
+peluche,cuero,muy_danado,compartir,113070,3,ninguna,Barranquilla,fisico,Recuerdo Compartido
+prenda_textil,tela,muy_danado,restaurar,81989,1,moderada,Medellin,fisico,Almohada Abrazo
+prenda_textil,tela,muy_danado,transformar,63740,1,total,Bucaramanga,fisico,Almohada Abrazo
+peluche,mixto,muy_danado,restaurar,95400,3,total,Medellin,fisico,Restauración Especial
+mueble,mixto,bueno,conservar,84525,1,moderada,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,vidrio,regular,conservar,59472,2,moderada,Bogota,fisico,Caja del Tiempo
+mueble,tela,bueno,compartir,166706,1,ninguna,Cali,fisico,Restauración Especial
+prenda_textil,metal,regular,transformar,157480,1,ninguna,Barranquilla,fisico,Almohada Abrazo
+joya_pequena,metal,danado,transformar,134761,3,total,Cali,fisico,Caja del Tiempo
+mueble,peluche_sintetico,muy_danado,compartir,62770,1,ninguna,Barranquilla,fisico,Restauración Especial
+carta_documento,mixto,danado,conservar,124925,1,total,Bogota,fisico,Libro de Memorias
+fotografia,vidrio,bueno,conservar,117386,1,ninguna,Medellin,fisico,Cuadro de Historia
+joya_pequena,tela,danado,compartir,110489,5,leve,Barranquilla,fisico,Memorial Digital
+otro_objeto,tela,danado,restaurar,138738,1,leve,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,danado,compartir,117237,2,total,Barranquilla,fisico,Recuerdo Compartido
+fotografia,vidrio,regular,transformar,120900,1,moderada,Cali,fisico,Cuadro de Historia
+peluche,madera,danado,transformar,117291,1,leve,Bucaramanga,digital,Memorial Digital
+carta_documento,madera,regular,restaurar,106927,1,ninguna,Bogota,digital,Memorial Digital
+fotografia,mixto,danado,transformar,32573,1,ninguna,Cali,digital,Memorial Digital
+fotografia,peluche_sintetico,muy_danado,recordar_digitalmente,97926,5,moderada,Bogota,digital,Memorial Digital
+reloj_instrumento,mixto,regular,compartir,75533,4,leve,Bogota,digital,Memorial Digital
+mueble,vidrio,muy_danado,transformar,50205,5,leve,Bucaramanga,fisico,Restauración Especial
+otro_objeto,peluche_sintetico,bueno,compartir,153863,4,leve,Bucaramanga,fisico,Recuerdo Compartido
+peluche,cuero,regular,compartir,155514,1,moderada,Bogota,fisico,Peluche Memoria
+joya_pequena,metal,danado,restaurar,142572,1,total,Bogota,digital,Memorial Digital
+reloj_instrumento,metal,muy_danado,transformar,103932,2,ninguna,Cali,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,muy_danado,transformar,142271,1,moderada,Cali,fisico,Restauración Especial
+otro_objeto,papel,regular,compartir,95421,2,total,Barranquilla,fisico,Recuerdo Compartido
+reloj_instrumento,cuero,regular,recordar_digitalmente,102097,2,leve,Medellin,fisico,Restauración Especial
+mueble,papel,muy_danado,conservar,56728,1,moderada,Barranquilla,fisico,Restauración Especial
+otro_objeto,madera,regular,restaurar,108894,3,moderada,Bucaramanga,fisico,Restauración Especial
+carta_documento,vidrio,muy_danado,recordar_digitalmente,97113,2,leve,Bogota,fisico,Libro de Memorias
+fotografia,vidrio,danado,compartir,49407,1,moderada,Barranquilla,fisico,Cuadro de Historia
+joya_pequena,tela,bueno,transformar,93208,1,ninguna,Bucaramanga,fisico,Caja del Tiempo
+otro_objeto,cuero,danado,compartir,92209,5,ninguna,Cali,fisico,Recuerdo Compartido
+peluche,vidrio,regular,recordar_digitalmente,157914,1,moderada,Barranquilla,digital,Memorial Digital
+fotografia,peluche_sintetico,regular,conservar,126297,1,total,Cali,fisico,Cuadro de Historia
+carta_documento,papel,regular,restaurar,95400,2,leve,Bucaramanga,fisico,Libro de Memorias
+mueble,vidrio,danado,transformar,103707,1,moderada,Medellin,fisico,Restauración Especial
+carta_documento,peluche_sintetico,muy_danado,compartir,96547,1,leve,Bogota,fisico,Libro de Memorias
+joya_pequena,metal,bueno,compartir,87898,1,ninguna,Bogota,digital,Memorial Digital
+peluche,mixto,danado,transformar,57115,2,leve,Barranquilla,digital,Memorial Digital
+mueble,madera,danado,conservar,89713,2,ninguna,Medellin,fisico,Caja del Tiempo
+fotografia,metal,danado,restaurar,68886,1,ninguna,Barranquilla,fisico,Cuadro de Historia
+prenda_textil,papel,bueno,compartir,51238,2,ninguna,Medellin,fisico,Almohada Abrazo
+peluche,mixto,bueno,transformar,112892,1,moderada,Bogota,fisico,Peluche Memoria
+prenda_textil,metal,regular,restaurar,108694,2,ninguna,Bogota,fisico,Almohada Abrazo
+carta_documento,peluche_sintetico,danado,restaurar,32465,3,leve,Bucaramanga,fisico,Libro de Memorias
+prenda_textil,tela,regular,restaurar,90706,5,leve,Bucaramanga,fisico,Almohada Abrazo
+prenda_textil,metal,muy_danado,transformar,129849,2,leve,Barranquilla,fisico,Almohada Abrazo
+prenda_textil,madera,danado,compartir,132072,1,leve,Barranquilla,fisico,Almohada Abrazo
+mueble,papel,muy_danado,conservar,130904,1,total,Cali,fisico,Restauración Especial
+peluche,papel,danado,compartir,96361,1,moderada,Barranquilla,fisico,Restauración Especial
+carta_documento,mixto,regular,recordar_digitalmente,65423,1,total,Medellin,digital,Memorial Digital
+otro_objeto,peluche_sintetico,regular,conservar,57070,5,total,Bogota,fisico,Caja del Tiempo
+prenda_textil,papel,regular,compartir,107061,1,ninguna,Medellin,fisico,Almohada Abrazo
+joya_pequena,peluche_sintetico,regular,recordar_digitalmente,108274,3,total,Bogota,fisico,Caja del Tiempo
+reloj_instrumento,mixto,danado,recordar_digitalmente,140056,2,total,Cali,fisico,Restauración Especial
+reloj_instrumento,mixto,danado,restaurar,133499,2,ninguna,Bogota,fisico,Almohada Abrazo
+otro_objeto,metal,regular,conservar,90371,1,ninguna,Bogota,fisico,Restauración Especial
+peluche,madera,muy_danado,recordar_digitalmente,51452,2,leve,Cali,fisico,Restauración Especial
+prenda_textil,papel,muy_danado,compartir,83831,1,total,Barranquilla,fisico,Almohada Abrazo
+mueble,tela,bueno,compartir,102603,3,ninguna,Barranquilla,fisico,Recuerdo Compartido
+reloj_instrumento,mixto,muy_danado,conservar,87927,1,moderada,Medellin,fisico,Restauración Especial
+fotografia,vidrio,muy_danado,compartir,74773,2,total,Bucaramanga,fisico,Caja del Tiempo
+otro_objeto,mixto,regular,recordar_digitalmente,103850,1,moderada,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,danado,transformar,77361,1,ninguna,Medellin,digital,Memorial Digital
+mueble,tela,danado,compartir,73017,1,moderada,Cali,fisico,Restauración Especial
+peluche,metal,regular,restaurar,105900,2,ninguna,Bogota,digital,Memorial Digital
+prenda_textil,peluche_sintetico,regular,conservar,80930,1,ninguna,Barranquilla,fisico,Almohada Abrazo
+reloj_instrumento,cuero,danado,conservar,103543,2,ninguna,Cali,fisico,Caja del Tiempo
+reloj_instrumento,peluche_sintetico,bueno,compartir,104562,1,leve,Cali,fisico,Restauración Especial
+mueble,madera,danado,transformar,55119,5,leve,Barranquilla,fisico,Restauración Especial
+prenda_textil,metal,danado,transformar,78156,1,total,Medellin,fisico,Almohada Abrazo
+prenda_textil,papel,danado,transformar,145322,1,total,Barranquilla,fisico,Almohada Abrazo
+prenda_textil,vidrio,danado,compartir,54327,2,moderada,Medellin,fisico,Almohada Abrazo
+carta_documento,mixto,regular,conservar,30000,2,leve,Bucaramanga,fisico,Libro de Memorias
+otro_objeto,vidrio,muy_danado,recordar_digitalmente,30000,2,ninguna,Bucaramanga,fisico,Restauración Especial
+otro_objeto,madera,regular,restaurar,96018,2,moderada,Barranquilla,fisico,Restauración Especial
+prenda_textil,metal,muy_danado,transformar,96082,3,leve,Cali,fisico,Almohada Abrazo
+joya_pequena,cuero,regular,conservar,90883,1,ninguna,Medellin,fisico,Almohada Abrazo
+carta_documento,mixto,muy_danado,recordar_digitalmente,137496,5,total,Bogota,fisico,Libro de Memorias
+carta_documento,madera,bueno,transformar,30000,2,moderada,Bucaramanga,fisico,Libro de Memorias
+peluche,mixto,bueno,conservar,108857,3,ninguna,Cali,fisico,Peluche Memoria
+prenda_textil,cuero,danado,conservar,149650,1,leve,Medellin,fisico,Almohada Abrazo
+prenda_textil,vidrio,muy_danado,conservar,55527,1,ninguna,Cali,fisico,Almohada Abrazo
+reloj_instrumento,metal,muy_danado,restaurar,81706,1,leve,Medellin,digital,Libro de Memorias
+otro_objeto,cuero,danado,recordar_digitalmente,68648,1,moderada,Bogota,fisico,Restauración Especial
+reloj_instrumento,mixto,regular,transformar,63697,3,leve,Cali,fisico,Restauración Especial
+mueble,vidrio,bueno,recordar_digitalmente,83580,1,ninguna,Medellin,fisico,Restauración Especial
+reloj_instrumento,vidrio,danado,conservar,144961,1,leve,Barranquilla,fisico,Cuadro de Historia
+reloj_instrumento,vidrio,danado,conservar,159308,4,leve,Cali,fisico,Restauración Especial
+fotografia,mixto,danado,compartir,83242,2,moderada,Bogota,digital,Memorial Digital
+otro_objeto,mixto,muy_danado,transformar,161677,2,ninguna,Medellin,fisico,Restauración Especial
+prenda_textil,peluche_sintetico,muy_danado,recordar_digitalmente,96245,2,moderada,Barranquilla,fisico,Almohada Abrazo
+peluche,madera,muy_danado,restaurar,156379,1,leve,Cali,fisico,Restauración Especial
+prenda_textil,papel,regular,restaurar,91734,1,leve,Bucaramanga,fisico,Almohada Abrazo
+mueble,mixto,muy_danado,restaurar,99587,1,moderada,Cali,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,regular,compartir,107791,3,leve,Bogota,digital,Memorial Digital
+joya_pequena,papel,muy_danado,restaurar,206259,1,leve,Bogota,fisico,Caja del Tiempo
+reloj_instrumento,vidrio,regular,conservar,124794,4,leve,Bucaramanga,fisico,Caja del Tiempo
+reloj_instrumento,mixto,muy_danado,conservar,70245,1,leve,Medellin,digital,Memorial Digital
+carta_documento,vidrio,muy_danado,compartir,128914,1,leve,Bucaramanga,fisico,Libro de Memorias
+carta_documento,metal,muy_danado,restaurar,82335,1,leve,Bogota,fisico,Libro de Memorias
+carta_documento,metal,muy_danado,restaurar,77858,1,total,Bogota,fisico,Libro de Memorias
+fotografia,peluche_sintetico,muy_danado,restaurar,126801,2,total,Bucaramanga,fisico,Cuadro de Historia
+prenda_textil,tela,bueno,transformar,96087,4,total,Cali,digital,Peluche Memoria
+peluche,tela,danado,recordar_digitalmente,104750,2,moderada,Barranquilla,fisico,Cuadro de Historia
+fotografia,tela,regular,transformar,95489,1,total,Cali,digital,Memorial Digital
+fotografia,papel,danado,recordar_digitalmente,106780,1,moderada,Bogota,fisico,Cuadro de Historia
+fotografia,mixto,danado,transformar,109873,4,moderada,Cali,fisico,Cuadro de Historia
+carta_documento,peluche_sintetico,muy_danado,restaurar,30000,1,total,Medellin,fisico,Libro de Memorias
+otro_objeto,tela,regular,restaurar,118330,1,leve,Bogota,fisico,Restauración Especial
+fotografia,mixto,muy_danado,conservar,60629,5,total,Bogota,fisico,Cuadro de Historia
+otro_objeto,mixto,muy_danado,conservar,44519,3,leve,Bogota,fisico,Caja del Tiempo
+joya_pequena,vidrio,regular,restaurar,92955,2,moderada,Bucaramanga,digital,Memorial Digital
+joya_pequena,tela,regular,compartir,97939,4,leve,Barranquilla,fisico,Recuerdo Compartido
+mueble,tela,danado,conservar,70727,1,ninguna,Cali,fisico,Restauración Especial
+prenda_textil,mixto,muy_danado,compartir,124086,2,moderada,Bucaramanga,fisico,Almohada Abrazo
+mueble,tela,muy_danado,transformar,48023,4,leve,Medellin,digital,Memorial Digital
+carta_documento,peluche_sintetico,bueno,conservar,80756,1,total,Bogota,fisico,Libro de Memorias
+fotografia,metal,muy_danado,conservar,74529,1,leve,Medellin,fisico,Cuadro de Historia
+reloj_instrumento,vidrio,regular,conservar,93369,1,total,Cali,digital,Memorial Digital
+fotografia,peluche_sintetico,bueno,transformar,104760,1,total,Barranquilla,digital,Memorial Digital
+otro_objeto,vidrio,muy_danado,conservar,59723,2,moderada,Bucaramanga,fisico,Recuerdo Compartido
+reloj_instrumento,papel,bueno,recordar_digitalmente,120349,1,total,Medellin,fisico,Restauración Especial
+fotografia,mixto,bueno,transformar,97205,1,ninguna,Barranquilla,fisico,Cuadro de Historia
+fotografia,vidrio,regular,recordar_digitalmente,30000,1,ninguna,Bucaramanga,fisico,Cuadro de Historia
+peluche,papel,muy_danado,compartir,30000,1,moderada,Cali,fisico,Restauración Especial
+prenda_textil,tela,bueno,compartir,94568,1,leve,Barranquilla,fisico,Almohada Abrazo
+reloj_instrumento,vidrio,danado,recordar_digitalmente,87266,2,total,Bucaramanga,digital,Memorial Digital
+mueble,madera,regular,restaurar,91380,1,moderada,Bogota,fisico,Restauración Especial
+peluche,tela,muy_danado,conservar,94020,1,total,Barranquilla,fisico,Restauración Especial
+otro_objeto,vidrio,danado,compartir,102894,3,ninguna,Medellin,fisico,Restauración Especial
+joya_pequena,papel,bueno,restaurar,128167,3,leve,Barranquilla,fisico,Caja del Tiempo
+joya_pequena,cuero,regular,conservar,56111,1,total,Medellin,fisico,Caja del Tiempo
+peluche,papel,regular,restaurar,53980,2,total,Barranquilla,fisico,Peluche Memoria
+otro_objeto,metal,regular,transformar,56733,2,total,Bogota,fisico,Peluche Memoria
+prenda_textil,cuero,muy_danado,compartir,105112,2,moderada,Bogota,fisico,Almohada Abrazo
+otro_objeto,mixto,regular,conservar,138573,1,total,Bucaramanga,fisico,Restauración Especial
+prenda_textil,vidrio,muy_danado,compartir,79903,1,moderada,Barranquilla,fisico,Almohada Abrazo
+peluche,madera,danado,restaurar,30000,1,total,Medellin,fisico,Restauración Especial
+mueble,mixto,regular,transformar,35360,2,total,Barranquilla,digital,Memorial Digital
+mueble,mixto,regular,recordar_digitalmente,65843,1,ninguna,Barranquilla,fisico,Restauración Especial
+joya_pequena,madera,muy_danado,conservar,75479,2,total,Cali,fisico,Caja del Tiempo
+peluche,tela,danado,transformar,80706,1,leve,Medellin,digital,Memorial Digital
+peluche,papel,danado,compartir,96350,1,leve,Bogota,fisico,Restauración Especial
+otro_objeto,vidrio,danado,transformar,84088,2,moderada,Medellin,digital,Memorial Digital
+prenda_textil,tela,muy_danado,compartir,131726,5,ninguna,Bogota,fisico,Almohada Abrazo
+prenda_textil,tela,bueno,restaurar,71339,2,leve,Cali,fisico,Almohada Abrazo
+carta_documento,mixto,muy_danado,conservar,64818,1,moderada,Cali,digital,Memorial Digital
+prenda_textil,metal,muy_danado,compartir,111760,2,ninguna,Medellin,digital,Memorial Digital
+otro_objeto,peluche_sintetico,danado,recordar_digitalmente,41252,1,moderada,Cali,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,regular,restaurar,108639,2,total,Medellin,fisico,Restauración Especial
+reloj_instrumento,cuero,muy_danado,compartir,98589,4,moderada,Bogota,fisico,Restauración Especial
+peluche,papel,bueno,transformar,89839,1,leve,Barranquilla,fisico,Peluche Memoria
+peluche,madera,bueno,recordar_digitalmente,150589,5,total,Barranquilla,digital,Memorial Digital
+carta_documento,peluche_sintetico,danado,conservar,73222,3,leve,Barranquilla,fisico,Libro de Memorias
+joya_pequena,mixto,danado,compartir,167110,2,moderada,Bogota,fisico,Recuerdo Compartido
+mueble,cuero,regular,recordar_digitalmente,87109,5,moderada,Medellin,fisico,Cuadro de Historia
+carta_documento,peluche_sintetico,regular,conservar,50304,1,moderada,Medellin,digital,Cuadro de Historia
+carta_documento,cuero,bueno,conservar,97447,3,moderada,Bucaramanga,fisico,Libro de Memorias
+peluche,papel,muy_danado,transformar,57331,2,ninguna,Barranquilla,fisico,Restauración Especial
+joya_pequena,metal,danado,transformar,68688,1,leve,Barranquilla,fisico,Caja del Tiempo
+joya_pequena,papel,danado,recordar_digitalmente,108896,2,moderada,Barranquilla,fisico,Caja del Tiempo
+reloj_instrumento,cuero,bueno,conservar,114445,1,leve,Barranquilla,fisico,Restauración Especial
+prenda_textil,peluche_sintetico,muy_danado,recordar_digitalmente,73224,2,total,Cali,fisico,Almohada Abrazo
+reloj_instrumento,mixto,muy_danado,compartir,129559,3,leve,Bucaramanga,fisico,Recuerdo Compartido
+otro_objeto,madera,bueno,restaurar,135512,1,ninguna,Medellin,digital,Memorial Digital
+mueble,papel,muy_danado,conservar,145270,1,moderada,Bogota,fisico,Restauración Especial
+prenda_textil,peluche_sintetico,danado,transformar,113529,1,total,Bogota,fisico,Almohada Abrazo
+fotografia,cuero,bueno,transformar,142720,3,leve,Medellin,digital,Memorial Digital
+otro_objeto,tela,bueno,recordar_digitalmente,30000,1,ninguna,Barranquilla,fisico,Restauración Especial
+carta_documento,mixto,danado,compartir,83873,1,leve,Medellin,fisico,Libro de Memorias
+otro_objeto,mixto,muy_danado,restaurar,64654,3,moderada,Bogota,fisico,Memorial Digital
+reloj_instrumento,cuero,regular,compartir,99172,1,ninguna,Barranquilla,fisico,Restauración Especial
+prenda_textil,madera,bueno,recordar_digitalmente,74999,2,moderada,Bucaramanga,fisico,Almohada Abrazo
+prenda_textil,metal,bueno,recordar_digitalmente,89184,1,total,Bucaramanga,digital,Memorial Digital
+prenda_textil,madera,bueno,transformar,160876,2,leve,Bucaramanga,fisico,Almohada Abrazo
+mueble,cuero,bueno,compartir,89059,3,ninguna,Cali,fisico,Recuerdo Compartido
+reloj_instrumento,tela,danado,compartir,109482,1,ninguna,Bogota,fisico,Restauración Especial
+carta_documento,madera,regular,transformar,86870,2,leve,Cali,digital,Memorial Digital
+fotografia,tela,danado,restaurar,97649,1,ninguna,Cali,fisico,Cuadro de Historia
+mueble,madera,muy_danado,transformar,95210,1,ninguna,Bogota,fisico,Restauración Especial
+joya_pequena,mixto,muy_danado,conservar,110691,1,moderada,Barranquilla,fisico,Caja del Tiempo
+prenda_textil,mixto,bueno,compartir,135785,2,ninguna,Cali,fisico,Almohada Abrazo
+prenda_textil,metal,regular,transformar,152658,2,total,Bogota,digital,Memorial Digital
+joya_pequena,madera,danado,recordar_digitalmente,105836,5,leve,Bucaramanga,digital,Recuerdo Compartido
+otro_objeto,tela,bueno,compartir,115634,5,moderada,Medellin,fisico,Recuerdo Compartido
+otro_objeto,vidrio,danado,compartir,54719,5,leve,Bucaramanga,digital,Memorial Digital
+carta_documento,tela,regular,recordar_digitalmente,91924,2,moderada,Bogota,fisico,Libro de Memorias
+prenda_textil,madera,danado,compartir,127910,1,moderada,Cali,fisico,Almohada Abrazo
+otro_objeto,vidrio,regular,transformar,125308,1,total,Bucaramanga,fisico,Restauración Especial
+fotografia,tela,muy_danado,conservar,102406,4,leve,Barranquilla,fisico,Cuadro de Historia
+otro_objeto,cuero,bueno,conservar,126023,1,total,Bogota,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,muy_danado,restaurar,112176,3,ninguna,Bogota,fisico,Restauración Especial
+joya_pequena,mixto,bueno,restaurar,137010,2,moderada,Cali,fisico,Caja del Tiempo
+carta_documento,metal,regular,compartir,105127,5,ninguna,Cali,fisico,Libro de Memorias
+joya_pequena,tela,regular,compartir,82550,1,moderada,Bucaramanga,fisico,Caja del Tiempo
+fotografia,metal,regular,conservar,106754,2,ninguna,Medellin,fisico,Cuadro de Historia
+joya_pequena,vidrio,regular,conservar,30000,5,moderada,Bucaramanga,digital,Memorial Digital
+peluche,cuero,bueno,transformar,108401,1,total,Cali,fisico,Peluche Memoria
+otro_objeto,mixto,danado,recordar_digitalmente,30000,2,leve,Bogota,fisico,Restauración Especial
+reloj_instrumento,mixto,danado,conservar,34678,1,moderada,Bogota,digital,Memorial Digital
+peluche,metal,muy_danado,conservar,110811,4,leve,Medellin,fisico,Caja del Tiempo
+prenda_textil,papel,bueno,compartir,111713,1,ninguna,Bucaramanga,fisico,Almohada Abrazo
+mueble,vidrio,regular,conservar,54314,1,moderada,Bogota,digital,Memorial Digital
+joya_pequena,papel,muy_danado,conservar,70076,2,ninguna,Bogota,digital,Memorial Digital
+peluche,cuero,danado,conservar,142968,2,ninguna,Barranquilla,fisico,Caja del Tiempo
+reloj_instrumento,papel,bueno,conservar,78058,2,moderada,Barranquilla,fisico,Caja del Tiempo
+reloj_instrumento,metal,bueno,compartir,173502,1,total,Bucaramanga,fisico,Restauración Especial
+mueble,tela,muy_danado,recordar_digitalmente,94932,1,leve,Bogota,fisico,Restauración Especial
+prenda_textil,metal,regular,recordar_digitalmente,109281,1,total,Barranquilla,fisico,Almohada Abrazo
+otro_objeto,madera,regular,restaurar,151590,2,ninguna,Medellin,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,danado,recordar_digitalmente,99585,3,leve,Medellin,fisico,Restauración Especial
+mueble,vidrio,danado,conservar,59917,1,leve,Bogota,fisico,Restauración Especial
+peluche,cuero,danado,restaurar,91159,5,leve,Bogota,fisico,Cuadro de Historia
+otro_objeto,mixto,danado,recordar_digitalmente,93753,2,moderada,Bucaramanga,fisico,Restauración Especial
+mueble,madera,bueno,compartir,47234,3,ninguna,Barranquilla,fisico,Recuerdo Compartido
+peluche,metal,regular,compartir,86045,2,leve,Barranquilla,fisico,Cuadro de Historia
+mueble,cuero,regular,compartir,69023,1,ninguna,Cali,fisico,Restauración Especial
+mueble,tela,bueno,restaurar,127352,1,leve,Bucaramanga,digital,Memorial Digital
+mueble,tela,bueno,restaurar,96211,1,leve,Medellin,digital,Memorial Digital
+fotografia,peluche_sintetico,regular,restaurar,85102,1,leve,Cali,digital,Recuerdo Compartido
+peluche,madera,muy_danado,conservar,91283,1,leve,Cali,fisico,Restauración Especial
+mueble,peluche_sintetico,regular,recordar_digitalmente,102809,5,total,Bogota,fisico,Restauración Especial
+fotografia,metal,regular,recordar_digitalmente,116588,1,moderada,Cali,fisico,Cuadro de Historia
+joya_pequena,tela,regular,recordar_digitalmente,60010,1,leve,Cali,fisico,Caja del Tiempo
+carta_documento,madera,muy_danado,restaurar,58544,2,total,Bucaramanga,fisico,Libro de Memorias
+reloj_instrumento,peluche_sintetico,muy_danado,recordar_digitalmente,133663,1,moderada,Cali,fisico,Restauración Especial
+otro_objeto,mixto,muy_danado,transformar,80568,2,ninguna,Medellin,fisico,Restauración Especial
+joya_pequena,mixto,regular,compartir,45410,1,total,Barranquilla,fisico,Caja del Tiempo
+mueble,vidrio,bueno,restaurar,110533,2,moderada,Barranquilla,fisico,Restauración Especial
+joya_pequena,tela,muy_danado,recordar_digitalmente,111217,2,total,Barranquilla,fisico,Caja del Tiempo
+reloj_instrumento,peluche_sintetico,muy_danado,transformar,41424,1,ninguna,Medellin,fisico,Restauración Especial
+carta_documento,papel,danado,conservar,103031,1,ninguna,Cali,digital,Memorial Digital
+prenda_textil,papel,bueno,transformar,120745,1,leve,Cali,fisico,Almohada Abrazo
+mueble,vidrio,danado,transformar,108103,1,leve,Bucaramanga,digital,Memorial Digital
+peluche,vidrio,danado,transformar,117119,2,total,Barranquilla,digital,Memorial Digital
+peluche,mixto,regular,compartir,45850,1,leve,Barranquilla,fisico,Peluche Memoria
+otro_objeto,mixto,danado,conservar,106586,1,leve,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,metal,muy_danado,compartir,84408,3,ninguna,Cali,fisico,Recuerdo Compartido
+fotografia,vidrio,bueno,compartir,78102,3,moderada,Cali,fisico,Libro de Memorias
+reloj_instrumento,cuero,danado,transformar,125469,2,ninguna,Medellin,fisico,Restauración Especial
+mueble,cuero,muy_danado,restaurar,146774,4,ninguna,Bucaramanga,fisico,Restauración Especial
+otro_objeto,papel,danado,recordar_digitalmente,157802,5,moderada,Bogota,fisico,Restauración Especial
+fotografia,tela,muy_danado,conservar,141018,1,ninguna,Barranquilla,fisico,Cuadro de Historia
+joya_pequena,vidrio,bueno,compartir,91159,1,ninguna,Medellin,fisico,Caja del Tiempo
+reloj_instrumento,cuero,regular,conservar,107345,1,total,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,metal,regular,restaurar,121838,1,total,Medellin,fisico,Restauración Especial
+carta_documento,metal,muy_danado,transformar,99241,1,leve,Barranquilla,fisico,Peluche Memoria
+reloj_instrumento,metal,danado,recordar_digitalmente,99576,3,total,Barranquilla,fisico,Recuerdo Compartido
+prenda_textil,vidrio,muy_danado,transformar,123831,2,moderada,Barranquilla,fisico,Almohada Abrazo
+fotografia,cuero,regular,restaurar,92925,3,total,Barranquilla,fisico,Cuadro de Historia
+fotografia,papel,muy_danado,conservar,69474,1,leve,Cali,digital,Memorial Digital
+carta_documento,papel,regular,compartir,80493,1,ninguna,Cali,fisico,Libro de Memorias
+prenda_textil,peluche_sintetico,muy_danado,compartir,117186,1,leve,Bucaramanga,fisico,Almohada Abrazo
+peluche,papel,muy_danado,compartir,95104,1,total,Medellin,fisico,Restauración Especial
+peluche,vidrio,bueno,restaurar,106907,1,total,Barranquilla,fisico,Peluche Memoria
+prenda_textil,metal,muy_danado,restaurar,118452,1,moderada,Medellin,fisico,Almohada Abrazo
+peluche,papel,regular,transformar,81880,1,total,Medellin,fisico,Peluche Memoria
+peluche,vidrio,regular,compartir,121468,1,leve,Bogota,digital,Almohada Abrazo
+joya_pequena,mixto,bueno,recordar_digitalmente,108259,2,ninguna,Barranquilla,fisico,Caja del Tiempo
+otro_objeto,tela,bueno,conservar,51781,2,leve,Medellin,fisico,Caja del Tiempo
+joya_pequena,metal,bueno,conservar,145480,1,ninguna,Cali,digital,Memorial Digital
+prenda_textil,metal,bueno,restaurar,77473,2,ninguna,Barranquilla,fisico,Almohada Abrazo
+mueble,peluche_sintetico,regular,recordar_digitalmente,37071,1,total,Barranquilla,fisico,Restauración Especial
+joya_pequena,papel,danado,transformar,58423,1,total,Cali,fisico,Caja del Tiempo
+joya_pequena,mixto,regular,conservar,59263,2,moderada,Bucaramanga,fisico,Restauración Especial
+prenda_textil,metal,muy_danado,transformar,96826,2,total,Bogota,fisico,Almohada Abrazo
+fotografia,vidrio,bueno,recordar_digitalmente,85415,1,total,Medellin,fisico,Cuadro de Historia
+mueble,mixto,bueno,transformar,83210,1,total,Barranquilla,fisico,Restauración Especial
+joya_pequena,tela,regular,conservar,116689,2,ninguna,Cali,fisico,Caja del Tiempo
+reloj_instrumento,metal,bueno,conservar,106895,1,total,Cali,fisico,Restauración Especial
+reloj_instrumento,metal,bueno,restaurar,106061,4,total,Cali,fisico,Restauración Especial
+mueble,tela,muy_danado,transformar,109343,2,leve,Cali,fisico,Restauración Especial
+joya_pequena,tela,regular,restaurar,116564,2,total,Bucaramanga,fisico,Caja del Tiempo
+otro_objeto,tela,bueno,compartir,30000,1,leve,Bogota,fisico,Restauración Especial
+fotografia,metal,regular,conservar,82244,1,leve,Medellin,fisico,Cuadro de Historia
+reloj_instrumento,mixto,danado,restaurar,30000,2,leve,Barranquilla,fisico,Restauración Especial
+joya_pequena,vidrio,danado,recordar_digitalmente,96262,1,leve,Cali,digital,Recuerdo Compartido
+otro_objeto,papel,danado,compartir,94837,1,total,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,madera,muy_danado,conservar,131593,2,total,Bogota,fisico,Restauración Especial
+carta_documento,madera,regular,transformar,136567,1,moderada,Barranquilla,fisico,Caja del Tiempo
+otro_objeto,papel,danado,restaurar,102097,2,leve,Medellin,digital,Memorial Digital
+peluche,tela,danado,compartir,77487,1,total,Barranquilla,digital,Memorial Digital
+mueble,cuero,muy_danado,transformar,111980,2,ninguna,Barranquilla,digital,Memorial Digital
+prenda_textil,cuero,regular,restaurar,76522,2,moderada,Cali,fisico,Almohada Abrazo
+otro_objeto,peluche_sintetico,bueno,compartir,94951,4,leve,Medellin,fisico,Recuerdo Compartido
+mueble,tela,regular,transformar,129514,2,leve,Cali,fisico,Restauración Especial
+fotografia,tela,bueno,conservar,75478,2,total,Barranquilla,fisico,Cuadro de Historia
+prenda_textil,metal,muy_danado,restaurar,123198,3,moderada,Cali,fisico,Restauración Especial
+reloj_instrumento,vidrio,muy_danado,conservar,118709,1,moderada,Medellin,fisico,Restauración Especial
+joya_pequena,cuero,danado,conservar,61582,5,total,Bogota,fisico,Caja del Tiempo
+reloj_instrumento,cuero,danado,compartir,129086,1,moderada,Medellin,fisico,Restauración Especial
+joya_pequena,mixto,regular,recordar_digitalmente,119449,4,total,Bucaramanga,digital,Memorial Digital
+fotografia,metal,bueno,restaurar,98567,3,leve,Cali,digital,Almohada Abrazo
+reloj_instrumento,mixto,bueno,restaurar,68318,1,ninguna,Barranquilla,fisico,Restauración Especial
+prenda_textil,peluche_sintetico,bueno,recordar_digitalmente,64927,1,total,Bogota,fisico,Almohada Abrazo
+carta_documento,tela,bueno,conservar,76181,1,ninguna,Barranquilla,fisico,Libro de Memorias
+carta_documento,mixto,muy_danado,transformar,113990,2,moderada,Cali,fisico,Libro de Memorias
+mueble,peluche_sintetico,regular,transformar,61553,2,total,Bucaramanga,fisico,Restauración Especial
+mueble,peluche_sintetico,bueno,conservar,110312,1,total,Medellin,fisico,Restauración Especial
+prenda_textil,vidrio,regular,transformar,51538,1,total,Bucaramanga,fisico,Almohada Abrazo
+joya_pequena,tela,danado,conservar,87857,2,ninguna,Cali,fisico,Caja del Tiempo
+joya_pequena,mixto,muy_danado,recordar_digitalmente,98837,2,moderada,Barranquilla,digital,Memorial Digital
+otro_objeto,papel,muy_danado,transformar,180579,2,leve,Bucaramanga,digital,Recuerdo Compartido
+peluche,madera,muy_danado,conservar,46793,1,total,Medellin,digital,Memorial Digital
+prenda_textil,mixto,regular,restaurar,146520,1,ninguna,Bogota,fisico,Almohada Abrazo
+peluche,madera,danado,compartir,100244,2,leve,Cali,fisico,Recuerdo Compartido
+prenda_textil,madera,muy_danado,conservar,109391,2,moderada,Medellin,digital,Libro de Memorias
+prenda_textil,peluche_sintetico,muy_danado,compartir,99142,2,total,Medellin,fisico,Almohada Abrazo
+prenda_textil,vidrio,bueno,conservar,110565,1,leve,Bogota,fisico,Almohada Abrazo
+fotografia,peluche_sintetico,muy_danado,recordar_digitalmente,89621,2,moderada,Bogota,fisico,Cuadro de Historia
+joya_pequena,cuero,muy_danado,transformar,145891,2,leve,Bucaramanga,fisico,Caja del Tiempo
+joya_pequena,papel,muy_danado,conservar,79023,1,total,Cali,fisico,Caja del Tiempo
+carta_documento,metal,muy_danado,compartir,134628,1,moderada,Medellin,fisico,Libro de Memorias
+peluche,peluche_sintetico,danado,recordar_digitalmente,72447,5,ninguna,Cali,digital,Memorial Digital
+otro_objeto,metal,muy_danado,transformar,92891,2,total,Bogota,digital,Memorial Digital
+mueble,madera,regular,restaurar,57481,2,ninguna,Medellin,digital,Memorial Digital
+reloj_instrumento,vidrio,regular,conservar,110925,1,moderada,Barranquilla,fisico,Restauración Especial
+mueble,cuero,muy_danado,conservar,145579,1,moderada,Cali,fisico,Restauración Especial
+joya_pequena,cuero,bueno,restaurar,92292,1,ninguna,Cali,fisico,Caja del Tiempo
+fotografia,madera,muy_danado,compartir,88109,1,leve,Medellin,fisico,Cuadro de Historia
+joya_pequena,tela,danado,recordar_digitalmente,55988,1,leve,Barranquilla,digital,Memorial Digital
+reloj_instrumento,madera,bueno,conservar,86974,1,total,Medellin,digital,Memorial Digital
+prenda_textil,peluche_sintetico,muy_danado,restaurar,39252,2,total,Medellin,fisico,Almohada Abrazo
+joya_pequena,cuero,muy_danado,transformar,63049,2,leve,Barranquilla,fisico,Caja del Tiempo
+prenda_textil,mixto,muy_danado,transformar,102937,2,total,Cali,fisico,Almohada Abrazo
+prenda_textil,papel,bueno,compartir,141165,2,leve,Bogota,fisico,Almohada Abrazo
+otro_objeto,vidrio,bueno,recordar_digitalmente,193322,1,total,Barranquilla,fisico,Restauración Especial
+fotografia,papel,danado,conservar,74469,2,leve,Barranquilla,digital,Memorial Digital
+peluche,cuero,muy_danado,conservar,145235,1,ninguna,Medellin,digital,Memorial Digital
+prenda_textil,madera,regular,conservar,103531,2,moderada,Bogota,fisico,Almohada Abrazo
+joya_pequena,madera,bueno,recordar_digitalmente,89706,1,ninguna,Bogota,digital,Memorial Digital
+carta_documento,peluche_sintetico,regular,compartir,110140,5,ninguna,Medellin,fisico,Libro de Memorias
+carta_documento,mixto,regular,recordar_digitalmente,97167,1,moderada,Bucaramanga,digital,Memorial Digital
+mueble,metal,bueno,conservar,98863,1,leve,Medellin,fisico,Restauración Especial
+joya_pequena,madera,regular,recordar_digitalmente,80708,1,leve,Bucaramanga,fisico,Caja del Tiempo
+carta_documento,vidrio,muy_danado,restaurar,46066,1,ninguna,Cali,fisico,Memorial Digital
+fotografia,metal,bueno,transformar,40973,5,leve,Cali,fisico,Cuadro de Historia
+fotografia,cuero,regular,transformar,117863,5,total,Barranquilla,fisico,Cuadro de Historia
+joya_pequena,papel,danado,conservar,85315,1,total,Bogota,fisico,Almohada Abrazo
+prenda_textil,peluche_sintetico,danado,transformar,74136,1,leve,Cali,fisico,Almohada Abrazo
+reloj_instrumento,metal,muy_danado,conservar,95297,2,ninguna,Medellin,fisico,Caja del Tiempo
+carta_documento,mixto,bueno,recordar_digitalmente,122822,1,moderada,Bucaramanga,fisico,Libro de Memorias
+prenda_textil,tela,regular,transformar,101312,4,total,Medellin,fisico,Almohada Abrazo
+reloj_instrumento,mixto,regular,transformar,72038,1,leve,Medellin,fisico,Restauración Especial
+carta_documento,tela,danado,restaurar,137920,2,total,Barranquilla,fisico,Libro de Memorias
+mueble,mixto,danado,transformar,150271,4,leve,Cali,fisico,Restauración Especial
+prenda_textil,vidrio,muy_danado,transformar,112309,3,ninguna,Bogota,fisico,Almohada Abrazo
+prenda_textil,madera,bueno,conservar,129078,2,total,Bogota,digital,Memorial Digital
+reloj_instrumento,madera,muy_danado,compartir,138468,1,ninguna,Barranquilla,fisico,Restauración Especial
+joya_pequena,tela,muy_danado,recordar_digitalmente,134553,2,leve,Bucaramanga,fisico,Caja del Tiempo
+peluche,mixto,regular,recordar_digitalmente,116493,4,leve,Bogota,fisico,Peluche Memoria
+fotografia,peluche_sintetico,bueno,compartir,115942,1,leve,Cali,digital,Memorial Digital
+mueble,metal,bueno,transformar,113188,1,moderada,Cali,fisico,Cuadro de Historia
+reloj_instrumento,metal,danado,recordar_digitalmente,56593,3,ninguna,Barranquilla,digital,Memorial Digital
+otro_objeto,tela,danado,conservar,119525,2,moderada,Cali,fisico,Caja del Tiempo
+peluche,peluche_sintetico,regular,compartir,47546,1,ninguna,Barranquilla,fisico,Peluche Memoria
+prenda_textil,madera,muy_danado,conservar,67189,4,ninguna,Medellin,fisico,Almohada Abrazo
+carta_documento,metal,muy_danado,compartir,140624,1,moderada,Barranquilla,digital,Memorial Digital
+carta_documento,papel,muy_danado,compartir,124407,1,moderada,Barranquilla,fisico,Libro de Memorias
+joya_pequena,papel,regular,transformar,147058,1,total,Barranquilla,fisico,Caja del Tiempo
+peluche,madera,regular,compartir,85491,4,moderada,Bogota,fisico,Peluche Memoria
+otro_objeto,madera,danado,compartir,54671,1,total,Medellin,fisico,Restauración Especial
+prenda_textil,tela,regular,restaurar,86584,1,ninguna,Medellin,fisico,Almohada Abrazo
+mueble,cuero,bueno,compartir,98571,1,moderada,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,metal,regular,recordar_digitalmente,97764,1,moderada,Bogota,digital,Memorial Digital
+joya_pequena,cuero,regular,compartir,134678,2,ninguna,Bucaramanga,fisico,Recuerdo Compartido
+joya_pequena,madera,regular,conservar,82355,1,ninguna,Cali,digital,Memorial Digital
+fotografia,cuero,bueno,recordar_digitalmente,107321,1,ninguna,Barranquilla,fisico,Cuadro de Historia
+carta_documento,metal,regular,transformar,60398,1,ninguna,Bucaramanga,fisico,Libro de Memorias
+peluche,vidrio,bueno,transformar,110761,1,moderada,Barranquilla,fisico,Peluche Memoria
+peluche,madera,bueno,conservar,95108,1,moderada,Medellin,fisico,Peluche Memoria
+carta_documento,papel,muy_danado,restaurar,68756,1,total,Cali,fisico,Libro de Memorias
+prenda_textil,papel,bueno,recordar_digitalmente,86745,2,leve,Cali,fisico,Almohada Abrazo
+mueble,peluche_sintetico,regular,transformar,88553,1,total,Bogota,digital,Memorial Digital
+fotografia,papel,bueno,recordar_digitalmente,85544,5,leve,Medellin,fisico,Cuadro de Historia
+prenda_textil,papel,danado,transformar,156996,2,leve,Bucaramanga,fisico,Almohada Abrazo
+peluche,madera,regular,compartir,91554,2,moderada,Bucaramanga,digital,Memorial Digital
+mueble,mixto,bueno,compartir,86463,1,total,Bucaramanga,digital,Memorial Digital
+peluche,madera,danado,restaurar,30000,1,ninguna,Medellin,fisico,Restauración Especial
+reloj_instrumento,mixto,bueno,restaurar,63702,1,total,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,vidrio,regular,restaurar,85792,1,leve,Bucaramanga,fisico,Restauración Especial
+otro_objeto,vidrio,danado,restaurar,70995,1,moderada,Bucaramanga,fisico,Restauración Especial
+joya_pequena,tela,regular,transformar,143359,1,leve,Cali,digital,Memorial Digital
+carta_documento,tela,regular,restaurar,89227,1,ninguna,Cali,fisico,Libro de Memorias
+mueble,peluche_sintetico,bueno,recordar_digitalmente,140095,1,leve,Barranquilla,digital,Memorial Digital
+carta_documento,peluche_sintetico,bueno,conservar,97159,3,leve,Cali,fisico,Libro de Memorias
+peluche,papel,muy_danado,transformar,96302,3,leve,Barranquilla,fisico,Restauración Especial
+carta_documento,metal,muy_danado,restaurar,91892,1,total,Cali,fisico,Libro de Memorias
+otro_objeto,papel,muy_danado,restaurar,95132,1,leve,Medellin,fisico,Restauración Especial
+fotografia,vidrio,bueno,transformar,155157,1,leve,Barranquilla,fisico,Cuadro de Historia
+joya_pequena,papel,regular,conservar,30000,1,total,Barranquilla,fisico,Caja del Tiempo
+fotografia,tela,bueno,compartir,30000,1,ninguna,Bogota,fisico,Cuadro de Historia
+peluche,madera,regular,conservar,75989,1,ninguna,Bogota,digital,Memorial Digital
+prenda_textil,peluche_sintetico,bueno,restaurar,95508,1,total,Medellin,fisico,Almohada Abrazo
+otro_objeto,madera,regular,conservar,119153,1,moderada,Bucaramanga,fisico,Restauración Especial
+peluche,papel,danado,conservar,111558,1,total,Medellin,fisico,Restauración Especial
+joya_pequena,tela,regular,compartir,81551,1,moderada,Cali,fisico,Caja del Tiempo
+reloj_instrumento,papel,muy_danado,restaurar,130666,5,leve,Bogota,digital,Memorial Digital
+carta_documento,peluche_sintetico,bueno,recordar_digitalmente,131056,1,moderada,Bogota,digital,Libro de Memorias
+fotografia,madera,muy_danado,recordar_digitalmente,101442,1,leve,Barranquilla,fisico,Cuadro de Historia
+carta_documento,vidrio,danado,conservar,128693,1,total,Cali,digital,Memorial Digital
+prenda_textil,tela,regular,restaurar,104542,1,total,Barranquilla,fisico,Almohada Abrazo
+otro_objeto,papel,bueno,recordar_digitalmente,75348,1,moderada,Medellin,fisico,Almohada Abrazo
+fotografia,madera,muy_danado,transformar,119423,1,total,Barranquilla,fisico,Cuadro de Historia
+reloj_instrumento,peluche_sintetico,regular,restaurar,98871,1,total,Bucaramanga,fisico,Restauración Especial
+joya_pequena,cuero,bueno,recordar_digitalmente,95046,2,leve,Bogota,fisico,Caja del Tiempo
+peluche,metal,bueno,transformar,146553,2,leve,Bogota,fisico,Peluche Memoria
+mueble,peluche_sintetico,regular,transformar,30000,1,total,Medellin,fisico,Restauración Especial
+joya_pequena,tela,regular,conservar,45381,5,leve,Barranquilla,fisico,Caja del Tiempo
+reloj_instrumento,peluche_sintetico,bueno,conservar,53452,2,ninguna,Barranquilla,digital,Memorial Digital
+fotografia,tela,regular,transformar,82285,1,leve,Bogota,fisico,Cuadro de Historia
+reloj_instrumento,madera,regular,compartir,86088,2,moderada,Barranquilla,fisico,Recuerdo Compartido
+mueble,mixto,bueno,transformar,42243,1,ninguna,Bogota,fisico,Restauración Especial
+fotografia,madera,bueno,compartir,60519,3,total,Bucaramanga,fisico,Cuadro de Historia
+carta_documento,vidrio,regular,compartir,64870,4,moderada,Bogota,fisico,Recuerdo Compartido
+fotografia,metal,muy_danado,recordar_digitalmente,181009,1,total,Medellin,digital,Memorial Digital
+prenda_textil,mixto,muy_danado,transformar,158060,2,total,Barranquilla,fisico,Almohada Abrazo
+mueble,cuero,regular,transformar,80588,1,ninguna,Cali,fisico,Restauración Especial
+mueble,tela,regular,transformar,82274,1,ninguna,Bogota,fisico,Libro de Memorias
+peluche,vidrio,regular,recordar_digitalmente,54777,1,ninguna,Medellin,fisico,Peluche Memoria
+peluche,mixto,bueno,conservar,30000,1,moderada,Bogota,digital,Memorial Digital
+carta_documento,cuero,regular,transformar,90909,2,moderada,Medellin,fisico,Libro de Memorias
+prenda_textil,peluche_sintetico,muy_danado,recordar_digitalmente,60075,1,leve,Bogota,fisico,Almohada Abrazo
+reloj_instrumento,mixto,bueno,transformar,92030,1,total,Bogota,digital,Memorial Digital
+prenda_textil,metal,regular,restaurar,38992,2,leve,Bucaramanga,fisico,Almohada Abrazo
+mueble,mixto,regular,transformar,68330,1,total,Bogota,digital,Memorial Digital
+reloj_instrumento,metal,regular,recordar_digitalmente,100201,2,leve,Bucaramanga,fisico,Restauración Especial
+otro_objeto,papel,bueno,restaurar,107817,2,moderada,Bucaramanga,digital,Memorial Digital
+prenda_textil,mixto,bueno,compartir,109611,1,moderada,Medellin,fisico,Almohada Abrazo
+mueble,peluche_sintetico,bueno,conservar,48782,1,total,Cali,digital,Memorial Digital
+carta_documento,mixto,regular,conservar,124914,5,total,Bogota,fisico,Libro de Memorias
+carta_documento,cuero,muy_danado,recordar_digitalmente,66992,4,leve,Barranquilla,fisico,Libro de Memorias
+mueble,peluche_sintetico,bueno,compartir,117150,1,moderada,Bogota,fisico,Restauración Especial
+peluche,metal,bueno,restaurar,94627,3,moderada,Barranquilla,fisico,Peluche Memoria
+reloj_instrumento,papel,regular,compartir,46826,3,ninguna,Cali,fisico,Recuerdo Compartido
+otro_objeto,papel,bueno,restaurar,83933,2,total,Barranquilla,fisico,Restauración Especial
+mueble,papel,danado,transformar,107787,5,total,Medellin,fisico,Restauración Especial
+otro_objeto,papel,danado,compartir,116453,1,leve,Barranquilla,fisico,Restauración Especial
+joya_pequena,peluche_sintetico,bueno,recordar_digitalmente,90065,2,ninguna,Cali,fisico,Caja del Tiempo
+otro_objeto,metal,bueno,restaurar,148612,3,total,Cali,fisico,Restauración Especial
+fotografia,papel,regular,conservar,130262,1,ninguna,Cali,digital,Almohada Abrazo
+otro_objeto,cuero,regular,transformar,86017,1,ninguna,Bogota,digital,Memorial Digital
+reloj_instrumento,peluche_sintetico,danado,restaurar,121254,1,total,Barranquilla,fisico,Restauración Especial
+fotografia,cuero,danado,recordar_digitalmente,162682,1,ninguna,Bucaramanga,fisico,Cuadro de Historia
+joya_pequena,papel,regular,transformar,163616,2,moderada,Bogota,fisico,Caja del Tiempo
+otro_objeto,madera,muy_danado,transformar,52020,1,total,Cali,fisico,Restauración Especial
+peluche,mixto,regular,compartir,62571,2,ninguna,Bogota,fisico,Peluche Memoria
+joya_pequena,cuero,regular,recordar_digitalmente,146972,1,moderada,Medellin,digital,Memorial Digital
+peluche,peluche_sintetico,danado,conservar,57960,1,moderada,Bucaramanga,digital,Memorial Digital
+prenda_textil,mixto,muy_danado,compartir,48711,1,moderada,Bucaramanga,fisico,Almohada Abrazo
+mueble,papel,regular,compartir,77983,1,leve,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,cuero,danado,compartir,109707,2,ninguna,Bogota,digital,Memorial Digital
+prenda_textil,papel,bueno,recordar_digitalmente,91416,4,ninguna,Barranquilla,fisico,Almohada Abrazo
+prenda_textil,mixto,bueno,transformar,72230,3,leve,Medellin,fisico,Almohada Abrazo
+reloj_instrumento,papel,regular,compartir,71402,4,moderada,Barranquilla,fisico,Recuerdo Compartido
+reloj_instrumento,tela,danado,restaurar,70068,1,moderada,Cali,fisico,Peluche Memoria
+reloj_instrumento,metal,bueno,compartir,64217,1,ninguna,Medellin,fisico,Caja del Tiempo
+mueble,peluche_sintetico,regular,recordar_digitalmente,174857,5,leve,Bucaramanga,digital,Memorial Digital
+joya_pequena,cuero,bueno,recordar_digitalmente,105412,1,total,Medellin,fisico,Caja del Tiempo
+mueble,madera,muy_danado,restaurar,126036,1,leve,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,vidrio,regular,transformar,77882,1,ninguna,Bogota,fisico,Restauración Especial
+fotografia,tela,bueno,recordar_digitalmente,88491,1,leve,Barranquilla,fisico,Cuadro de Historia
+mueble,madera,regular,restaurar,70025,1,leve,Barranquilla,fisico,Restauración Especial
+peluche,vidrio,bueno,restaurar,30000,2,ninguna,Bogota,fisico,Peluche Memoria
+prenda_textil,papel,regular,transformar,46769,1,leve,Bogota,fisico,Almohada Abrazo
+mueble,metal,muy_danado,conservar,31628,1,ninguna,Barranquilla,fisico,Restauración Especial
+prenda_textil,metal,muy_danado,compartir,30000,3,total,Medellin,fisico,Almohada Abrazo
+peluche,madera,bueno,conservar,53162,5,moderada,Barranquilla,digital,Memorial Digital
+peluche,madera,danado,conservar,141373,1,ninguna,Bucaramanga,fisico,Recuerdo Compartido
+fotografia,metal,danado,conservar,93444,3,ninguna,Cali,fisico,Cuadro de Historia
+prenda_textil,madera,danado,transformar,140169,1,ninguna,Cali,fisico,Almohada Abrazo
+carta_documento,mixto,muy_danado,compartir,109384,1,total,Medellin,fisico,Libro de Memorias
+joya_pequena,vidrio,muy_danado,conservar,122389,2,moderada,Medellin,fisico,Caja del Tiempo
+otro_objeto,cuero,muy_danado,compartir,63468,2,moderada,Cali,fisico,Recuerdo Compartido
+reloj_instrumento,cuero,regular,recordar_digitalmente,113338,1,ninguna,Barranquilla,fisico,Cuadro de Historia
+peluche,vidrio,muy_danado,transformar,120504,2,moderada,Barranquilla,fisico,Restauración Especial
+fotografia,peluche_sintetico,muy_danado,restaurar,74817,1,ninguna,Medellin,fisico,Cuadro de Historia
+mueble,madera,danado,conservar,114583,1,ninguna,Cali,fisico,Restauración Especial
+mueble,metal,bueno,compartir,114816,1,leve,Bucaramanga,fisico,Restauración Especial
+carta_documento,papel,muy_danado,compartir,75765,1,moderada,Medellin,fisico,Libro de Memorias
+otro_objeto,mixto,bueno,transformar,55703,1,ninguna,Barranquilla,fisico,Libro de Memorias
+mueble,cuero,regular,recordar_digitalmente,53555,1,ninguna,Bucaramanga,digital,Memorial Digital
+otro_objeto,vidrio,regular,compartir,98027,1,ninguna,Cali,fisico,Restauración Especial
+prenda_textil,mixto,bueno,compartir,106445,2,moderada,Cali,fisico,Almohada Abrazo
+reloj_instrumento,papel,danado,compartir,67261,2,total,Cali,fisico,Recuerdo Compartido
+otro_objeto,mixto,bueno,transformar,95930,4,ninguna,Bogota,fisico,Restauración Especial
+peluche,madera,bueno,transformar,114968,3,total,Medellin,fisico,Peluche Memoria
+joya_pequena,peluche_sintetico,bueno,conservar,116636,1,ninguna,Bogota,fisico,Caja del Tiempo
+carta_documento,papel,danado,transformar,149315,2,total,Cali,fisico,Libro de Memorias
+fotografia,mixto,bueno,restaurar,139694,1,leve,Bucaramanga,digital,Memorial Digital
+reloj_instrumento,mixto,bueno,recordar_digitalmente,59954,1,total,Barranquilla,digital,Memorial Digital
+mueble,mixto,regular,conservar,153925,1,moderada,Bogota,fisico,Restauración Especial
+joya_pequena,metal,bueno,conservar,76415,5,ninguna,Medellin,fisico,Caja del Tiempo
+joya_pequena,mixto,muy_danado,restaurar,131570,1,moderada,Medellin,digital,Memorial Digital
+mueble,vidrio,muy_danado,restaurar,97379,3,ninguna,Medellin,fisico,Restauración Especial
+mueble,cuero,muy_danado,recordar_digitalmente,80574,1,total,Medellin,fisico,Restauración Especial
+reloj_instrumento,madera,danado,recordar_digitalmente,31730,2,leve,Barranquilla,digital,Memorial Digital
+prenda_textil,metal,bueno,compartir,88995,1,ninguna,Barranquilla,fisico,Restauración Especial
+otro_objeto,peluche_sintetico,danado,conservar,40421,4,ninguna,Cali,fisico,Memorial Digital
+fotografia,cuero,muy_danado,recordar_digitalmente,128855,1,total,Cali,fisico,Cuadro de Historia
+peluche,cuero,muy_danado,restaurar,148087,1,total,Medellin,fisico,Restauración Especial
+otro_objeto,cuero,bueno,conservar,67108,2,ninguna,Medellin,fisico,Caja del Tiempo
+peluche,vidrio,regular,conservar,105568,1,moderada,Medellin,digital,Memorial Digital
+reloj_instrumento,cuero,muy_danado,conservar,69611,1,moderada,Barranquilla,fisico,Restauración Especial
+joya_pequena,peluche_sintetico,danado,recordar_digitalmente,73003,1,ninguna,Bogota,fisico,Caja del Tiempo
+otro_objeto,vidrio,regular,restaurar,122107,1,ninguna,Medellin,fisico,Restauración Especial
+otro_objeto,madera,bueno,compartir,93651,1,ninguna,Medellin,digital,Memorial Digital
+prenda_textil,madera,bueno,recordar_digitalmente,155887,1,total,Bucaramanga,fisico,Libro de Memorias
+joya_pequena,mixto,bueno,conservar,78121,3,moderada,Medellin,fisico,Caja del Tiempo
+fotografia,madera,bueno,conservar,129976,1,moderada,Barranquilla,fisico,Cuadro de Historia
+mueble,vidrio,muy_danado,transformar,98409,1,ninguna,Cali,fisico,Restauración Especial
+mueble,mixto,bueno,transformar,122852,2,ninguna,Medellin,digital,Memorial Digital
+joya_pequena,madera,danado,compartir,79349,1,total,Cali,fisico,Caja del Tiempo
+prenda_textil,metal,muy_danado,conservar,93265,5,total,Bucaramanga,fisico,Almohada Abrazo
+mueble,peluche_sintetico,muy_danado,recordar_digitalmente,90957,1,moderada,Cali,fisico,Restauración Especial
+mueble,papel,muy_danado,compartir,65738,2,moderada,Cali,fisico,Recuerdo Compartido
+peluche,mixto,regular,compartir,118172,2,moderada,Bucaramanga,fisico,Peluche Memoria
+fotografia,vidrio,muy_danado,transformar,117758,1,moderada,Bogota,fisico,Cuadro de Historia
+joya_pequena,vidrio,bueno,conservar,115774,1,ninguna,Barranquilla,fisico,Caja del Tiempo
+peluche,tela,danado,restaurar,148793,1,moderada,Bucaramanga,fisico,Restauración Especial
+fotografia,papel,danado,restaurar,145727,5,leve,Barranquilla,fisico,Cuadro de Historia
+prenda_textil,vidrio,regular,conservar,81876,1,moderada,Medellin,digital,Memorial Digital
+reloj_instrumento,cuero,muy_danado,conservar,108056,3,moderada,Bucaramanga,fisico,Caja del Tiempo
+reloj_instrumento,peluche_sintetico,regular,restaurar,73173,1,total,Bucaramanga,fisico,Restauración Especial
+carta_documento,papel,danado,recordar_digitalmente,95817,4,total,Bucaramanga,fisico,Libro de Memorias
+reloj_instrumento,papel,regular,recordar_digitalmente,74008,1,moderada,Bucaramanga,digital,Memorial Digital
+mueble,mixto,danado,compartir,151702,1,total,Barranquilla,fisico,Restauración Especial
+peluche,cuero,bueno,restaurar,107729,2,moderada,Medellin,fisico,Peluche Memoria
+mueble,madera,danado,conservar,87368,2,total,Medellin,fisico,Caja del Tiempo
+peluche,mixto,muy_danado,conservar,136776,1,moderada,Bogota,fisico,Restauración Especial
+prenda_textil,vidrio,muy_danado,transformar,30000,3,ninguna,Bucaramanga,fisico,Memorial Digital
+peluche,metal,regular,recordar_digitalmente,30000,2,total,Medellin,fisico,Peluche Memoria
+fotografia,vidrio,danado,conservar,122854,3,leve,Bogota,fisico,Cuadro de Historia
+fotografia,papel,bueno,restaurar,97116,1,total,Bogota,digital,Memorial Digital
+otro_objeto,cuero,bueno,conservar,103765,1,total,Medellin,digital,Memorial Digital
+carta_documento,mixto,bueno,compartir,48576,1,ninguna,Medellin,fisico,Libro de Memorias
+joya_pequena,madera,regular,compartir,94186,1,moderada,Bogota,digital,Memorial Digital
+otro_objeto,peluche_sintetico,danado,compartir,165122,1,ninguna,Barranquilla,fisico,Restauración Especial
+reloj_instrumento,madera,bueno,transformar,123846,1,total,Bogota,fisico,Restauración Especial
+peluche,mixto,bueno,transformar,100939,5,total,Barranquilla,fisico,Peluche Memoria
+fotografia,peluche_sintetico,regular,transformar,79633,4,total,Bucaramanga,fisico,Cuadro de Historia
+fotografia,peluche_sintetico,danado,compartir,81189,2,leve,Cali,fisico,Memorial Digital
+carta_documento,cuero,bueno,compartir,30000,1,total,Bucaramanga,fisico,Libro de Memorias
+carta_documento,madera,danado,recordar_digitalmente,104017,4,moderada,Bucaramanga,fisico,Libro de Memorias
+reloj_instrumento,papel,bueno,conservar,124591,3,leve,Medellin,fisico,Caja del Tiempo
+prenda_textil,mixto,muy_danado,transformar,39853,2,leve,Bogota,digital,Memorial Digital
+fotografia,cuero,muy_danado,conservar,71850,1,moderada,Bogota,fisico,Cuadro de Historia
+prenda_textil,mixto,danado,recordar_digitalmente,54488,2,ninguna,Medellin,fisico,Almohada Abrazo
+otro_objeto,cuero,regular,recordar_digitalmente,61212,2,leve,Cali,fisico,Restauración Especial
+carta_documento,metal,regular,restaurar,96871,1,leve,Bogota,fisico,Cuadro de Historia
+prenda_textil,metal,bueno,restaurar,30000,3,moderada,Barranquilla,fisico,Almohada Abrazo
+prenda_textil,peluche_sintetico,regular,recordar_digitalmente,116499,1,leve,Bucaramanga,digital,Memorial Digital
+mueble,peluche_sintetico,regular,conservar,121384,1,total,Bogota,fisico,Restauración Especial
+fotografia,vidrio,bueno,conservar,86211,1,ninguna,Bucaramanga,fisico,Cuadro de Historia
+peluche,metal,danado,transformar,30000,1,moderada,Bogota,digital,Memorial Digital
+fotografia,vidrio,bueno,recordar_digitalmente,60125,2,moderada,Barranquilla,fisico,Caja del Tiempo
+prenda_textil,mixto,danado,conservar,138151,1,total,Cali,fisico,Almohada Abrazo
+peluche,madera,regular,recordar_digitalmente,30000,3,moderada,Bogota,fisico,Peluche Memoria
+prenda_textil,tela,danado,conservar,82836,4,ninguna,Bucaramanga,fisico,Almohada Abrazo
+fotografia,vidrio,bueno,conservar,53699,1,leve,Cali,fisico,Cuadro de Historia
+carta_documento,metal,bueno,conservar,123159,1,leve,Bucaramanga,fisico,Libro de Memorias
+reloj_instrumento,tela,muy_danado,conservar,71371,1,total,Medellin,fisico,Restauración Especial
+reloj_instrumento,madera,bueno,compartir,109138,1,moderada,Cali,fisico,Restauración Especial
+reloj_instrumento,tela,regular,restaurar,114791,1,ninguna,Medellin,fisico,Restauración Especial
+peluche,tela,regular,conservar,159267,1,leve,Barranquilla,fisico,Peluche Memoria
+peluche,peluche_sintetico,danado,recordar_digitalmente,87897,2,leve,Cali,fisico,Memorial Digital
+reloj_instrumento,mixto,bueno,conservar,108161,1,leve,Barranquilla,fisico,Restauración Especial
+mueble,metal,muy_danado,transformar,43023,4,moderada,Medellin,fisico,Restauración Especial
+carta_documento,peluche_sintetico,bueno,conservar,136664,1,total,Bucaramanga,fisico,Libro de Memorias
+prenda_textil,metal,regular,recordar_digitalmente,68382,1,leve,Bogota,fisico,Almohada Abrazo
+fotografia,tela,regular,compartir,75373,2,total,Bogota,fisico,Peluche Memoria
+peluche,vidrio,danado,recordar_digitalmente,94221,1,ninguna,Bogota,fisico,Cuadro de Historia
+reloj_instrumento,mixto,bueno,compartir,40299,1,ninguna,Medellin,fisico,Restauración Especial
+fotografia,cuero,bueno,transformar,103006,1,moderada,Bogota,digital,Memorial Digital
+mueble,vidrio,regular,conservar,128861,1,total,Barranquilla,fisico,Restauración Especial
+peluche,papel,muy_danado,transformar,105252,3,total,Barranquilla,fisico,Restauración Especial
+carta_documento,madera,muy_danado,compartir,39388,2,leve,Medellin,digital,Memorial Digital
+carta_documento,vidrio,bueno,restaurar,90666,2,moderada,Cali,fisico,Libro de Memorias
+peluche,vidrio,danado,transformar,120971,2,ninguna,Bogota,fisico,Restauración Especial
+mueble,vidrio,regular,compartir,30000,1,total,Bogota,fisico,Restauración Especial
+mueble,mixto,regular,compartir,57383,1,ninguna,Cali,digital,Memorial Digital
+mueble,papel,muy_danado,restaurar,125679,1,moderada,Cali,digital,Memorial Digital
+fotografia,metal,regular,restaurar,104453,3,ninguna,Medellin,fisico,Cuadro de Historia
+peluche,madera,muy_danado,recordar_digitalmente,109419,1,leve,Bogota,digital,Memorial Digital
+carta_documento,vidrio,bueno,transformar,160082,1,ninguna,Bucaramanga,fisico,Libro de Memorias
+prenda_textil,papel,muy_danado,conservar,111399,1,leve,Medellin,fisico,Almohada Abrazo
+mueble,cuero,bueno,compartir,118026,3,leve,Bogota,fisico,Recuerdo Compartido
+mueble,peluche_sintetico,muy_danado,transformar,189876,1,moderada,Bucaramanga,fisico,Cuadro de Historia
+mueble,tela,danado,restaurar,87516,4,ninguna,Bogota,fisico,Restauración Especial
+mueble,peluche_sintetico,regular,compartir,67074,3,ninguna,Medellin,fisico,Recuerdo Compartido
+prenda_textil,papel,regular,recordar_digitalmente,109972,1,total,Bucaramanga,fisico,Almohada Abrazo
+peluche,mixto,muy_danado,transformar,110364,1,moderada,Medellin,fisico,Restauración Especial
+mueble,metal,muy_danado,transformar,76564,2,ninguna,Medellin,fisico,Restauración Especial
+reloj_instrumento,peluche_sintetico,bueno,transformar,58866,2,ninguna,Cali,fisico,Restauración Especial
+joya_pequena,mixto,muy_danado,restaurar,175844,2,leve,Bucaramanga,fisico,Caja del Tiempo
+reloj_instrumento,madera,danado,transformar,106439,1,ninguna,Bogota,fisico,Restauración Especial
+fotografia,mixto,regular,restaurar,69370,3,ninguna,Medellin,fisico,Cuadro de Historia
+carta_documento,mixto,bueno,restaurar,127057,3,total,Bogota,fisico,Libro de Memorias
+prenda_textil,madera,muy_danado,compartir,91179,1,total,Bucaramanga,fisico,Almohada Abrazo
+carta_documento,papel,danado,transformar,86149,2,ninguna,Bogota,fisico,Libro de Memorias
+mueble,mixto,muy_danado,compartir,114679,2,total,Cali,fisico,Recuerdo Compartido
+fotografia,madera,bueno,restaurar,49784,3,moderada,Barranquilla,fisico,Cuadro de Historia
+otro_objeto,madera,danado,conservar,107341,1,total,Cali,fisico,Restauración Especial
+reloj_instrumento,vidrio,danado,compartir,161953,1,leve,Medellin,fisico,Restauración Especial
+joya_pequena,cuero,danado,recordar_digitalmente,111316,3,moderada,Bogota,fisico,Caja del Tiempo
+fotografia,papel,danado,transformar,81832,1,leve,Medellin,fisico,Recuerdo Compartido
+carta_documento,papel,regular,transformar,77251,1,leve,Bucaramanga,digital,Memorial Digital
+fotografia,tela,bueno,recordar_digitalmente,80638,1,leve,Bogota,fisico,Cuadro de Historia
+peluche,peluche_sintetico,regular,transformar,86111,4,total,Barranquilla,fisico,Peluche Memoria
+otro_objeto,vidrio,bueno,conservar,81776,1,total,Barranquilla,fisico,Restauración Especial
+fotografia,vidrio,bueno,transformar,127070,3,leve,Bogota,fisico,Cuadro de Historia
+mueble,vidrio,muy_danado,recordar_digitalmente,34337,2,ninguna,Cali,digital,Memorial Digital
+peluche,cuero,bueno,recordar_digitalmente,125170,1,ninguna,Bogota,fisico,Peluche Memoria
+reloj_instrumento,metal,regular,transformar,81710,1,total,Medellin,fisico,Restauración Especial
+carta_documento,madera,regular,conservar,108193,4,leve,Bogota,fisico,Libro de Memorias
+otro_objeto,metal,regular,conservar,55555,1,moderada,Bucaramanga,fisico,Restauración Especial
+joya_pequena,peluche_sintetico,muy_danado,recordar_digitalmente,141502,2,leve,Cali,digital,Memorial Digital
+carta_documento,mixto,muy_danado,compartir,138597,2,total,Cali,fisico,Libro de Memorias
+prenda_textil,vidrio,muy_danado,compartir,128585,1,total,Bogota,fisico,Almohada Abrazo
+mueble,papel,danado,compartir,41983,2,total,Barranquilla,fisico,Recuerdo Compartido
+joya_pequena,tela,danado,transformar,124019,1,total,Bogota,fisico,Caja del Tiempo
+mueble,vidrio,danado,compartir,109169,1,total,Barranquilla,fisico,Restauración Especial
+peluche,vidrio,muy_danado,restaurar,38815,1,ninguna,Cali,fisico,Restauración Especial
+joya_pequena,madera,regular,conservar,94149,4,moderada,Medellin,fisico,Caja del Tiempo
+peluche,tela,muy_danado,conservar,107758,2,moderada,Cali,fisico,Caja del Tiempo
+prenda_textil,tela,regular,transformar,114462,1,leve,Bucaramanga,fisico,Cuadro de Historia
+joya_pequena,vidrio,regular,transformar,101204,1,leve,Bucaramanga,fisico,Caja del Tiempo
+peluche,tela,bueno,recordar_digitalmente,105193,1,total,Barranquilla,fisico,Almohada Abrazo
+carta_documento,vidrio,bueno,restaurar,146576,2,leve,Bogota,fisico,Libro de Memorias
+prenda_textil,cuero,muy_danado,restaurar,137911,3,moderada,Bogota,fisico,Almohada Abrazo
+reloj_instrumento,tela,bueno,recordar_digitalmente,30000,2,leve,Bogota,fisico,Restauración Especial
+reloj_instrumento,metal,danado,transformar,83889,1,ninguna,Cali,fisico,Restauración Especial
+joya_pequena,papel,danado,recordar_digitalmente,89237,1,moderada,Barranquilla,fisico,Caja del Tiempo
+reloj_instrumento,vidrio,muy_danado,transformar,33676,4,leve,Barranquilla,fisico,Restauración Especial
+otro_objeto,cuero,danado,recordar_digitalmente,98296,2,total,Medellin,fisico,Restauración Especial
+peluche,cuero,regular,compartir,138706,1,ninguna,Cali,fisico,Peluche Memoria
+prenda_textil,papel,regular,restaurar,56970,3,total,Bucaramanga,fisico,Almohada Abrazo
+fotografia,cuero,muy_danado,recordar_digitalmente,106774,2,leve,Bogota,fisico,Recuerdo Compartido
+carta_documento,cuero,danado,transformar,62946,3,ninguna,Cali,fisico,Libro de Memorias
+reloj_instrumento,tela,danado,restaurar,71483,2,total,Bucaramanga,fisico,Restauración Especial
+joya_pequena,peluche_sintetico,muy_danado,compartir,146708,1,ninguna,Bogota,fisico,Caja del Tiempo
+prenda_textil,cuero,regular,conservar,76010,1,ninguna,Medellin,fisico,Almohada Abrazo
+prenda_textil,tela,muy_danado,compartir,111177,1,total,Medellin,fisico,Almohada Abrazo
+reloj_instrumento,cuero,bueno,transformar,30000,1,moderada,Cali,fisico,Restauración Especial
+mueble,madera,regular,transformar,160181,1,leve,Bucaramanga,digital,Memorial Digital
+mueble,vidrio,muy_danado,compartir,116092,1,moderada,Medellin,fisico,Restauración Especial
+otro_objeto,tela,danado,compartir,88612,1,total,Bogota,digital,Memorial Digital
+peluche,vidrio,regular,restaurar,115144,2,total,Cali,fisico,Peluche Memoria
+otro_objeto,madera,bueno,transformar,45656,2,leve,Cali,fisico,Restauración Especial
+joya_pequena,vidrio,danado,compartir,136388,2,moderada,Cali,fisico,Recuerdo Compartido
+reloj_instrumento,vidrio,regular,conservar,83660,2,ninguna,Medellin,fisico,Caja del Tiempo
+carta_documento,papel,regular,recordar_digitalmente,87857,2,total,Cali,fisico,Almohada Abrazo
+carta_documento,mixto,regular,restaurar,77792,1,leve,Medellin,fisico,Libro de Memorias
+fotografia,madera,regular,compartir,74677,3,moderada,Bogota,digital,Memorial Digital
+peluche,madera,muy_danado,compartir,119313,2,moderada,Cali,fisico,Recuerdo Compartido
+prenda_textil,metal,muy_danado,compartir,103956,2,total,Cali,fisico,Libro de Memorias
+mueble,papel,regular,restaurar,117811,4,moderada,Medellin,digital,Memorial Digital
+otro_objeto,mixto,danado,conservar,94692,2,total,Cali,fisico,Caja del Tiempo
+mueble,mixto,danado,compartir,112961,1,leve,Barranquilla,fisico,Restauración Especial
+peluche,metal,muy_danado,transformar,80340,1,ninguna,Bucaramanga,fisico,Restauración Especial
+prenda_textil,peluche_sintetico,danado,recordar_digitalmente,173040,4,moderada,Bogota,fisico,Almohada Abrazo
+otro_objeto,cuero,bueno,transformar,40122,1,ninguna,Bucaramanga,digital,Memorial Digital
+otro_objeto,mixto,muy_danado,restaurar,139132,1,ninguna,Bogota,fisico,Restauración Especial
+fotografia,madera,regular,conservar,142876,1,ninguna,Bogota,fisico,Cuadro de Historia
+peluche,peluche_sintetico,bueno,recordar_digitalmente,65174,1,leve,Bucaramanga,fisico,Peluche Memoria
+mueble,peluche_sintetico,regular,recordar_digitalmente,173024,2,moderada,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,cuero,bueno,conservar,129842,1,leve,Cali,fisico,Restauración Especial
+otro_objeto,tela,danado,recordar_digitalmente,128989,1,total,Medellin,fisico,Restauración Especial
+peluche,vidrio,danado,recordar_digitalmente,95980,1,moderada,Barranquilla,fisico,Restauración Especial
+prenda_textil,mixto,bueno,conservar,87397,4,leve,Bogota,fisico,Almohada Abrazo
+peluche,madera,bueno,restaurar,87670,2,total,Bogota,digital,Memorial Digital
+joya_pequena,vidrio,regular,restaurar,108668,1,total,Cali,fisico,Caja del Tiempo
+fotografia,peluche_sintetico,muy_danado,restaurar,144041,3,moderada,Medellin,fisico,Cuadro de Historia
+carta_documento,vidrio,muy_danado,transformar,101345,1,moderada,Bucaramanga,fisico,Libro de Memorias
+otro_objeto,madera,bueno,recordar_digitalmente,63099,1,leve,Barranquilla,fisico,Restauración Especial
+carta_documento,metal,danado,recordar_digitalmente,123854,2,moderada,Bogota,fisico,Libro de Memorias
+joya_pequena,vidrio,regular,compartir,127240,1,ninguna,Bucaramanga,fisico,Caja del Tiempo
+fotografia,mixto,regular,compartir,117913,2,moderada,Bucaramanga,fisico,Cuadro de Historia
+peluche,peluche_sintetico,bueno,transformar,121092,3,ninguna,Medellin,fisico,Peluche Memoria
+mueble,peluche_sintetico,bueno,restaurar,85517,4,moderada,Medellin,fisico,Restauración Especial
+fotografia,tela,muy_danado,recordar_digitalmente,62485,1,total,Barranquilla,fisico,Cuadro de Historia
+joya_pequena,vidrio,danado,recordar_digitalmente,64613,1,total,Cali,fisico,Caja del Tiempo
+joya_pequena,papel,muy_danado,compartir,37758,2,total,Bucaramanga,fisico,Recuerdo Compartido
+fotografia,vidrio,regular,recordar_digitalmente,103293,2,leve,Cali,fisico,Cuadro de Historia
+peluche,papel,danado,restaurar,92079,3,total,Barranquilla,fisico,Restauración Especial
+peluche,madera,regular,restaurar,79600,1,ninguna,Medellin,fisico,Peluche Memoria
+joya_pequena,cuero,bueno,restaurar,30000,1,moderada,Bogota,fisico,Caja del Tiempo
+mueble,papel,muy_danado,recordar_digitalmente,51343,2,leve,Barranquilla,fisico,Restauración Especial
+otro_objeto,metal,bueno,compartir,134229,1,leve,Barranquilla,fisico,Restauración Especial
+carta_documento,cuero,muy_danado,recordar_digitalmente,71738,1,total,Bucaramanga,fisico,Libro de Memorias
+fotografia,metal,danado,transformar,107620,1,ninguna,Bucaramanga,fisico,Cuadro de Historia
+reloj_instrumento,papel,regular,restaurar,46326,1,ninguna,Medellin,fisico,Restauración Especial
+prenda_textil,peluche_sintetico,muy_danado,restaurar,145354,1,moderada,Cali,fisico,Almohada Abrazo
+otro_objeto,tela,danado,compartir,89959,1,total,Bucaramanga,digital,Memorial Digital
+otro_objeto,papel,danado,conservar,105151,2,total,Bogota,fisico,Caja del Tiempo
+fotografia,cuero,muy_danado,conservar,176402,1,total,Barranquilla,fisico,Cuadro de Historia
+carta_documento,cuero,danado,conservar,148075,2,total,Bucaramanga,fisico,Libro de Memorias
+otro_objeto,peluche_sintetico,danado,conservar,84270,2,total,Bucaramanga,fisico,Caja del Tiempo
+prenda_textil,madera,bueno,transformar,74237,4,moderada,Medellin,fisico,Almohada Abrazo
+otro_objeto,cuero,bueno,compartir,83605,1,ninguna,Barranquilla,fisico,Restauración Especial
+peluche,peluche_sintetico,danado,compartir,112846,1,moderada,Bogota,fisico,Restauración Especial
+fotografia,vidrio,danado,compartir,91317,1,moderada,Cali,fisico,Cuadro de Historia
+prenda_textil,peluche_sintetico,bueno,recordar_digitalmente,81166,2,leve,Medellin,fisico,Almohada Abrazo
+prenda_textil,madera,regular,compartir,146351,1,moderada,Cali,digital,Memorial Digital
+joya_pequena,mixto,bueno,conservar,91002,1,ninguna,Medellin,fisico,Caja del Tiempo
+prenda_textil,cuero,bueno,transformar,175485,4,moderada,Barranquilla,fisico,Almohada Abrazo
+fotografia,vidrio,bueno,compartir,98175,5,leve,Bucaramanga,fisico,Cuadro de Historia
+carta_documento,metal,bueno,transformar,157486,2,leve,Barranquilla,fisico,Libro de Memorias
+fotografia,vidrio,bueno,recordar_digitalmente,107506,1,leve,Cali,fisico,Cuadro de Historia
+reloj_instrumento,metal,bueno,compartir,128703,2,moderada,Cali,fisico,Recuerdo Compartido
+mueble,papel,regular,restaurar,69638,1,moderada,Medellin,fisico,Restauración Especial
+carta_documento,mixto,muy_danado,recordar_digitalmente,65118,1,total,Barranquilla,digital,Memorial Digital
+peluche,peluche_sintetico,danado,transformar,111089,1,total,Medellin,fisico,Restauración Especial
+otro_objeto,metal,regular,compartir,129599,1,ninguna,Bucaramanga,digital,Memorial Digital
+otro_objeto,peluche_sintetico,bueno,restaurar,96408,2,moderada,Cali,fisico,Restauración Especial
+mueble,mixto,muy_danado,conservar,49976,1,leve,Bucaramanga,fisico,Restauración Especial
+reloj_instrumento,cuero,bueno,transformar,47390,2,total,Medellin,fisico,Restauración Especial
+fotografia,cuero,bueno,conservar,45050,1,leve,Bogota,fisico,Cuadro de Historia
+fotografia,madera,muy_danado,recordar_digitalmente,33133,1,leve,Barranquilla,digital,Memorial Digital
+carta_documento,peluche_sintetico,danado,conservar,98831,2,moderada,Bucaramanga,fisico,Libro de Memorias
+reloj_instrumento,metal,muy_danado,compartir,134376,2,moderada,Barranquilla,fisico,Recuerdo Compartido
+fotografia,cuero,danado,conservar,94530,1,moderada,Barranquilla,fisico,Cuadro de Historia
+prenda_textil,cuero,muy_danado,compartir,30000,1,ninguna,Bucaramanga,fisico,Almohada Abrazo
+prenda_textil,cuero,bueno,transformar,88323,2,leve,Bucaramanga,fisico,Caja del Tiempo
+prenda_textil,peluche_sintetico,bueno,recordar_digitalmente,89302,3,total,Bucaramanga,fisico,Almohada Abrazo
+joya_pequena,madera,muy_danado,transformar,168359,2,leve,Medellin,fisico,Caja del Tiempo
+joya_pequena,peluche_sintetico,regular,transformar,44000,1,ninguna,Medellin,fisico,Caja del Tiempo
+otro_objeto,metal,muy_danado,restaurar,81326,2,total,Bucaramanga,fisico,Restauración Especial
+mueble,madera,regular,compartir,154704,2,ninguna,Bogota,fisico,Recuerdo Compartido
+reloj_instrumento,mixto,muy_danado,conservar,110749,2,moderada,Bucaramanga,fisico,Caja del Tiempo
+peluche,mixto,muy_danado,conservar,114715,1,total,Bogota,fisico,Restauración Especial
+otro_objeto,cuero,bueno,conservar,99010,1,moderada,Bucaramanga,fisico,Restauración Especial
+prenda_textil,madera,danado,compartir,106548,2,leve,Medellin,fisico,Almohada Abrazo
+joya_pequena,vidrio,bueno,transformar,122216,2,ninguna,Barranquilla,digital,Memorial Digital
+otro_objeto,metal,danado,transformar,66667,1,total,Cali,fisico,Restauración Especial
+carta_documento,vidrio,bueno,restaurar,125732,1,moderada,Bogota,fisico,Libro de Memorias
+mueble,peluche_sintetico,danado,transformar,46944,4,leve,Bucaramanga,fisico,Almohada Abrazo
+otro_objeto,mixto,danado,restaurar,106492,2,leve,Medellin,fisico,Cuadro de Historia
+reloj_instrumento,vidrio,regular,conservar,101255,3,moderada,Medellin,fisico,Caja del Tiempo
+carta_documento,peluche_sintetico,muy_danado,compartir,73429,2,leve,Cali,fisico,Libro de Memorias
+mueble,peluche_sintetico,muy_danado,compartir,94206,2,total,Medellin,fisico,Recuerdo Compartido
+reloj_instrumento,tela,bueno,transformar,73211,1,leve,Medellin,fisico,Restauración Especial
+prenda_textil,metal,danado,compartir,57490,1,ninguna,Bucaramanga,digital,Memorial Digital
+joya_pequena,peluche_sintetico,bueno,compartir,82623,2,moderada,Bucaramanga,fisico,Recuerdo Compartido
+prenda_textil,tela,muy_danado,recordar_digitalmente,56360,1,leve,Cali,fisico,Almohada Abrazo
+fotografia,metal,regular,compartir,106297,1,moderada,Bucaramanga,fisico,Cuadro de Historia
+joya_pequena,papel,regular,recordar_digitalmente,54747,1,leve,Medellin,fisico,Caja del Tiempo
+otro_objeto,mixto,bueno,recordar_digitalmente,119919,3,ninguna,Cali,fisico,Restauración Especial
+prenda_textil,metal,muy_danado,conservar,53648,1,total,Medellin,fisico,Almohada Abrazo

@@ -5,3 +5,9 @@ PyMySQL==1.1.1
 django-environ==0.11.2
 django-cors-headers==4.6.0
 gunicorn==23.0.0
+# Modulo de Machine Learning (Backend/ml/) -- carga el pipeline entrenado
+# (arbol de decision) para POST /api/v1/ml/recomendar-producto.
+scikit-learn==1.9.0
+pandas==3.0.5
+numpy==2.5.2
+joblib==1.5.3

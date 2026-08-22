@@ -30,6 +30,12 @@ class AgentRunCompleteSerializer(serializers.Serializer):
     tools_used = serializers.ListField(child=serializers.CharField(), required=False, default=list)
     metrics = AgentRunMetricsSerializer(required=False)
     evaluation = AgentRunEvaluationSerializer(required=False)
+    # IDs de los Mensaje (rol=usuario) que este agente ya tuvo en cuenta al
+    # generar `reply`. El orquestador los marca como respondido=True para
+    # que el chequeo de ráfaga en n8n sepa cuáles siguen realmente pendientes.
+    mensajes_ids = serializers.ListField(
+        child=serializers.IntegerField(), required=False, default=list
+    )
 
 
 class EjecucionAgenteSerializer(serializers.ModelSerializer):

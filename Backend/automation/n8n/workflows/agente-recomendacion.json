@@ -6,7 +6,10 @@
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [0, 0],
+      "position": [
+        0,
+        0
+      ],
       "webhookId": "reviive-memories-recuerdo-creado",
       "parameters": {
         "httpMethod": "POST",
@@ -20,7 +23,10 @@
       "name": "Obtener recuerdo",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [260, 0],
+      "position": [
+        260,
+        0
+      ],
       "parameters": {
         "method": "GET",
         "url": "={{ $env.DJANGO_API_URL }}/memories/{{ $json.body.recuerdo_id }}/",
@@ -28,7 +34,10 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{ $json.body.access_token }}" }
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.body.access_token }}"
+            }
           ]
         },
         "options": {}
@@ -39,7 +48,10 @@
       "name": "Obtener catalogo",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [520, 0],
+      "position": [
+        520,
+        0
+      ],
       "parameters": {
         "method": "GET",
         "url": "={{ $env.DJANGO_API_URL }}/products/",
@@ -48,11 +60,83 @@
       }
     },
     {
+      "id": "preparar-entrada-ml",
+      "name": "Preparar entrada ML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Traduce el primer objeto del recuerdo a las columnas de entrada del\n// clasificador entrenado (Backend/ml/model_recomendacion.py). uso_deseado,\n// presupuesto, ciudad y preferencia todavia no se capturan en el registro\n// de un recuerdo, asi que usan un valor neutro documentado (ver\n// fila_desde_objeto_memoria en ese mismo modulo) en vez de inventarlos.\nconst recuerdo = $('Obtener recuerdo').item.json;\nconst objetos = recuerdo.objetos || [];\nconst primero = objetos[0] || {};\nconst cantidad = objetos.length || 1;\n\nfunction match(valor, opciones, defecto) {\n  const v = (valor || '').toString().toLowerCase();\n  for (const op of opciones) { if (v.includes(op)) return op; }\n  return defecto;\n}\n\nconst body = {\n  tipo_objeto: match(primero.tipo, ['peluche', 'prenda_textil', 'fotografia', 'joya_pequena', 'carta_documento', 'mueble', 'reloj_instrumento'], 'otro_objeto'),\n  material: match(primero.material, ['tela', 'papel', 'madera', 'metal', 'vidrio', 'peluche_sintetico', 'cuero', 'mixto'], 'mixto'),\n  estado: match(primero.estado, ['bueno', 'regular', 'danado', 'muy_danado'], 'regular'),\n  transformacion: match(primero.nivel_transformacion, ['ninguna', 'leve', 'moderada', 'total'], 'leve'),\n  cantidad,\n  uso_deseado: 'conservar',\n  presupuesto: 95000,\n  ciudad: 'Bogota',\n  preferencia: 'fisico',\n};\n\nreturn [{ json: { mlBodyString: JSON.stringify(body) } }];"
+      }
+    },
+    {
+      "id": "firmar-entrada-ml",
+      "name": "Firmar entrada ML",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        1020,
+        0
+      ],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ $json.mlBodyString }}",
+        "dataPropertyName": "signature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": {
+          "id": "fG3VUKNiYE9P68kJ",
+          "name": "Reviive HMAC"
+        }
+      }
+    },
+    {
+      "id": "consultar-modelo-ml",
+      "name": "Consultar modelo ML",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1260,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/ml/recomendar-producto",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Reviive-Signature",
+              "value": "={{ $json.signature }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $('Preparar entrada ML').item.json.mlBodyString }}",
+        "options": {}
+      }
+    },
+    {
       "id": "construir-firma-request",
       "name": "Construir firma request",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [780, 0],
+      "position": [
+        2280,
+        0
+      ],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
@@ -64,7 +148,10 @@
       "name": "Firmar request",
       "type": "n8n-nodes-base.crypto",
       "typeVersion": 2,
-      "position": [1040, 0],
+      "position": [
+        2540,
+        0
+      ],
       "parameters": {
         "action": "hmac",
         "binaryData": false,
@@ -74,7 +161,10 @@
         "encoding": "hex"
       },
       "credentials": {
-        "crypto": { "id": "fG3VUKNiYE9P68kJ", "name": "Reviive HMAC" }
+        "crypto": {
+          "id": "fG3VUKNiYE9P68kJ",
+          "name": "Reviive HMAC"
+        }
       }
     },
     {
@@ -82,7 +172,10 @@
       "name": "Registrar inicio de agente",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1300, 0],
+      "position": [
+        2800,
+        0
+      ],
       "parameters": {
         "method": "POST",
         "url": "={{ $env.DJANGO_API_URL }}/agent-runs/request",
@@ -90,7 +183,10 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "X-Reviive-Signature", "value": "={{ $json.signature }}" }
+            {
+              "name": "X-Reviive-Signature",
+              "value": "={{ $json.signature }}"
+            }
           ]
         },
         "sendBody": true,
@@ -105,11 +201,14 @@
       "name": "Preparar prompt recomendacion",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1560, 0],
+      "position": [
+        3060,
+        0
+      ],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const recuerdo = $('Obtener recuerdo').item.json;\nconst catalogoRaw = $('Obtener catalogo').item.json.results || [];\nconst catalogo = catalogoRaw.filter((p) => p.activo).map((p) => ({\n  id: Number(p.id),\n  nombre: p.nombre,\n  categoria: p.categoria,\n  descripcion: p.descripcion,\n}));\n\n// Este prompt cubre en un solo paso lo que la arquitectura describe como\n// tres agentes: Creativo (concepto_creativo), Viabilidad (advertencias /\n// requiere_revision_humana) y Recomendacion (puntaje, ranking).\nconst systemPrompt = `Eres el equipo de Creativo, Viabilidad y Recomendacion de Reviive, un taller de restauracion de objetos con valor emocional. Recibiras la historia de un recuerdo/objeto de un cliente y el catalogo de servicios disponibles (cada uno con un id numerico). Responde UNICAMENTE con un JSON con esta forma exacta: {\"recomendaciones\": [{\"producto_id\": <id entero que exista en el catalogo dado>, \"titulo\": <string corto>, \"concepto_creativo\": <1-2 frases, propuesta creativa personalizada y especifica para ESTE objeto y esta historia>, \"puntaje\": <numero entre 0 y 1, que tan bien se ajusta>, \"advertencias\": [<string, riesgos o restricciones tecnicas del material/estado, o vacio si no hay>], \"requiere_revision_humana\": <true o false>}]}. Elige como maximo 3 productos del catalogo que mejor se ajusten, ordenados por puntaje descendente. Marca requiere_revision_humana=true si la transformacion implica cortar, desarmar o desechar parte del material original (en ese caso el cliente debe autorizarlo explicitamente antes de proceder), o si el estado descrito sugiere que el objeto necesita inspeccion presencial antes de cualquier compromiso. Nunca inventes un producto_id que no este en el catalogo. concepto_creativo es una sugerencia, nunca confirmes precios ni tiempos de entrega exactos (eso lo define el taller en una cotizacion formal).`;\n\nconst userPayload = {\n  recuerdo: {\n    historia: recuerdo.historia,\n    objetos: (recuerdo.objetos || []).map((o) => ({\n      tipo: o.tipo, marca: o.marca, anio_aproximado: o.anio_aproximado,\n      material: o.material, estado: o.estado,\n    })),\n  },\n  catalogo,\n};\n\nreturn [{\n  json: {\n    recuerdo_id: $('Webhook').item.json.body.recuerdo_id,\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    openaiPayload: {\n      model: 'gpt-4o-mini',\n      response_format: { type: 'json_object' },\n      temperature: 0.4,\n      max_tokens: 700,\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: JSON.stringify(userPayload) },\n      ],\n    },\n  },\n}];"
+        "jsCode": "const recuerdo = $('Obtener recuerdo').item.json;\nconst catalogoRaw = $('Obtener catalogo').item.json.results || [];\nconst catalogo = catalogoRaw.filter((p) => p.activo).map((p) => ({\n  id: Number(p.id),\n  nombre: p.nombre,\n  categoria: p.categoria,\n  descripcion: p.descripcion,\n}));\n\n// Senal del clasificador entrenado (arbol de decision, Backend/ml/) sobre\n// el primer objeto del recuerdo. Si el servicio de ML falla o no responde\n// (onError continueRegularOutput en 'Consultar modelo ML'), senalMl queda\n// null y el prompt simplemente no la menciona -- no bloquea la recomendacion.\nconst mlResp = $('Consultar modelo ML').item.json;\nconst senalMl = mlResp && mlResp.producto_recomendado\n  ? { producto: mlResp.producto_recomendado, probabilidad: mlResp.probabilidad }\n  : null;\n\n// Este prompt cubre en un solo paso lo que la arquitectura describe como\n// tres agentes: Creativo (concepto_creativo), Viabilidad (advertencias /\n// requiere_revision_humana) y Recomendacion (puntaje, ranking).\nlet systemPrompt = `Eres el equipo de Creativo, Viabilidad y Recomendacion de Reviive, un taller de restauracion de objetos con valor emocional. Recibiras la historia de un recuerdo/objeto de un cliente y el catalogo de servicios disponibles (cada uno con un id numerico). Responde UNICAMENTE con un JSON con esta forma exacta: {\"recomendaciones\": [{\"producto_id\": <id entero que exista en el catalogo dado>, \"titulo\": <string corto>, \"concepto_creativo\": <1-2 frases, propuesta creativa personalizada y especifica para ESTE objeto y esta historia>, \"puntaje\": <numero entre 0 y 1, que tan bien se ajusta>, \"advertencias\": [<string, riesgos o restricciones tecnicas del material/estado, o vacio si no hay>], \"requiere_revision_humana\": <true o false>}]}. Elige como maximo 3 productos del catalogo que mejor se ajusten, ordenados por puntaje descendente. Marca requiere_revision_humana=true si la transformacion implica cortar, desarmar o desechar parte del material original (en ese caso el cliente debe autorizarlo explicitamente antes de proceder), o si el estado descrito sugiere que el objeto necesita inspeccion presencial antes de cualquier compromiso. Nunca inventes un producto_id que no este en el catalogo. concepto_creativo es una sugerencia, nunca confirmes precios ni tiempos de entrega exactos (eso lo define el taller en una cotizacion formal).`;\n\nif (senalMl) {\n  systemPrompt += ` Un modelo de machine learning (arbol de decision entrenado con datos de casos similares) sugiere como servicio mas probable para este tipo de objeto: \"${senalMl.producto}\" (confianza ${Math.round(senalMl.probabilidad * 100)}%). Considera esta senal como una opinion experta mas, no la sigas ciegamente si la historia concreta del cliente sugiere algo distinto: prioriza siempre lo que cuenta la historia real por encima de la sugerencia estadistica.`;\n}\n\nconst userPayload = {\n  recuerdo: {\n    historia: recuerdo.historia,\n    objetos: (recuerdo.objetos || []).map((o) => ({\n      tipo: o.tipo, marca: o.marca, anio_aproximado: o.anio_aproximado,\n      material: o.material, estado: o.estado,\n    })),\n  },\n  catalogo,\n};\n\nreturn [{\n  json: {\n    recuerdo_id: $('Webhook').item.json.body.recuerdo_id,\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    senalMl,\n    openaiPayload: {\n      model: 'gpt-4o-mini',\n      response_format: { type: 'json_object' },\n      temperature: 0.4,\n      max_tokens: 700,\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: JSON.stringify(userPayload) },\n      ],\n    },\n  },\n}];"
       }
     },
     {
@@ -117,7 +216,10 @@
       "name": "Llamar a OpenAI",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1820, 0],
+      "position": [
+        3320,
+        0
+      ],
       "onError": "continueRegularOutput",
       "parameters": {
         "method": "POST",
@@ -131,7 +233,10 @@
         "options": {}
       },
       "credentials": {
-        "httpHeaderAuth": { "id": "8kXUBb43FVoTNqhA", "name": "OpenAI Reviive" }
+        "httpHeaderAuth": {
+          "id": "8kXUBb43FVoTNqhA",
+          "name": "OpenAI Reviive"
+        }
       }
     },
     {
@@ -139,7 +244,10 @@
       "name": "Procesar respuesta OpenAI",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [2080, 0],
+      "position": [
+        3580,
+        0
+      ],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
@@ -151,11 +259,14 @@
       "name": "Construir firma complete",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [2340, 0],
+      "position": [
+        3840,
+        0
+      ],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const body = {\n  status: $json.estado,\n  structured_data: {\n    recuerdo_id: $json.recuerdo_id,\n    recomendaciones: $json.recomendaciones,\n  },\n};\n\nreturn [{\n  json: {\n    run_id: $json.run_id,\n    recuerdo_id: $json.recuerdo_id,\n    estado: $json.estado,\n    bodyString: JSON.stringify(body),\n  },\n}];"
+        "jsCode": "const senalMl = $('Preparar prompt recomendacion').item.json.senalMl;\nconst body = {\n  status: $json.estado,\n  structured_data: {\n    recuerdo_id: $json.recuerdo_id,\n    recomendaciones: $json.recomendaciones,\n    // Se deja registrada la senal del modelo de ML para poder auditar\n    // despues si el LLM la siguio o se aparto de ella, y para tener un\n    // historial real de aciertos del clasificador entrenado.\n    senal_ml: senalMl,\n  },\n};\n\nreturn [{\n  json: {\n    run_id: $json.run_id,\n    recuerdo_id: $json.recuerdo_id,\n    estado: $json.estado,\n    bodyString: JSON.stringify(body),\n  },\n}];"
       }
     },
     {
@@ -163,7 +274,10 @@
       "name": "Firmar complete",
       "type": "n8n-nodes-base.crypto",
       "typeVersion": 2,
-      "position": [2600, 0],
+      "position": [
+        4100,
+        0
+      ],
       "parameters": {
         "action": "hmac",
         "binaryData": false,
@@ -173,7 +287,10 @@
         "encoding": "hex"
       },
       "credentials": {
-        "crypto": { "id": "fG3VUKNiYE9P68kJ", "name": "Reviive HMAC" }
+        "crypto": {
+          "id": "fG3VUKNiYE9P68kJ",
+          "name": "Reviive HMAC"
+        }
       }
     },
     {
@@ -181,7 +298,10 @@
       "name": "Completar ejecucion de agente",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [2860, 0],
+      "position": [
+        4360,
+        0
+      ],
       "parameters": {
         "method": "POST",
         "url": "={{ $env.DJANGO_API_URL }}/agent-runs/{{ $json.run_id }}/complete",
@@ -189,7 +309,10 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "X-Reviive-Signature", "value": "={{ $json.signature }}" }
+            {
+              "name": "X-Reviive-Signature",
+              "value": "={{ $json.signature }}"
+            }
           ]
         },
         "sendBody": true,
@@ -204,7 +327,10 @@
       "name": "Responder al frontend",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
-      "position": [3120, 0],
+      "position": [
+        4620,
+        0
+      ],
       "parameters": {
         "respondWith": "json",
         "responseBody": "={{ { recuerdo_id: $('Construir firma complete').item.json.recuerdo_id, run_id: $('Construir firma complete').item.json.run_id, estado: $('Construir firma complete').item.json.estado } }}",
@@ -213,18 +339,173 @@
     }
   ],
   "connections": {
-    "Webhook": { "main": [[{ "node": "Obtener recuerdo", "type": "main", "index": 0 }]] },
-    "Obtener recuerdo": { "main": [[{ "node": "Obtener catalogo", "type": "main", "index": 0 }]] },
-    "Obtener catalogo": { "main": [[{ "node": "Construir firma request", "type": "main", "index": 0 }]] },
-    "Construir firma request": { "main": [[{ "node": "Firmar request", "type": "main", "index": 0 }]] },
-    "Firmar request": { "main": [[{ "node": "Registrar inicio de agente", "type": "main", "index": 0 }]] },
-    "Registrar inicio de agente": { "main": [[{ "node": "Preparar prompt recomendacion", "type": "main", "index": 0 }]] },
-    "Preparar prompt recomendacion": { "main": [[{ "node": "Llamar a OpenAI", "type": "main", "index": 0 }]] },
-    "Llamar a OpenAI": { "main": [[{ "node": "Procesar respuesta OpenAI", "type": "main", "index": 0 }]] },
-    "Procesar respuesta OpenAI": { "main": [[{ "node": "Construir firma complete", "type": "main", "index": 0 }]] },
-    "Construir firma complete": { "main": [[{ "node": "Firmar complete", "type": "main", "index": 0 }]] },
-    "Firmar complete": { "main": [[{ "node": "Completar ejecucion de agente", "type": "main", "index": 0 }]] },
-    "Completar ejecucion de agente": { "main": [[{ "node": "Responder al frontend", "type": "main", "index": 0 }]] }
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Obtener recuerdo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener recuerdo": {
+      "main": [
+        [
+          {
+            "node": "Obtener catalogo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener catalogo": {
+      "main": [
+        [
+          {
+            "node": "Preparar entrada ML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar entrada ML": {
+      "main": [
+        [
+          {
+            "node": "Firmar entrada ML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firmar entrada ML": {
+      "main": [
+        [
+          {
+            "node": "Consultar modelo ML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar modelo ML": {
+      "main": [
+        [
+          {
+            "node": "Construir firma request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir firma request": {
+      "main": [
+        [
+          {
+            "node": "Firmar request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firmar request": {
+      "main": [
+        [
+          {
+            "node": "Registrar inicio de agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar inicio de agente": {
+      "main": [
+        [
+          {
+            "node": "Preparar prompt recomendacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar prompt recomendacion": {
+      "main": [
+        [
+          {
+            "node": "Llamar a OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Llamar a OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Procesar respuesta OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar respuesta OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Construir firma complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir firma complete": {
+      "main": [
+        [
+          {
+            "node": "Firmar complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firmar complete": {
+      "main": [
+        [
+          {
+            "node": "Completar ejecucion de agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Completar ejecucion de agente": {
+      "main": [
+        [
+          {
+            "node": "Responder al frontend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1" }
+  "settings": {
+    "executionOrder": "v1"
+  }
 }

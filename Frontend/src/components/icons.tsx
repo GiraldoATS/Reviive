@@ -365,6 +365,33 @@ export function IconUpload(props: IconProps) {
   );
 }
 
+export function IconMicrofono(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="9" y="3" width="6" height="11" rx="3" />
+      <path d="M5.5 11a6.5 6.5 0 0 0 13 0" />
+      <path d="M12 17.5V21M9 21h6" />
+    </svg>
+  );
+}
+
+export function IconVideo(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3" y="6" width="12" height="12" rx="1.5" />
+      <path d="M15 10.5 21 7.5v9L15 13.5" />
+    </svg>
+  );
+}
+
+export function IconStop(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="6" y="6" width="12" height="12" rx="2" />
+    </svg>
+  );
+}
+
 export function IconHeart(props: IconProps) {
   return (
     <svg {...base} {...props}>

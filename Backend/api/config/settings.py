@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "apps.memorials",
     "apps.evaluations",
     "apps.analytics",
+    "apps.ml",
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,17 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
+    # Todos los errores de la API (validacion, 404, permisos, limite de
+    # rafaga, bugs no controlados) llegan al frontend con una sola forma:
+    # {"error": {"codigo", "mensaje", "detalles"}}. Ver config/exceptions.py.
+    "EXCEPTION_HANDLER": "config.exceptions.manejador_excepciones",
+    # Freno tecnico contra abuso real (scripts, no usuarios humanos): las
+    # rafagas normales ya se agrupan en una sola respuesta desde n8n (ver
+    # el nodo "Evaluar rafaga" en orquestador-chat-alma.json), asi que este
+    # limite es solo un ultimo recurso, no el mecanismo de control de UX.
+    "DEFAULT_THROTTLE_RATES": {
+        "mensajes_chat": "60/min",
+    },
 }
 
 SIMPLE_JWT = {

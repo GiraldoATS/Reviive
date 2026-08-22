@@ -16,26 +16,286 @@
       }
     },
     {
+      "id": "es-audio-adjunto",
+      "name": "Es audio adjunto?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [240, 0],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 3 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.body.adjunto && $json.body.adjunto.tipo }}",
+              "rightValue": "audio",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "extraer-base64-audio",
+      "name": "Extraer base64 audio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, -140],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const dataUrl = $json.body.adjunto.base64;\nconst base64 = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;\nreturn [{ json: { audioBase64: base64 } }];"
+      }
+    },
+    {
+      "id": "convertir-audio-binario",
+      "name": "Convertir audio a binario",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1.1,
+      "position": [720, -140],
+      "parameters": {
+        "mode": "jsonToBinary",
+        "convertAllData": false,
+        "sourceKey": "audioBase64",
+        "destinationKey": "data",
+        "options": {
+          "dataIsBase64": true,
+          "mimeType": "audio/webm",
+          "fileName": "nota.webm"
+        }
+      }
+    },
+    {
+      "id": "transcribir-audio",
+      "name": "Transcribir audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [960, -140],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            { "parameterType": "formData", "name": "model", "value": "whisper-1" },
+            { "parameterType": "formBinaryData", "name": "file", "inputDataFieldName": "data" }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": { "id": "8kXUBb43FVoTNqhA", "name": "OpenAI Reviive" }
+      }
+    },
+    {
+      "id": "resultado-transcripcion",
+      "name": "Resultado transcripcion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, -140],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const texto = (($json.text) || '').trim();\nreturn [{\n  json: {\n    mensajeFinal: texto || '[nota de voz]',\n    esAudio: true,\n    tieneImagen: false,\n    imagenBase64: null,\n    tieneVideo: false,\n  },\n}];"
+      }
+    },
+    {
+      "id": "resultado-sin-transcripcion",
+      "name": "Resultado sin transcripcion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 140],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const body = $('Webhook').item.json.body;\nconst adjunto = body.adjunto;\nconst tieneImagen = !!(adjunto && adjunto.tipo === 'imagen');\nconst tieneVideo = !!(adjunto && adjunto.tipo === 'video');\nlet mensajeFinal = body.mensaje || '';\nif (!mensajeFinal) {\n  mensajeFinal = tieneImagen ? '[imagen adjunta]' : (tieneVideo ? '[video adjunto]' : '');\n}\n\nreturn [{\n  json: {\n    mensajeFinal,\n    esAudio: false,\n    tieneImagen,\n    imagenBase64: tieneImagen ? adjunto.base64 : null,\n    tieneVideo,\n  },\n}];"
+      }
+    },
+    {
+      "id": "preparar-guardar-mensaje",
+      "name": "Preparar guardar mensaje",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1440, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "return [{\n  json: {\n    mensajeFinal: $json.mensajeFinal,\n    esAudio: $json.esAudio,\n    tieneImagen: $json.tieneImagen,\n    imagenBase64: $json.imagenBase64,\n    tieneVideo: $json.tieneVideo,\n  },\n}];"
+      }
+    },
+    {
       "id": "guardar-mensaje-usuario",
       "name": "Guardar mensaje usuario",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [240, 0],
+      "position": [1680, 0],
+      "onError": "continueRegularOutput",
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.DJANGO_API_URL }}/conversations/{{ $json.body.conversacion_id }}/messages",
+        "url": "={{ $env.DJANGO_API_URL }}/conversations/{{ $('Webhook').item.json.body.conversacion_id }}/messages",
         "authentication": "none",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{ $json.body.access_token }}" }
+            { "name": "Authorization", "value": "=Bearer {{ $('Webhook').item.json.body.access_token }}" }
           ]
         },
         "sendBody": true,
         "contentType": "json",
         "specifyBody": "json",
-        "jsonBody": "={{ { contenido: $json.body.mensaje } }}",
+        "jsonBody": "={{ { contenido: $json.mensajeFinal } }}",
+        "options": {
+          "response": {
+            "response": { "fullResponse": true, "neverError": true }
+          }
+        }
+      }
+    },
+    {
+      "id": "obtener-mensajes-conversacion",
+      "name": "Obtener mensajes conversacion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1920, 0],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.DJANGO_API_URL }}/conversations/{{ $('Webhook').item.json.body.conversacion_id }}/messages",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $('Webhook').item.json.body.access_token }}" }
+          ]
+        },
         "options": {}
+      }
+    },
+    {
+      "id": "evaluar-rafaga",
+      "name": "Evaluar rafaga",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2160, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// El GET de Django devuelve un array JSON; n8n reparte cada elemento\n// del array como un item independiente, asi que hay que reconstruirlo\n// leyendo todos los items de entrada, no asumir que $json ya es la lista.\n// 'respondido' es la fuente de verdad explicita (lo marca Django cuando un\n// agente ya incorporo ese mensaje en una respuesta): NO se puede inferir\n// pendientes por posicion/fecha, porque cuando varias ejecuciones corren en\n// paralelo pueden completarse en un orden distinto al que llegaron.\nconst mensajes = $input.all().map((item) => item.json);\nconst pendientes = mensajes.filter((m) => m.rol === 'usuario' && !m.respondido);\nconst ultimoPendiente = pendientes[pendientes.length - 1];\n\nreturn [{\n  json: {\n    esRafaga: pendientes.length > 1,\n    idUltimoMensaje: ultimoPendiente ? ultimoPendiente.id : null,\n    pendientes,\n  },\n}];"
+      }
+    },
+    {
+      "id": "hay-rafaga-en-curso",
+      "name": "Hay rafaga en curso?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [2400, 0],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 3 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ String($json.esRafaga) }}",
+              "rightValue": "true",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "esperar-20s",
+      "name": "Esperar 20s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2640, -140],
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 20,
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "reobtener-mensajes-tras-espera",
+      "name": "Reobtener mensajes tras espera",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2880, -140],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.DJANGO_API_URL }}/conversations/{{ $('Webhook').item.json.body.conversacion_id }}/messages",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $('Webhook').item.json.body.access_token }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "evaluar-tras-espera",
+      "name": "Evaluar tras espera",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3120, -140],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const mensajes = $input.all().map((item) => item.json);\nconst pendientes = mensajes.filter((m) => m.rol === 'usuario' && !m.respondido);\nconst ultimoPendienteAhora = pendientes[pendientes.length - 1];\nconst idAntes = $('Evaluar rafaga').item.json.idUltimoMensaje;\n\nreturn [{\n  json: {\n    fueSuperado: !!(ultimoPendienteAhora && ultimoPendienteAhora.id !== idAntes),\n    pendientes,\n  },\n}];"
+      }
+    },
+    {
+      "id": "fue-superado",
+      "name": "Fue superado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [3360, -140],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 3 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ String($json.fueSuperado) }}",
+              "rightValue": "true",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "responder-agrupado",
+      "name": "Responder agrupado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [3600, -280],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { conversacion_id: $('Webhook').item.json.body.conversacion_id, run_id: null, reply: null, estado: 'agrupado' } }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "construir-mensaje-del-turno",
+      "name": "Construir mensaje del turno",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3600, 140],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const pendientes = $json.pendientes || [];\nconst textos = pendientes.map((m) => m.contenido).filter(Boolean);\nconst mensajeFinal = textos.length ? textos.join('\\n') : $('Preparar guardar mensaje').item.json.mensajeFinal;\nconst idsPendientes = pendientes.map((m) => m.id);\n\nreturn [{ json: { mensajeFinal, idsPendientes } }];"
       }
     },
     {
@@ -43,11 +303,11 @@
       "name": "Preparar prompt clasificacion",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [480, 0],
+      "position": [2160, 140],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const mensaje = $('Webhook').item.json.body.mensaje;\nconst systemPrompt = `Eres un clasificador para Reviive, un taller de restauracion de objetos con valor emocional. Analiza el mensaje del usuario y responde SOLO con un JSON exacto: {\"riesgo\": \"bajo|medio|alto\", \"motivo_riesgo\": \"string breve o vacio\", \"intencion\": \"pedidos|proveedores|cotizacion|extraccion|acompanamiento\"}. Usa riesgo=alto SOLO si el mensaje muestra senales claras de crisis emocional severa, ideas de autolesion, o angustia extrema que requiera atencion humana inmediata -- no por tristeza o nostalgia normal de un duelo. Usa intencion=pedidos si el usuario pregunta por el estado de un pedido u orden existente. Usa intencion=proveedores si el usuario busca un taller o proveedor especifico para su objeto. Usa intencion=cotizacion si el usuario pregunta cuanto podria costar o cuanto tiempo tomaria un servicio. Usa intencion=extraccion si el usuario esta contando por primera vez, con suficiente detalle (que objeto es y que historia/significado tiene), un recuerdo que quiere registrar o guardar en la plataforma. En cualquier otro caso usa intencion=acompanamiento.`;\n\nreturn [{\n  json: {\n    openaiPayload: {\n      model: 'gpt-4o-mini',\n      response_format: { type: 'json_object' },\n      temperature: 0,\n      max_tokens: 200,\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: mensaje },\n      ],\n    },\n  },\n}];"
+        "jsCode": "const mensaje = $('Construir mensaje del turno').item.json.mensajeFinal;\nconst systemPrompt = `Eres un clasificador para Reviive, un taller de restauracion de objetos con valor emocional. Analiza el mensaje del usuario y responde SOLO con un JSON exacto: {\"riesgo\": \"bajo|medio|alto\", \"motivo_riesgo\": \"string breve o vacio\", \"intencion\": \"pedidos|proveedores|cotizacion|extraccion|acompanamiento\"}. Usa riesgo=alto SOLO si el mensaje muestra senales claras de crisis emocional severa, ideas de autolesion, o angustia extrema que requiera atencion humana inmediata -- no por tristeza o nostalgia normal de un duelo. Usa intencion=pedidos si el usuario pregunta por el estado de un pedido u orden existente. Usa intencion=proveedores si el usuario busca un taller o proveedor especifico para su objeto. Usa intencion=cotizacion si el usuario pregunta cuanto podria costar o cuanto tiempo tomaria un servicio. Usa intencion=extraccion si el usuario esta contando por primera vez, con suficiente detalle (que objeto es y que historia/significado tiene), un recuerdo que quiere registrar o guardar en la plataforma. En cualquier otro caso usa intencion=acompanamiento.`;\n\nreturn [{\n  json: {\n    openaiPayload: {\n      model: 'gpt-4o-mini',\n      response_format: { type: 'json_object' },\n      temperature: 0,\n      max_tokens: 200,\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: mensaje },\n      ],\n    },\n  },\n}];"
       }
     },
     {
@@ -55,7 +315,7 @@
       "name": "Clasificar con OpenAI",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [720, 0],
+      "position": [2400, 140],
       "onError": "continueRegularOutput",
       "parameters": {
         "method": "POST",
@@ -77,7 +337,7 @@
       "name": "Procesar clasificacion",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [960, 0],
+      "position": [2640, 140],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
@@ -89,7 +349,7 @@
       "name": "Obtener pedidos usuario",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1200, -120],
+      "position": [2880, 0],
       "onError": "continueRegularOutput",
       "parameters": {
         "method": "GET",
@@ -109,7 +369,7 @@
       "name": "Obtener proveedores validados",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1200, 120],
+      "position": [3120, 0],
       "onError": "continueRegularOutput",
       "parameters": {
         "method": "GET",
@@ -129,7 +389,7 @@
       "name": "Obtener catalogo",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1200, 0],
+      "position": [3360, 0],
       "onError": "continueRegularOutput",
       "parameters": {
         "method": "GET",
@@ -143,7 +403,7 @@
       "name": "Construir firma request",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1440, 0],
+      "position": [3600, 0],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
@@ -155,7 +415,7 @@
       "name": "Firmar request",
       "type": "n8n-nodes-base.crypto",
       "typeVersion": 2,
-      "position": [1680, 0],
+      "position": [3840, 0],
       "parameters": {
         "action": "hmac",
         "binaryData": false,
@@ -173,7 +433,7 @@
       "name": "Registrar inicio de agente",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1920, 0],
+      "position": [4080, 0],
       "parameters": {
         "method": "POST",
         "url": "={{ $env.DJANGO_API_URL }}/agent-runs/request",
@@ -196,7 +456,7 @@
       "name": "Riesgo alto?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [2160, 0],
+      "position": [4320, 0],
       "parameters": {
         "conditions": {
           "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 3 },
@@ -217,11 +477,11 @@
       "name": "Respuesta de seguridad",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [2400, -140],
+      "position": [4560, -140],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const mensajeSeguridad = 'Gracias por confiar en Reviive para contarme esto. Quiero asegurarme de que estes bien: si sientes que esto es una emergencia o una crisis, por favor contacta a la Linea de la Vida (Colombia) al 192 opcion 4, o acude a un profesional de salud mental de confianza. Estoy aqui para acompanarte con tu recuerdo cuando te sientas lista o listo; tambien avisamos a nuestro equipo humano para que pueda apoyarte.';\n\nreturn [{\n  json: {\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    reply: mensajeSeguridad,\n    status: 'completado',\n    input_tokens: null,\n    output_tokens: null,\n    evaluation_flags: ['riesgo_emocional'],\n  },\n}];"
+        "jsCode": "const mensajeSeguridad = 'Gracias por confiar en Reviive para contarme esto. Quiero asegurarme de que estes bien: si sientes que esto es una emergencia o una crisis, por favor contacta a la Linea de la Vida (Colombia) al 192 opcion 4, o acude a un profesional de salud mental de confianza. Estoy aqui para acompanarte con tu recuerdo cuando te sientas lista o listo; tambien avisamos a nuestro equipo humano para que pueda apoyarte.';\n\nreturn [{\n  json: {\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    reply: mensajeSeguridad,\n    status: 'completado',\n    input_tokens: null,\n    output_tokens: null,\n    evaluation_flags: ['riesgo_emocional'],\n    esAudio: $('Preparar guardar mensaje').item.json.esAudio,\n  },\n}];"
       }
     },
     {
@@ -229,11 +489,11 @@
       "name": "Preparar prompt Alma",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [2400, 140],
+      "position": [4560, 140],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const mensaje = $('Webhook').item.json.body.mensaje;\nconst intencion = $('Procesar clasificacion').item.json.intencion;\n\nconst pedidosRaw = ($('Obtener pedidos usuario').item.json.results) || [];\nconst pedidosResumen = pedidosRaw.slice(0, 3).map((p) => ({\n  codigo: p.codigo,\n  estado: p.estado,\n  objeto: p.resumen && p.resumen.objeto,\n}));\n\nconst proveedoresRaw = ($('Obtener proveedores validados').item.json.results) || [];\nconst proveedoresResumen = proveedoresRaw.slice(0, 5).map((p) => ({\n  nombre_taller: p.nombre_taller,\n  ciudad: p.ciudad,\n  calificacion: p.calificacion,\n}));\n\nconst catalogoRaw = ($('Obtener catalogo').item.json.results) || [];\nconst catalogoResumen = catalogoRaw.filter((p) => p.activo).slice(0, 8).map((p) => ({\n  nombre: p.nombre,\n  categoria: p.categoria,\n  precio_base: p.precio_base,\n}));\n\nconst basePrompt = `Eres Alma, la asistente de inteligencia artificial de Reviive, un taller que restaura objetos con valor emocional. Tu tono es calido, cercano, elegante y profesional, nunca frio ni robotico, y nunca te presentas como psicologa ni sustituyes atencion profesional. Nunca confirmes precios ni tiempos de entrega exactos ni inventes estados de pedidos o proveedores: solo puedes mencionar los pedidos reales listados en pedidos_recientes y los proveedores reales listados en proveedores_validados si el usuario pregunta por eso. Si intencion es cotizacion, usa catalogo_precios (precio_base real) para dar un RANGO orientativo y aclara siempre que es una estimacion preliminar, no oficial -- el taller asignado enviara la cotizacion formal. Si no hay datos que respondan la pregunta, dilo con honestidad en vez de inventar.\\n\\nIntencion detectada: ${intencion}.\\npedidos_recientes: ${JSON.stringify(pedidosResumen)}\\nproveedores_validados: ${JSON.stringify(proveedoresResumen)}\\ncatalogo_precios: ${JSON.stringify(catalogoResumen)}`;\n\nlet systemPrompt = basePrompt + '\\n\\nResponde siempre en espanol, en 2 a 4 frases.';\nconst openaiPayload = {\n  model: 'gpt-4o-mini',\n  temperature: 0.7,\n  max_tokens: 350,\n  messages: [],\n};\n\nif (intencion === 'extraccion') {\n  systemPrompt = basePrompt + `\\n\\nAdemas, el usuario esta contando la historia de un objeto que quiere registrar como recuerdo. Responde UNICAMENTE con un JSON exacto: {\"reply\": \"tu respuesta calida confirmando que guardaste el recuerdo, 2-3 frases, en espanol\", \"persona_recordada\": \"nombre o vinculo si lo menciono, o vacio\", \"historia\": \"resumen fiel de la historia contada en 1-3 frases\", \"objeto\": {\"tipo\": \"tipo de objeto\", \"marca\": \"o vacio\", \"anio_aproximado\": \"o vacio\", \"material\": \"o vacio\", \"estado\": \"estado/condicion descrita, o vacio\"}}. Si el mensaje NO tiene suficiente informacion para extraer un objeto y una historia real, deja historia vacio y en reply pide amablemente el detalle que falta (nunca inventes datos que no dijo el usuario).`;\n  openaiPayload.response_format = { type: 'json_object' };\n}\n\nopenaiPayload.messages = [\n  { role: 'system', content: systemPrompt },\n  { role: 'user', content: mensaje },\n];\n\nreturn [{\n  json: {\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    intencion,\n    openaiPayload,\n  },\n}];"
+        "jsCode": "const mensaje = $('Construir mensaje del turno').item.json.mensajeFinal;\nconst tieneImagen = $('Preparar guardar mensaje').item.json.tieneImagen;\nconst imagenBase64 = $('Preparar guardar mensaje').item.json.imagenBase64;\nconst tieneVideo = $('Preparar guardar mensaje').item.json.tieneVideo;\nconst esAudio = $('Preparar guardar mensaje').item.json.esAudio;\nconst intencion = $('Procesar clasificacion').item.json.intencion;\n\nconst pedidosRaw = ($('Obtener pedidos usuario').item.json.results) || [];\nconst pedidosResumen = pedidosRaw.slice(0, 3).map((p) => ({\n  codigo: p.codigo,\n  estado: p.estado,\n  objeto: p.resumen && p.resumen.objeto,\n}));\n\nconst proveedoresRaw = ($('Obtener proveedores validados').item.json.results) || [];\nconst proveedoresResumen = proveedoresRaw.slice(0, 5).map((p) => ({\n  nombre_taller: p.nombre_taller,\n  ciudad: p.ciudad,\n  calificacion: p.calificacion,\n}));\n\nconst catalogoRaw = ($('Obtener catalogo').item.json.results) || [];\nconst catalogoResumen = catalogoRaw.filter((p) => p.activo).slice(0, 8).map((p) => ({\n  nombre: p.nombre,\n  categoria: p.categoria,\n  precio_base: p.precio_base,\n}));\n\nlet basePrompt = `Eres Alma, la asistente de inteligencia artificial de Reviive, un taller que restaura objetos con valor emocional. Tu tono es calido, cercano, elegante y profesional, nunca frio ni robotico, y nunca te presentas como psicologa ni sustituyes atencion profesional. Nunca confirmes precios ni tiempos de entrega exactos ni inventes estados de pedidos o proveedores: solo puedes mencionar los pedidos reales listados en pedidos_recientes y los proveedores reales listados en proveedores_validados si el usuario pregunta por eso. Si intencion es cotizacion, usa catalogo_precios (precio_base real) para dar un RANGO orientativo y aclara siempre que es una estimacion preliminar, no oficial -- el taller asignado enviara la cotizacion formal. Si no hay datos que respondan la pregunta, dilo con honestidad en vez de inventar.\\n\\nIntencion detectada: ${intencion}.\\npedidos_recientes: ${JSON.stringify(pedidosResumen)}\\nproveedores_validados: ${JSON.stringify(proveedoresResumen)}\\ncatalogo_precios: ${JSON.stringify(catalogoResumen)}`;\n\nif (tieneImagen) {\n  basePrompt += '\\n\\nEl usuario adjunto una imagen y SI puedes verla: se te entrega dentro del mensaje del usuario como contenido visual real, no como un dato inventado. Observala con atencion y describe con precision lo que hay en ella cuando sea relevante para tu respuesta. Nunca digas que no puedes ver imagenes: eso seria falso.';\n}\n\nif (tieneVideo) {\n  basePrompt += '\\n\\nEl usuario adjunto un video. A diferencia de las imagenes, los videos no puedes analizarlos: agradece el envio con honestidad y pidele que te cuente o describa lo que muestra si es relevante para ayudarlo.';\n}\n\nlet systemPromptFinal = basePrompt + '\\n\\nResponde siempre en espanol, en 2 a 4 frases.';\nlet userContent = mensaje;\n\nconst openaiPayload = { model: 'gpt-4o-mini', temperature: 0.7, max_tokens: 350, messages: [] };\n\nif (intencion === 'extraccion') {\n  systemPromptFinal = basePrompt + `\\n\\nAdemas, el usuario esta contando la historia de un objeto que quiere registrar como recuerdo. Responde UNICAMENTE con un JSON exacto: {\"reply\": \"tu respuesta calida confirmando que guardaste el recuerdo, 2-3 frases, en espanol\", \"persona_recordada\": \"nombre o vinculo si lo menciono, o vacio\", \"historia\": \"resumen fiel de la historia contada en 1-3 frases\", \"objeto\": {\"tipo\": \"tipo de objeto\", \"marca\": \"o vacio\", \"anio_aproximado\": \"o vacio\", \"material\": \"o vacio\", \"estado\": \"estado/condicion descrita, o vacio\"}}. Si el mensaje NO tiene suficiente informacion para extraer un objeto y una historia real, deja historia vacio y en reply pide amablemente el detalle que falta (nunca inventes datos que no dijo el usuario).`;\n  openaiPayload.response_format = { type: 'json_object' };\n}\n\nif (tieneImagen && imagenBase64) {\n  userContent = [\n    { type: 'text', text: mensaje || 'Aqui te comparto una foto.' },\n    { type: 'image_url', image_url: { url: imagenBase64 } },\n  ];\n}\n\nopenaiPayload.messages = [\n  { role: 'system', content: systemPromptFinal },\n  { role: 'user', content: userContent },\n];\n\nreturn [{\n  json: {\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    intencion,\n    esAudio,\n    openaiPayload,\n  },\n}];"
       }
     },
     {
@@ -241,7 +501,7 @@
       "name": "Llamar a OpenAI",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [2640, 140],
+      "position": [4800, 140],
       "onError": "continueRegularOutput",
       "parameters": {
         "method": "POST",
@@ -263,11 +523,11 @@
       "name": "Procesar respuesta OpenAI",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [2880, 140],
+      "position": [5040, 140],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const resp = $json;\nconst intencion = $('Preparar prompt Alma').item.json.intencion;\nlet reply, statusValue, inputTokens = null, outputTokens = null, structuredData = null;\n\nif (resp.error || !resp.choices || !resp.choices.length) {\n  statusValue = 'fallido';\n  reply = 'Estoy teniendo un problema tecnico para responder en este momento. Por favor intenta de nuevo en unos minutos, o cuentame de otra forma en que puedo ayudarte con tu recuerdo.';\n} else {\n  statusValue = 'completado';\n  const contenido = resp.choices[0].message.content.trim();\n  if (resp.usage) {\n    inputTokens = resp.usage.prompt_tokens;\n    outputTokens = resp.usage.completion_tokens;\n  }\n  if (intencion === 'extraccion') {\n    try {\n      const parsed = JSON.parse(contenido);\n      reply = parsed.reply || 'Gracias por contarme tu historia.';\n      if (parsed.historia) {\n        structuredData = {\n          persona_recordada: parsed.persona_recordada || '',\n          historia: parsed.historia,\n          objeto: parsed.objeto || {},\n        };\n      }\n    } catch (e) {\n      reply = contenido;\n    }\n  } else {\n    reply = contenido;\n  }\n}\n\nreturn [{\n  json: {\n    run_id: $('Preparar prompt Alma').item.json.run_id,\n    reply,\n    status: statusValue,\n    input_tokens: inputTokens,\n    output_tokens: outputTokens,\n    evaluation_flags: [],\n    structured_data: structuredData,\n  },\n}];"
+        "jsCode": "const resp = $json;\nconst intencion = $('Preparar prompt Alma').item.json.intencion;\nconst esAudio = $('Preparar prompt Alma').item.json.esAudio;\nlet reply, statusValue, inputTokens = null, outputTokens = null, structuredData = null;\n\nif (resp.error || !resp.choices || !resp.choices.length) {\n  statusValue = 'fallido';\n  reply = 'Estoy teniendo un problema tecnico para responder en este momento. Por favor intenta de nuevo en unos minutos, o cuentame de otra forma en que puedo ayudarte con tu recuerdo.';\n} else {\n  statusValue = 'completado';\n  const contenido = resp.choices[0].message.content.trim();\n  if (resp.usage) {\n    inputTokens = resp.usage.prompt_tokens;\n    outputTokens = resp.usage.completion_tokens;\n  }\n  if (intencion === 'extraccion') {\n    try {\n      const parsed = JSON.parse(contenido);\n      reply = parsed.reply || 'Gracias por contarme tu historia.';\n      if (parsed.historia) {\n        structuredData = {\n          persona_recordada: parsed.persona_recordada || '',\n          historia: parsed.historia,\n          objeto: parsed.objeto || {},\n        };\n      }\n    } catch (e) {\n      reply = contenido;\n    }\n  } else {\n    reply = contenido;\n  }\n}\n\nreturn [{\n  json: {\n    run_id: $('Preparar prompt Alma').item.json.run_id,\n    reply,\n    status: statusValue,\n    input_tokens: inputTokens,\n    output_tokens: outputTokens,\n    evaluation_flags: [],\n    structured_data: structuredData,\n    esAudio,\n  },\n}];"
       }
     },
     {
@@ -275,11 +535,11 @@
       "name": "Construir firma complete",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [3120, 0],
+      "position": [5280, 0],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const body = { status: $json.status, reply: $json.reply };\nif ($json.input_tokens != null || $json.output_tokens != null) {\n  body.metrics = { input_tokens: $json.input_tokens, output_tokens: $json.output_tokens };\n}\nif ($json.evaluation_flags && $json.evaluation_flags.length) {\n  body.evaluation = { flags: $json.evaluation_flags };\n}\nif ($json.structured_data) {\n  body.structured_data = $json.structured_data;\n}\n\nreturn [{ json: { run_id: $json.run_id, reply: $json.reply, status: $json.status, bodyString: JSON.stringify(body) } }];"
+        "jsCode": "const body = { status: $json.status, reply: $json.reply };\nif ($json.input_tokens != null || $json.output_tokens != null) {\n  body.metrics = { input_tokens: $json.input_tokens, output_tokens: $json.output_tokens };\n}\nif ($json.evaluation_flags && $json.evaluation_flags.length) {\n  body.evaluation = { flags: $json.evaluation_flags };\n}\nif ($json.structured_data) {\n  body.structured_data = $json.structured_data;\n}\n// Le dice a Django cuales mensajes de usuario quedaron cubiertos por esta\n// respuesta, para que el chequeo de rafaga no los vuelva a contar como\n// pendientes en el proximo mensaje.\nbody.mensajes_ids = $('Construir mensaje del turno').item.json.idsPendientes || [];\n\nreturn [{ json: { run_id: $json.run_id, reply: $json.reply, status: $json.status, esAudio: $json.esAudio, bodyString: JSON.stringify(body) } }];"
       }
     },
     {
@@ -287,7 +547,7 @@
       "name": "Firmar complete",
       "type": "n8n-nodes-base.crypto",
       "typeVersion": 2,
-      "position": [3360, 0],
+      "position": [5520, 0],
       "parameters": {
         "action": "hmac",
         "binaryData": false,
@@ -305,7 +565,7 @@
       "name": "Completar ejecucion de agente",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [3600, 0],
+      "position": [5760, 0],
       "parameters": {
         "method": "POST",
         "url": "={{ $env.DJANGO_API_URL }}/agent-runs/{{ $json.run_id }}/complete",
@@ -324,11 +584,97 @@
       }
     },
     {
+      "id": "responder-con-audio",
+      "name": "Responder con audio?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [6000, -140],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 3 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ String($('Construir firma complete').item.json.esAudio) }}",
+              "rightValue": "true",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "generar-audio-respuesta",
+      "name": "Generar audio de respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [6240, -280],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const texto = ($json.reply || '').slice(0, 4000);\nreturn [{\n  json: {\n    conversacion_id: $('Webhook').item.json.body.conversacion_id,\n    run_id: $json.run_id,\n    reply: $json.reply,\n    estado: $json.estado,\n    ttsPayload: { model: 'tts-1', voice: 'nova', input: texto || 'Listo.' },\n  },\n}];"
+      }
+    },
+    {
+      "id": "llamar-openai-tts",
+      "name": "Llamar a OpenAI TTS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [6480, -280],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/speech",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ttsPayload }}",
+        "options": {
+          "response": {
+            "response": { "responseFormat": "file", "outputPropertyName": "data" }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": { "id": "8kXUBb43FVoTNqhA", "name": "OpenAI Reviive" }
+      }
+    },
+    {
+      "id": "convertir-audio-tts-base64",
+      "name": "Convertir audio TTS a base64",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1.1,
+      "position": [6720, -280],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "mode": "binaryToJson",
+        "setAllData": false,
+        "sourceKey": "data",
+        "destinationKey": "audioBase64",
+        "options": { "keepAsBase64": true }
+      }
+    },
+    {
+      "id": "responder-frontend-con-audio",
+      "name": "Responder al frontend con audio",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [6960, -280],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { conversacion_id: $('Generar audio de respuesta').item.json.conversacion_id, run_id: $('Generar audio de respuesta').item.json.run_id, reply: $('Generar audio de respuesta').item.json.reply, estado: $('Generar audio de respuesta').item.json.estado, reply_audio_base64: $json.audioBase64 || null } }}",
+        "options": {}
+      }
+    },
+    {
       "id": "responder-frontend",
       "name": "Responder al frontend",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
-      "position": [3840, -140],
+      "position": [6240, 0],
       "parameters": {
         "respondWith": "json",
         "responseBody": "={{ { conversacion_id: $('Webhook').item.json.body.conversacion_id, run_id: $json.run_id, reply: $json.reply, estado: $json.estado } }}",
@@ -340,7 +686,7 @@
       "name": "Preparar prompt evaluador",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [3840, 140],
+      "position": [6240, 280],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
@@ -352,7 +698,7 @@
       "name": "Evaluar con OpenAI",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [4080, 140],
+      "position": [6480, 280],
       "onError": "continueRegularOutput",
       "parameters": {
         "method": "POST",
@@ -374,7 +720,7 @@
       "name": "Procesar evaluacion",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [4320, 140],
+      "position": [6720, 280],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
@@ -386,7 +732,7 @@
       "name": "Construir firma evaluador request",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [4560, 140],
+      "position": [6960, 280],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
@@ -398,7 +744,7 @@
       "name": "Firmar evaluador request",
       "type": "n8n-nodes-base.crypto",
       "typeVersion": 2,
-      "position": [4800, 140],
+      "position": [7200, 280],
       "parameters": {
         "action": "hmac",
         "binaryData": false,
@@ -416,7 +762,7 @@
       "name": "Registrar inicio evaluador",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [5040, 140],
+      "position": [7440, 280],
       "parameters": {
         "method": "POST",
         "url": "={{ $env.DJANGO_API_URL }}/agent-runs/request",
@@ -439,7 +785,7 @@
       "name": "Construir firma evaluador complete",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [5280, 140],
+      "position": [7680, 280],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
@@ -451,7 +797,7 @@
       "name": "Firmar evaluador complete",
       "type": "n8n-nodes-base.crypto",
       "typeVersion": 2,
-      "position": [5520, 140],
+      "position": [7920, 280],
       "parameters": {
         "action": "hmac",
         "binaryData": false,
@@ -469,7 +815,7 @@
       "name": "Completar evaluador",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [5760, 140],
+      "position": [8160, 280],
       "parameters": {
         "method": "POST",
         "url": "={{ $env.DJANGO_API_URL }}/agent-runs/{{ $json.run_id }}/complete",
@@ -489,8 +835,38 @@
     }
   ],
   "connections": {
-    "Webhook": { "main": [[{ "node": "Guardar mensaje usuario", "type": "main", "index": 0 }]] },
-    "Guardar mensaje usuario": { "main": [[{ "node": "Preparar prompt clasificacion", "type": "main", "index": 0 }]] },
+    "Webhook": { "main": [[{ "node": "Es audio adjunto?", "type": "main", "index": 0 }]] },
+    "Es audio adjunto?": {
+      "main": [
+        [{ "node": "Extraer base64 audio", "type": "main", "index": 0 }],
+        [{ "node": "Resultado sin transcripcion", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extraer base64 audio": { "main": [[{ "node": "Convertir audio a binario", "type": "main", "index": 0 }]] },
+    "Convertir audio a binario": { "main": [[{ "node": "Transcribir audio", "type": "main", "index": 0 }]] },
+    "Transcribir audio": { "main": [[{ "node": "Resultado transcripcion", "type": "main", "index": 0 }]] },
+    "Resultado transcripcion": { "main": [[{ "node": "Preparar guardar mensaje", "type": "main", "index": 0 }]] },
+    "Resultado sin transcripcion": { "main": [[{ "node": "Preparar guardar mensaje", "type": "main", "index": 0 }]] },
+    "Preparar guardar mensaje": { "main": [[{ "node": "Guardar mensaje usuario", "type": "main", "index": 0 }]] },
+    "Guardar mensaje usuario": { "main": [[{ "node": "Obtener mensajes conversacion", "type": "main", "index": 0 }]] },
+    "Obtener mensajes conversacion": { "main": [[{ "node": "Evaluar rafaga", "type": "main", "index": 0 }]] },
+    "Evaluar rafaga": { "main": [[{ "node": "Hay rafaga en curso?", "type": "main", "index": 0 }]] },
+    "Hay rafaga en curso?": {
+      "main": [
+        [{ "node": "Esperar 20s", "type": "main", "index": 0 }],
+        [{ "node": "Construir mensaje del turno", "type": "main", "index": 0 }]
+      ]
+    },
+    "Esperar 20s": { "main": [[{ "node": "Reobtener mensajes tras espera", "type": "main", "index": 0 }]] },
+    "Reobtener mensajes tras espera": { "main": [[{ "node": "Evaluar tras espera", "type": "main", "index": 0 }]] },
+    "Evaluar tras espera": { "main": [[{ "node": "Fue superado?", "type": "main", "index": 0 }]] },
+    "Fue superado?": {
+      "main": [
+        [{ "node": "Responder agrupado", "type": "main", "index": 0 }],
+        [{ "node": "Construir mensaje del turno", "type": "main", "index": 0 }]
+      ]
+    },
+    "Construir mensaje del turno": { "main": [[{ "node": "Preparar prompt clasificacion", "type": "main", "index": 0 }]] },
     "Preparar prompt clasificacion": { "main": [[{ "node": "Clasificar con OpenAI", "type": "main", "index": 0 }]] },
     "Clasificar con OpenAI": { "main": [[{ "node": "Procesar clasificacion", "type": "main", "index": 0 }]] },
     "Procesar clasificacion": { "main": [[{ "node": "Obtener pedidos usuario", "type": "main", "index": 0 }]] },
@@ -515,11 +891,20 @@
     "Completar ejecucion de agente": {
       "main": [
         [
-          { "node": "Responder al frontend", "type": "main", "index": 0 },
+          { "node": "Responder con audio?", "type": "main", "index": 0 },
           { "node": "Preparar prompt evaluador", "type": "main", "index": 0 }
         ]
       ]
     },
+    "Responder con audio?": {
+      "main": [
+        [{ "node": "Generar audio de respuesta", "type": "main", "index": 0 }],
+        [{ "node": "Responder al frontend", "type": "main", "index": 0 }]
+      ]
+    },
+    "Generar audio de respuesta": { "main": [[{ "node": "Llamar a OpenAI TTS", "type": "main", "index": 0 }]] },
+    "Llamar a OpenAI TTS": { "main": [[{ "node": "Convertir audio TTS a base64", "type": "main", "index": 0 }]] },
+    "Convertir audio TTS a base64": { "main": [[{ "node": "Responder al frontend con audio", "type": "main", "index": 0 }]] },
     "Preparar prompt evaluador": { "main": [[{ "node": "Evaluar con OpenAI", "type": "main", "index": 0 }]] },
     "Evaluar con OpenAI": { "main": [[{ "node": "Procesar evaluacion", "type": "main", "index": 0 }]] },
     "Procesar evaluacion": { "main": [[{ "node": "Construir firma evaluador request", "type": "main", "index": 0 }]] },
