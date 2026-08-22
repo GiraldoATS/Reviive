@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMultiAlternatives
+from django.db import transaction
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -13,9 +14,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Usuario
+from django.utils import timezone
+
+from apps.agents.permissions import IsN8nOrchestrator
+
+from .models import EstadoCanalTelegram, Perfil, Usuario
 from .serializers import (
     ConfirmarRestablecimientoSerializer,
+    IdentificarTelegramSerializer,
+    LiberarBloqueoTelegramSerializer,
     RegistroSerializer,
     SolicitarRestablecimientoSerializer,
     UsuarioSerializer,
@@ -77,6 +84,127 @@ def _enviar_correo_restablecimiento(usuario: Usuario) -> None:
     )
     correo.attach_alternative(cuerpo_html, "text/html")
     correo.send(fail_silently=False)
+
+
+class IdentificarCanalTelegramView(APIView):
+    """POST /api/v1/auth/identificar-telegram — n8n resuelve (o crea) la
+    cuenta Reviive asociada a un chat de Telegram, y devuelve un token de
+    acceso + una conversación abierta para que el orquestador de Alma
+    pueda atenderlo igual que a un usuario web.
+
+    RN-01: una cuenta creada así arranca SIN consentimiento_datos (nadie
+    lo pidió explícitamente todavía) -- las funciones que ya exigen ese
+    consentimiento (p. ej. crear un Recuerdo desde el agente de
+    extracción) simplemente no actuarán hasta que se otorgue por otro
+    medio; no se inventa un flujo de consentimiento nuevo aquí.
+    """
+
+    permission_classes = [IsN8nOrchestrator]
+
+    def post(self, request: Request) -> Response:
+        from apps.conversations.models import Conversacion
+
+        serializer = IdentificarTelegramSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        chat_id = serializer.validated_data["telegram_chat_id"]
+        telegram_username = serializer.validated_data["telegram_username"]
+        nombre = serializer.validated_data["nombre"] or telegram_username or "Usuario de Telegram"
+
+        perfil = Perfil.objects.filter(telegram_chat_id=chat_id).select_related("usuario").first()
+        es_nuevo = perfil is None
+
+        if perfil is None:
+            with transaction.atomic():
+                usuario = Usuario(
+                    username=f"tg-{chat_id}",
+                    email=f"telegram-{chat_id}@t.reviive.local",
+                    rol=Usuario.Rol.CLIENTE,
+                )
+                usuario.set_unusable_password()
+                usuario.save()
+                Perfil.objects.create(
+                    usuario=usuario,
+                    nombre=nombre[:150],
+                    canal_preferido=Perfil.CanalPreferido.TELEGRAM,
+                    telegram_chat_id=chat_id,
+                )
+        else:
+            usuario = perfil.usuario
+
+        conversacion = (
+            Conversacion.objects.filter(
+                usuario=usuario,
+                canal=Conversacion.Canal.TELEGRAM,
+                estado=Conversacion.Estado.ACTIVA,
+            )
+            .order_by("-creada_en")
+            .first()
+        )
+        if conversacion is None:
+            conversacion = Conversacion.objects.create(usuario=usuario, canal=Conversacion.Canal.TELEGRAM)
+
+        refresh = RefreshToken.for_user(usuario)
+        return Response(
+            {
+                "access_token": str(refresh.access_token),
+                "conversacion_id": str(conversacion.id),
+                "es_nuevo": es_nuevo,
+            }
+        )
+
+
+_BLOQUEO_TELEGRAM_TIMEOUT_SEGUNDOS = 60
+
+
+class AdquirirBloqueoTelegramView(APIView):
+    """POST /api/v1/telegram/bloqueo/adquirir
+
+    El Schedule Trigger del workflow de Telegram en n8n dispara cada 5s
+    sin esperar a que la ejecucion anterior termine, y procesar un
+    mensaje de audio (transcripcion + respuesta en voz) puede tardar mas
+    que eso -- se verifico empiricamente que dos ejecuciones que se
+    solapan pueden terminar procesando el mismo mensaje de Telegram dos o
+    tres veces. select_for_update() aqui SI da exclusion mutua real
+    (MySQL bloquea la fila mientras dura esta transaccion), a diferencia
+    de los datos estaticos internos de n8n.
+    """
+
+    permission_classes = [IsN8nOrchestrator]
+
+    def post(self, request: Request) -> Response:
+        with transaction.atomic():
+            fila, _ = EstadoCanalTelegram.objects.select_for_update().get_or_create(pk=1)
+            ahora = timezone.now()
+            vencido = (
+                fila.bloqueado_desde is not None
+                and (ahora - fila.bloqueado_desde).total_seconds() > _BLOQUEO_TELEGRAM_TIMEOUT_SEGUNDOS
+            )
+            if fila.bloqueado_desde is not None and not vencido:
+                return Response({"adquirido": False})
+
+            fila.bloqueado_desde = ahora
+            fila.save(update_fields=["bloqueado_desde"])
+            return Response({"adquirido": True, "offset": fila.ultimo_update_id})
+
+
+class LiberarBloqueoTelegramView(APIView):
+    """POST /api/v1/telegram/bloqueo/liberar"""
+
+    permission_classes = [IsN8nOrchestrator]
+
+    def post(self, request: Request) -> Response:
+        serializer = LiberarBloqueoTelegramSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        nuevo_offset = serializer.validated_data["ultimo_update_id"]
+
+        with transaction.atomic():
+            fila, _ = EstadoCanalTelegram.objects.select_for_update().get_or_create(pk=1)
+            if nuevo_offset is not None and nuevo_offset > fila.ultimo_update_id:
+                fila.ultimo_update_id = nuevo_offset
+            fila.bloqueado_desde = None
+            fila.save(update_fields=["ultimo_update_id", "bloqueado_desde"])
+
+        return Response({"ok": True})
 
 
 class SolicitarRestablecimientoView(APIView):

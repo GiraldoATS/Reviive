@@ -1,0 +1,520 @@
+{
+  "name": "Canal - Telegram",
+  "nodes": [
+    {
+      "id": "cada-5-segundos",
+      "name": "Cada 5 segundos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "seconds", "secondsInterval": 5 }]
+        }
+      }
+    },
+    {
+      "id": "construir-cuerpo-adquirir",
+      "name": "Construir cuerpo adquirir",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "return [{ json: { bodyString: '{}' } }];"
+      }
+    },
+    {
+      "id": "firmar-adquirir",
+      "name": "Firmar adquirir",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [480, 0],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ $json.bodyString }}",
+        "dataPropertyName": "signature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": { "id": "fG3VUKNiYE9P68kJ", "name": "Reviive HMAC" }
+      }
+    },
+    {
+      "id": "adquirir-bloqueo",
+      "name": "Adquirir bloqueo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [720, 0],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/telegram/bloqueo/adquirir",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Reviive-Signature", "value": "={{ $json.signature }}" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $('Construir cuerpo adquirir').item.json.bodyString }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "se-adquirio-el-bloqueo",
+      "name": "Se adquirio el bloqueo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [960, 0],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 3 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ String(!!$json.adquirido) }}",
+              "rightValue": "true",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "obtener-actualizaciones",
+      "name": "Obtener actualizaciones",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1200, 0],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/getUpdates?offset={{ $json.offset }}&timeout=0",
+        "authentication": "none",
+        "options": {}
+      }
+    },
+    {
+      "id": "calcular-nuevo-offset",
+      "name": "Calcular nuevo offset",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1440, 140],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Rama independiente de 'Procesar actualizaciones': libera el bloqueo\n// exactamente una vez por ejecucion, sin importar si hubo 0, 1 o N\n// mensajes nuevos (si se encadenara despues del procesamiento por\n// mensaje, con 0 mensajes nunca se ejecutaria nada y el bloqueo\n// quedaria tomado para siempre).\nconst resp = $json;\nconst updates = (resp && resp.result) || [];\nlet maxUpdateId = 0;\nfor (const u of updates) { if (u.update_id > maxUpdateId) maxUpdateId = u.update_id; }\nreturn [{ json: { nuevoOffset: updates.length ? maxUpdateId + 1 : null } }];"
+      }
+    },
+    {
+      "id": "construir-cuerpo-liberar",
+      "name": "Construir cuerpo liberar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1680, 140],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const body = $json.nuevoOffset != null ? { ultimo_update_id: $json.nuevoOffset } : {};\nreturn [{ json: { bodyString: JSON.stringify(body) } }];"
+      }
+    },
+    {
+      "id": "firmar-liberar",
+      "name": "Firmar liberar",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [1920, 140],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ $json.bodyString }}",
+        "dataPropertyName": "signature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": { "id": "fG3VUKNiYE9P68kJ", "name": "Reviive HMAC" }
+      }
+    },
+    {
+      "id": "liberar-bloqueo",
+      "name": "Liberar bloqueo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2160, 140],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/telegram/bloqueo/liberar",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Reviive-Signature", "value": "={{ $json.signature }}" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $('Construir cuerpo liberar').item.json.bodyString }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "procesar-actualizaciones",
+      "name": "Procesar actualizaciones",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1440, -140],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// getUpdates devuelve {ok, result: [...]} (un objeto, no un array), asi\n// que aqui NO aplica el problema de n8n repartiendo un array top-level\n// (ver 'Evaluar rafaga' en orquestador-chat-alma.json para ese caso).\n// El avance del offset ya NO se maneja aqui (ver 'Calcular nuevo offset'\n// + el bloqueo real en Django) -- esta rama solo construye los mensajes.\nconst resp = $json;\nconst updates = (resp && resp.result) || [];\nconst items = [];\n\nfor (const update of updates) {\n  const msg = update.message;\n  if (!msg) continue;\n\n  let tipoAdjunto = null;\n  let fileId = null;\n  if (Array.isArray(msg.photo) && msg.photo.length) {\n    tipoAdjunto = 'imagen';\n    fileId = msg.photo[msg.photo.length - 1].file_id; // la de mayor resolucion\n  } else if (msg.voice) {\n    tipoAdjunto = 'audio';\n    fileId = msg.voice.file_id;\n  } else if (msg.audio) {\n    tipoAdjunto = 'audio';\n    fileId = msg.audio.file_id;\n  } else if (msg.video) {\n    tipoAdjunto = 'video';\n    fileId = msg.video.file_id;\n  }\n\n  const texto = (typeof msg.text === 'string' && msg.text) || (typeof msg.caption === 'string' && msg.caption) || '';\n  if (!texto && !tipoAdjunto) continue; // stickers, ubicacion, contactos, etc.: fuera de alcance\n\n  items.push({\n    json: {\n      chat_id: msg.chat.id,\n      texto,\n      telegram_username: (msg.from && msg.from.username) || '',\n      nombre: (msg.from && msg.from.first_name) || '',\n      tipo_adjunto: tipoAdjunto,\n      file_id: fileId,\n    },\n  });\n}\n\nreturn items;"
+      }
+    },
+    {
+      "id": "tiene-adjunto",
+      "name": "Tiene adjunto?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [1680, -140],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 3 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ String(!!$json.tipo_adjunto) }}",
+              "rightValue": "true",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "obtener-info-archivo",
+      "name": "Obtener info del archivo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1920, -280],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/getFile?file_id={{ $json.file_id }}",
+        "authentication": "none",
+        "options": {}
+      }
+    },
+    {
+      "id": "descargar-archivo",
+      "name": "Descargar archivo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2160, -280],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.telegram.org/file/bot{{ $env.TELEGRAM_BOT_TOKEN }}/{{ $json.result.file_path }}",
+        "authentication": "none",
+        "options": {
+          "response": {
+            "response": { "responseFormat": "file", "outputPropertyName": "data" }
+          }
+        }
+      }
+    },
+    {
+      "id": "convertir-a-base64",
+      "name": "Convertir a base64",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1.1,
+      "position": [2400, -280],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "mode": "binaryToJson",
+        "setAllData": false,
+        "sourceKey": "data",
+        "destinationKey": "base64",
+        "options": { "keepAsBase64": true }
+      }
+    },
+    {
+      "id": "construir-mensaje-con-adjunto",
+      "name": "Construir mensaje con adjunto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2640, -280],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const original = $('Procesar actualizaciones').item.json;\nconst base64 = $json.base64 || '';\nconst mime = original.tipo_adjunto === 'imagen' ? 'image/jpeg'\n  : original.tipo_adjunto === 'audio' ? 'audio/ogg'\n  : 'video/mp4';\nconst nombreArchivo = original.tipo_adjunto === 'imagen' ? 'foto.jpg'\n  : original.tipo_adjunto === 'audio' ? 'nota-de-voz.ogg'\n  : 'video.mp4';\n\nreturn {\n  json: {\n    chat_id: original.chat_id,\n    texto: original.texto,\n    telegram_username: original.telegram_username,\n    nombre: original.nombre,\n    // Si la descarga fallo (onError continueRegularOutput), base64 queda\n    // vacio y se manda sin adjunto en vez de romper el mensaje completo.\n    adjunto: base64 ? { tipo: original.tipo_adjunto, base64: `data:${mime};base64,${base64}`, nombre: nombreArchivo } : null,\n  },\n};"
+      }
+    },
+    {
+      "id": "construir-mensaje-sin-adjunto",
+      "name": "Construir mensaje sin adjunto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1920, -20],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "return {\n  json: {\n    chat_id: $json.chat_id,\n    texto: $json.texto,\n    telegram_username: $json.telegram_username,\n    nombre: $json.nombre,\n    adjunto: null,\n  },\n};"
+      }
+    },
+    {
+      "id": "construir-cuerpo-identificar",
+      "name": "Construir cuerpo identificar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2880, -140],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const body = {\n  telegram_chat_id: $json.chat_id,\n  telegram_username: $json.telegram_username,\n  nombre: $json.nombre,\n};\nreturn { json: { chat_id: $json.chat_id, texto: $json.texto, adjunto: $json.adjunto, bodyString: JSON.stringify(body) } };"
+      }
+    },
+    {
+      "id": "firmar-identificar",
+      "name": "Firmar identificar",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [3120, -140],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ $json.bodyString }}",
+        "dataPropertyName": "signature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": { "id": "fG3VUKNiYE9P68kJ", "name": "Reviive HMAC" }
+      }
+    },
+    {
+      "id": "identificar-usuario-telegram",
+      "name": "Identificar usuario telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [3360, -140],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/auth/identificar-telegram",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Reviive-Signature", "value": "={{ $json.signature }}" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $('Construir cuerpo identificar').item.json.bodyString }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "preparar-mensaje-alma",
+      "name": "Preparar mensaje para Alma",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3600, -140],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "return {\n  json: {\n    chat_id: $('Construir cuerpo identificar').item.json.chat_id,\n    access_token: $json.access_token,\n    conversacion_id: $json.conversacion_id,\n    mensaje: $('Construir cuerpo identificar').item.json.texto,\n    adjunto: $('Construir cuerpo identificar').item.json.adjunto,\n  },\n};"
+      }
+    },
+    {
+      "id": "llamar-orquestador-alma",
+      "name": "Llamar al orquestador de Alma",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [3840, -140],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5678/webhook/reviive/conversations/message",
+        "authentication": "none",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ { access_token: $json.access_token, conversacion_id: $json.conversacion_id, mensaje: $json.mensaje, adjunto: $json.adjunto } }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "hay-respuesta",
+      "name": "Hay respuesta para enviar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [4080, -140],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 3 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ String(!!$json.reply) }}",
+              "rightValue": "true",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "hay-audio-de-respuesta",
+      "name": "Hay audio de respuesta?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [4320, -280],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 3 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ String(!!$json.reply_audio_base64) }}",
+              "rightValue": "true",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "convertir-base64-a-binario-audio",
+      "name": "Convertir base64 a binario (audio)",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1.1,
+      "position": [4560, -420],
+      "parameters": {
+        "mode": "jsonToBinary",
+        "convertAllData": false,
+        "sourceKey": "reply_audio_base64",
+        "destinationKey": "audio",
+        "options": {
+          "dataIsBase64": true,
+          "mimeType": "audio/mpeg",
+          "fileName": "respuesta.mp3"
+        }
+      }
+    },
+    {
+      "id": "enviar-audio-telegram",
+      "name": "Enviar audio a Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [4800, -420],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendAudio",
+        "authentication": "none",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formData",
+              "name": "chat_id",
+              "value": "={{ $('Preparar mensaje para Alma').item.json.chat_id }}"
+            },
+            { "parameterType": "formData", "name": "title", "value": "Alma" },
+            { "parameterType": "formData", "name": "performer", "value": "Reviive" },
+            { "parameterType": "formBinaryData", "name": "audio", "inputDataFieldName": "audio" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "enviar-respuesta-telegram",
+      "name": "Enviar respuesta a Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [4560, 0],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "authentication": "none",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ { chat_id: $('Preparar mensaje para Alma').item.json.chat_id, text: $json.reply } }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Cada 5 segundos": { "main": [[{ "node": "Construir cuerpo adquirir", "type": "main", "index": 0 }]] },
+    "Construir cuerpo adquirir": { "main": [[{ "node": "Firmar adquirir", "type": "main", "index": 0 }]] },
+    "Firmar adquirir": { "main": [[{ "node": "Adquirir bloqueo", "type": "main", "index": 0 }]] },
+    "Adquirir bloqueo": { "main": [[{ "node": "Se adquirio el bloqueo?", "type": "main", "index": 0 }]] },
+    "Se adquirio el bloqueo?": {
+      "main": [
+        [{ "node": "Obtener actualizaciones", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Obtener actualizaciones": {
+      "main": [
+        [
+          { "node": "Procesar actualizaciones", "type": "main", "index": 0 },
+          { "node": "Calcular nuevo offset", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Calcular nuevo offset": { "main": [[{ "node": "Construir cuerpo liberar", "type": "main", "index": 0 }]] },
+    "Construir cuerpo liberar": { "main": [[{ "node": "Firmar liberar", "type": "main", "index": 0 }]] },
+    "Firmar liberar": { "main": [[{ "node": "Liberar bloqueo", "type": "main", "index": 0 }]] },
+    "Procesar actualizaciones": { "main": [[{ "node": "Tiene adjunto?", "type": "main", "index": 0 }]] },
+    "Tiene adjunto?": {
+      "main": [
+        [{ "node": "Obtener info del archivo", "type": "main", "index": 0 }],
+        [{ "node": "Construir mensaje sin adjunto", "type": "main", "index": 0 }]
+      ]
+    },
+    "Obtener info del archivo": { "main": [[{ "node": "Descargar archivo", "type": "main", "index": 0 }]] },
+    "Descargar archivo": { "main": [[{ "node": "Convertir a base64", "type": "main", "index": 0 }]] },
+    "Convertir a base64": { "main": [[{ "node": "Construir mensaje con adjunto", "type": "main", "index": 0 }]] },
+    "Construir mensaje con adjunto": { "main": [[{ "node": "Construir cuerpo identificar", "type": "main", "index": 0 }]] },
+    "Construir mensaje sin adjunto": { "main": [[{ "node": "Construir cuerpo identificar", "type": "main", "index": 0 }]] },
+    "Construir cuerpo identificar": { "main": [[{ "node": "Firmar identificar", "type": "main", "index": 0 }]] },
+    "Firmar identificar": { "main": [[{ "node": "Identificar usuario telegram", "type": "main", "index": 0 }]] },
+    "Identificar usuario telegram": { "main": [[{ "node": "Preparar mensaje para Alma", "type": "main", "index": 0 }]] },
+    "Preparar mensaje para Alma": { "main": [[{ "node": "Llamar al orquestador de Alma", "type": "main", "index": 0 }]] },
+    "Llamar al orquestador de Alma": { "main": [[{ "node": "Hay respuesta para enviar?", "type": "main", "index": 0 }]] },
+    "Hay respuesta para enviar?": {
+      "main": [
+        [{ "node": "Hay audio de respuesta?", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Hay audio de respuesta?": {
+      "main": [
+        [{ "node": "Convertir base64 a binario (audio)", "type": "main", "index": 0 }],
+        [{ "node": "Enviar respuesta a Telegram", "type": "main", "index": 0 }]
+      ]
+    },
+    "Convertir base64 a binario (audio)": { "main": [[{ "node": "Enviar audio a Telegram", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

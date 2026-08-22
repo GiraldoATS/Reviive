@@ -109,6 +109,20 @@ class RegistroSerializer(serializers.Serializer):
         return usuario
 
 
+class IdentificarTelegramSerializer(serializers.Serializer):
+    """POST /api/v1/auth/identificar-telegram (n8n, canal de Telegram)."""
+
+    telegram_chat_id = serializers.IntegerField()
+    telegram_username = serializers.CharField(required=False, allow_blank=True, default="")
+    nombre = serializers.CharField(required=False, allow_blank=True, default="")
+
+
+class LiberarBloqueoTelegramSerializer(serializers.Serializer):
+    """POST /api/v1/telegram/bloqueo/liberar"""
+
+    ultimo_update_id = serializers.IntegerField(required=False, allow_null=True, default=None)
+
+
 class SolicitarRestablecimientoSerializer(serializers.Serializer):
     """POST /api/v1/auth/password-reset/solicitar"""
 

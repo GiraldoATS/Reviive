@@ -53,7 +53,31 @@ class Perfil(models.Model):
         max_length=16, choices=CanalPreferido.choices, default=CanalPreferido.WEB
     )
     consentimiento_datos = models.BooleanField(default=False)
+    # Identifica una cuenta creada automaticamente desde el canal de
+    # Telegram (ver apps.identity.views.IdentificarCanalTelegramView). Es
+    # una identidad separada de la cuenta web de la misma persona en esta
+    # primera version -- no hay vinculacion entre canales todavia.
+    telegram_chat_id = models.BigIntegerField(null=True, blank=True, unique=True, db_index=True)
     creado_en = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return self.nombre
+
+
+class EstadoCanalTelegram(models.Model):
+    """Fila única (singleton, pk=1) que sincroniza el sondeo (long-polling)
+    del canal de Telegram entre ejecuciones del workflow de n8n que pueden
+    solaparse en el tiempo: el Schedule Trigger dispara cada 5s sin
+    esperar a que la ejecución anterior termine, y un mensaje de audio
+    (transcripción + respuesta en voz) puede tardar más que eso.
+
+    Se verificó empíricamente que los datos estáticos internos de n8n
+    (`$getWorkflowStaticData`) NO alcanzan a quedar visibles a tiempo para
+    la siguiente ejecución programada -- se necesita una fuente de verdad
+    externa con bloqueo real. `select_for_update()` sobre esta fila (ver
+    apps.identity.views) es lo que da la exclusión mutua real: MySQL
+    bloquea la fila hasta que la transacción que la tomó termine.
+    """
+
+    ultimo_update_id = models.BigIntegerField(default=0)
+    bloqueado_desde = models.DateTimeField(null=True, blank=True)
