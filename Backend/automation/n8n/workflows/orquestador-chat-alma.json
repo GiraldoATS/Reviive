@@ -157,20 +157,52 @@
       }
     },
     {
-      "id": "limite-mensajes-alcanzado",
-      "name": "Limite de mensajes alcanzado?",
+      "id": "obtener-mensajes-conversacion",
+      "name": "Obtener mensajes conversacion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1920, 0],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.DJANGO_API_URL }}/conversations/{{ $('Webhook').item.json.body.conversacion_id }}/messages",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $('Webhook').item.json.body.access_token }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "evaluar-rafaga",
+      "name": "Evaluar rafaga",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2160, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// El GET de Django devuelve un array JSON; n8n reparte cada elemento\n// del array como un item independiente, asi que hay que reconstruirlo\n// leyendo todos los items de entrada, no asumir que $json ya es la lista.\n// 'respondido' es la fuente de verdad explicita (lo marca Django cuando un\n// agente ya incorporo ese mensaje en una respuesta): NO se puede inferir\n// pendientes por posicion/fecha, porque cuando varias ejecuciones corren en\n// paralelo pueden completarse en un orden distinto al que llegaron.\nconst mensajes = $input.all().map((item) => item.json);\nconst pendientes = mensajes.filter((m) => m.rol === 'usuario' && !m.respondido);\nconst ultimoPendiente = pendientes[pendientes.length - 1];\n\nreturn [{\n  json: {\n    esRafaga: pendientes.length > 1,\n    idUltimoMensaje: ultimoPendiente ? ultimoPendiente.id : null,\n    pendientes,\n  },\n}];"
+      }
+    },
+    {
+      "id": "hay-rafaga-en-curso",
+      "name": "Hay rafaga en curso?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [1920, 0],
+      "position": [2400, 0],
       "parameters": {
         "conditions": {
           "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 3 },
           "combinator": "and",
           "conditions": [
             {
-              "leftValue": "={{ $json.statusCode }}",
-              "rightValue": 429,
-              "operator": { "type": "number", "operation": "equals" }
+              "leftValue": "={{ String($json.esRafaga) }}",
+              "rightValue": "true",
+              "operator": { "type": "string", "operation": "equals" }
             }
           ]
         },
@@ -178,15 +210,92 @@
       }
     },
     {
-      "id": "respuesta-por-limite",
-      "name": "Respuesta por limite",
+      "id": "esperar-20s",
+      "name": "Esperar 20s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2640, -140],
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 20,
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "reobtener-mensajes-tras-espera",
+      "name": "Reobtener mensajes tras espera",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2880, -140],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.DJANGO_API_URL }}/conversations/{{ $('Webhook').item.json.body.conversacion_id }}/messages",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $('Webhook').item.json.body.access_token }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "evaluar-tras-espera",
+      "name": "Evaluar tras espera",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [2160, -140],
+      "position": [3120, -140],
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "return [{\n  json: {\n    reply: 'Estas escribiendo muy rapido. Espera un momento antes de enviar otro mensaje para que pueda responderte con calma.',\n    estado: 'limitado',\n  },\n}];"
+        "jsCode": "const mensajes = $input.all().map((item) => item.json);\nconst pendientes = mensajes.filter((m) => m.rol === 'usuario' && !m.respondido);\nconst ultimoPendienteAhora = pendientes[pendientes.length - 1];\nconst idAntes = $('Evaluar rafaga').item.json.idUltimoMensaje;\n\nreturn [{\n  json: {\n    fueSuperado: !!(ultimoPendienteAhora && ultimoPendienteAhora.id !== idAntes),\n    pendientes,\n  },\n}];"
+      }
+    },
+    {
+      "id": "fue-superado",
+      "name": "Fue superado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [3360, -140],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 3 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ String($json.fueSuperado) }}",
+              "rightValue": "true",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "responder-agrupado",
+      "name": "Responder agrupado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [3600, -280],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { conversacion_id: $('Webhook').item.json.body.conversacion_id, run_id: null, reply: null, estado: 'agrupado' } }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "construir-mensaje-del-turno",
+      "name": "Construir mensaje del turno",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3600, 140],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const pendientes = $json.pendientes || [];\nconst textos = pendientes.map((m) => m.contenido).filter(Boolean);\nconst mensajeFinal = textos.length ? textos.join('\\n') : $('Preparar guardar mensaje').item.json.mensajeFinal;\nconst idsPendientes = pendientes.map((m) => m.id);\n\nreturn [{ json: { mensajeFinal, idsPendientes } }];"
       }
     },
     {
@@ -198,7 +307,7 @@
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const mensaje = $('Preparar guardar mensaje').item.json.mensajeFinal;\nconst systemPrompt = `Eres un clasificador para Reviive, un taller de restauracion de objetos con valor emocional. Analiza el mensaje del usuario y responde SOLO con un JSON exacto: {\"riesgo\": \"bajo|medio|alto\", \"motivo_riesgo\": \"string breve o vacio\", \"intencion\": \"pedidos|proveedores|cotizacion|extraccion|acompanamiento\"}. Usa riesgo=alto SOLO si el mensaje muestra senales claras de crisis emocional severa, ideas de autolesion, o angustia extrema que requiera atencion humana inmediata -- no por tristeza o nostalgia normal de un duelo. Usa intencion=pedidos si el usuario pregunta por el estado de un pedido u orden existente. Usa intencion=proveedores si el usuario busca un taller o proveedor especifico para su objeto. Usa intencion=cotizacion si el usuario pregunta cuanto podria costar o cuanto tiempo tomaria un servicio. Usa intencion=extraccion si el usuario esta contando por primera vez, con suficiente detalle (que objeto es y que historia/significado tiene), un recuerdo que quiere registrar o guardar en la plataforma. En cualquier otro caso usa intencion=acompanamiento.`;\n\nreturn [{\n  json: {\n    openaiPayload: {\n      model: 'gpt-4o-mini',\n      response_format: { type: 'json_object' },\n      temperature: 0,\n      max_tokens: 200,\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: mensaje },\n      ],\n    },\n  },\n}];"
+        "jsCode": "const mensaje = $('Construir mensaje del turno').item.json.mensajeFinal;\nconst systemPrompt = `Eres un clasificador para Reviive, un taller de restauracion de objetos con valor emocional. Analiza el mensaje del usuario y responde SOLO con un JSON exacto: {\"riesgo\": \"bajo|medio|alto\", \"motivo_riesgo\": \"string breve o vacio\", \"intencion\": \"pedidos|proveedores|cotizacion|extraccion|acompanamiento\"}. Usa riesgo=alto SOLO si el mensaje muestra senales claras de crisis emocional severa, ideas de autolesion, o angustia extrema que requiera atencion humana inmediata -- no por tristeza o nostalgia normal de un duelo. Usa intencion=pedidos si el usuario pregunta por el estado de un pedido u orden existente. Usa intencion=proveedores si el usuario busca un taller o proveedor especifico para su objeto. Usa intencion=cotizacion si el usuario pregunta cuanto podria costar o cuanto tiempo tomaria un servicio. Usa intencion=extraccion si el usuario esta contando por primera vez, con suficiente detalle (que objeto es y que historia/significado tiene), un recuerdo que quiere registrar o guardar en la plataforma. En cualquier otro caso usa intencion=acompanamiento.`;\n\nreturn [{\n  json: {\n    openaiPayload: {\n      model: 'gpt-4o-mini',\n      response_format: { type: 'json_object' },\n      temperature: 0,\n      max_tokens: 200,\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: mensaje },\n      ],\n    },\n  },\n}];"
       }
     },
     {
@@ -384,7 +493,7 @@
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const mensaje = $('Preparar guardar mensaje').item.json.mensajeFinal;\nconst tieneImagen = $('Preparar guardar mensaje').item.json.tieneImagen;\nconst imagenBase64 = $('Preparar guardar mensaje').item.json.imagenBase64;\nconst tieneVideo = $('Preparar guardar mensaje').item.json.tieneVideo;\nconst esAudio = $('Preparar guardar mensaje').item.json.esAudio;\nconst intencion = $('Procesar clasificacion').item.json.intencion;\n\nconst pedidosRaw = ($('Obtener pedidos usuario').item.json.results) || [];\nconst pedidosResumen = pedidosRaw.slice(0, 3).map((p) => ({\n  codigo: p.codigo,\n  estado: p.estado,\n  objeto: p.resumen && p.resumen.objeto,\n}));\n\nconst proveedoresRaw = ($('Obtener proveedores validados').item.json.results) || [];\nconst proveedoresResumen = proveedoresRaw.slice(0, 5).map((p) => ({\n  nombre_taller: p.nombre_taller,\n  ciudad: p.ciudad,\n  calificacion: p.calificacion,\n}));\n\nconst catalogoRaw = ($('Obtener catalogo').item.json.results) || [];\nconst catalogoResumen = catalogoRaw.filter((p) => p.activo).slice(0, 8).map((p) => ({\n  nombre: p.nombre,\n  categoria: p.categoria,\n  precio_base: p.precio_base,\n}));\n\nlet basePrompt = `Eres Alma, la asistente de inteligencia artificial de Reviive, un taller que restaura objetos con valor emocional. Tu tono es calido, cercano, elegante y profesional, nunca frio ni robotico, y nunca te presentas como psicologa ni sustituyes atencion profesional. Nunca confirmes precios ni tiempos de entrega exactos ni inventes estados de pedidos o proveedores: solo puedes mencionar los pedidos reales listados en pedidos_recientes y los proveedores reales listados en proveedores_validados si el usuario pregunta por eso. Si intencion es cotizacion, usa catalogo_precios (precio_base real) para dar un RANGO orientativo y aclara siempre que es una estimacion preliminar, no oficial -- el taller asignado enviara la cotizacion formal. Si no hay datos que respondan la pregunta, dilo con honestidad en vez de inventar.\\n\\nIntencion detectada: ${intencion}.\\npedidos_recientes: ${JSON.stringify(pedidosResumen)}\\nproveedores_validados: ${JSON.stringify(proveedoresResumen)}\\ncatalogo_precios: ${JSON.stringify(catalogoResumen)}`;\n\nif (tieneImagen) {\n  basePrompt += '\\n\\nEl usuario adjunto una imagen y SI puedes verla: se te entrega dentro del mensaje del usuario como contenido visual real, no como un dato inventado. Observala con atencion y describe con precision lo que hay en ella cuando sea relevante para tu respuesta. Nunca digas que no puedes ver imagenes: eso seria falso.';\n}\n\nif (tieneVideo) {\n  basePrompt += '\\n\\nEl usuario adjunto un video. A diferencia de las imagenes, los videos no puedes analizarlos: agradece el envio con honestidad y pidele que te cuente o describa lo que muestra si es relevante para ayudarlo.';\n}\n\nlet systemPromptFinal = basePrompt + '\\n\\nResponde siempre en espanol, en 2 a 4 frases.';\nlet userContent = mensaje;\n\nconst openaiPayload = { model: 'gpt-4o-mini', temperature: 0.7, max_tokens: 350, messages: [] };\n\nif (intencion === 'extraccion') {\n  systemPromptFinal = basePrompt + `\\n\\nAdemas, el usuario esta contando la historia de un objeto que quiere registrar como recuerdo. Responde UNICAMENTE con un JSON exacto: {\"reply\": \"tu respuesta calida confirmando que guardaste el recuerdo, 2-3 frases, en espanol\", \"persona_recordada\": \"nombre o vinculo si lo menciono, o vacio\", \"historia\": \"resumen fiel de la historia contada en 1-3 frases\", \"objeto\": {\"tipo\": \"tipo de objeto\", \"marca\": \"o vacio\", \"anio_aproximado\": \"o vacio\", \"material\": \"o vacio\", \"estado\": \"estado/condicion descrita, o vacio\"}}. Si el mensaje NO tiene suficiente informacion para extraer un objeto y una historia real, deja historia vacio y en reply pide amablemente el detalle que falta (nunca inventes datos que no dijo el usuario).`;\n  openaiPayload.response_format = { type: 'json_object' };\n}\n\nif (tieneImagen && imagenBase64) {\n  userContent = [\n    { type: 'text', text: mensaje || 'Aqui te comparto una foto.' },\n    { type: 'image_url', image_url: { url: imagenBase64 } },\n  ];\n}\n\nopenaiPayload.messages = [\n  { role: 'system', content: systemPromptFinal },\n  { role: 'user', content: userContent },\n];\n\nreturn [{\n  json: {\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    intencion,\n    esAudio,\n    openaiPayload,\n  },\n}];"
+        "jsCode": "const mensaje = $('Construir mensaje del turno').item.json.mensajeFinal;\nconst tieneImagen = $('Preparar guardar mensaje').item.json.tieneImagen;\nconst imagenBase64 = $('Preparar guardar mensaje').item.json.imagenBase64;\nconst tieneVideo = $('Preparar guardar mensaje').item.json.tieneVideo;\nconst esAudio = $('Preparar guardar mensaje').item.json.esAudio;\nconst intencion = $('Procesar clasificacion').item.json.intencion;\n\nconst pedidosRaw = ($('Obtener pedidos usuario').item.json.results) || [];\nconst pedidosResumen = pedidosRaw.slice(0, 3).map((p) => ({\n  codigo: p.codigo,\n  estado: p.estado,\n  objeto: p.resumen && p.resumen.objeto,\n}));\n\nconst proveedoresRaw = ($('Obtener proveedores validados').item.json.results) || [];\nconst proveedoresResumen = proveedoresRaw.slice(0, 5).map((p) => ({\n  nombre_taller: p.nombre_taller,\n  ciudad: p.ciudad,\n  calificacion: p.calificacion,\n}));\n\nconst catalogoRaw = ($('Obtener catalogo').item.json.results) || [];\nconst catalogoResumen = catalogoRaw.filter((p) => p.activo).slice(0, 8).map((p) => ({\n  nombre: p.nombre,\n  categoria: p.categoria,\n  precio_base: p.precio_base,\n}));\n\nlet basePrompt = `Eres Alma, la asistente de inteligencia artificial de Reviive, un taller que restaura objetos con valor emocional. Tu tono es calido, cercano, elegante y profesional, nunca frio ni robotico, y nunca te presentas como psicologa ni sustituyes atencion profesional. Nunca confirmes precios ni tiempos de entrega exactos ni inventes estados de pedidos o proveedores: solo puedes mencionar los pedidos reales listados en pedidos_recientes y los proveedores reales listados en proveedores_validados si el usuario pregunta por eso. Si intencion es cotizacion, usa catalogo_precios (precio_base real) para dar un RANGO orientativo y aclara siempre que es una estimacion preliminar, no oficial -- el taller asignado enviara la cotizacion formal. Si no hay datos que respondan la pregunta, dilo con honestidad en vez de inventar.\\n\\nIntencion detectada: ${intencion}.\\npedidos_recientes: ${JSON.stringify(pedidosResumen)}\\nproveedores_validados: ${JSON.stringify(proveedoresResumen)}\\ncatalogo_precios: ${JSON.stringify(catalogoResumen)}`;\n\nif (tieneImagen) {\n  basePrompt += '\\n\\nEl usuario adjunto una imagen y SI puedes verla: se te entrega dentro del mensaje del usuario como contenido visual real, no como un dato inventado. Observala con atencion y describe con precision lo que hay en ella cuando sea relevante para tu respuesta. Nunca digas que no puedes ver imagenes: eso seria falso.';\n}\n\nif (tieneVideo) {\n  basePrompt += '\\n\\nEl usuario adjunto un video. A diferencia de las imagenes, los videos no puedes analizarlos: agradece el envio con honestidad y pidele que te cuente o describa lo que muestra si es relevante para ayudarlo.';\n}\n\nlet systemPromptFinal = basePrompt + '\\n\\nResponde siempre en espanol, en 2 a 4 frases.';\nlet userContent = mensaje;\n\nconst openaiPayload = { model: 'gpt-4o-mini', temperature: 0.7, max_tokens: 350, messages: [] };\n\nif (intencion === 'extraccion') {\n  systemPromptFinal = basePrompt + `\\n\\nAdemas, el usuario esta contando la historia de un objeto que quiere registrar como recuerdo. Responde UNICAMENTE con un JSON exacto: {\"reply\": \"tu respuesta calida confirmando que guardaste el recuerdo, 2-3 frases, en espanol\", \"persona_recordada\": \"nombre o vinculo si lo menciono, o vacio\", \"historia\": \"resumen fiel de la historia contada en 1-3 frases\", \"objeto\": {\"tipo\": \"tipo de objeto\", \"marca\": \"o vacio\", \"anio_aproximado\": \"o vacio\", \"material\": \"o vacio\", \"estado\": \"estado/condicion descrita, o vacio\"}}. Si el mensaje NO tiene suficiente informacion para extraer un objeto y una historia real, deja historia vacio y en reply pide amablemente el detalle que falta (nunca inventes datos que no dijo el usuario).`;\n  openaiPayload.response_format = { type: 'json_object' };\n}\n\nif (tieneImagen && imagenBase64) {\n  userContent = [\n    { type: 'text', text: mensaje || 'Aqui te comparto una foto.' },\n    { type: 'image_url', image_url: { url: imagenBase64 } },\n  ];\n}\n\nopenaiPayload.messages = [\n  { role: 'system', content: systemPromptFinal },\n  { role: 'user', content: userContent },\n];\n\nreturn [{\n  json: {\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    intencion,\n    esAudio,\n    openaiPayload,\n  },\n}];"
       }
     },
     {
@@ -430,7 +539,7 @@
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const body = { status: $json.status, reply: $json.reply };\nif ($json.input_tokens != null || $json.output_tokens != null) {\n  body.metrics = { input_tokens: $json.input_tokens, output_tokens: $json.output_tokens };\n}\nif ($json.evaluation_flags && $json.evaluation_flags.length) {\n  body.evaluation = { flags: $json.evaluation_flags };\n}\nif ($json.structured_data) {\n  body.structured_data = $json.structured_data;\n}\n\nreturn [{ json: { run_id: $json.run_id, reply: $json.reply, status: $json.status, esAudio: $json.esAudio, bodyString: JSON.stringify(body) } }];"
+        "jsCode": "const body = { status: $json.status, reply: $json.reply };\nif ($json.input_tokens != null || $json.output_tokens != null) {\n  body.metrics = { input_tokens: $json.input_tokens, output_tokens: $json.output_tokens };\n}\nif ($json.evaluation_flags && $json.evaluation_flags.length) {\n  body.evaluation = { flags: $json.evaluation_flags };\n}\nif ($json.structured_data) {\n  body.structured_data = $json.structured_data;\n}\n// Le dice a Django cuales mensajes de usuario quedaron cubiertos por esta\n// respuesta, para que el chequeo de rafaga no los vuelva a contar como\n// pendientes en el proximo mensaje.\nbody.mensajes_ids = $('Construir mensaje del turno').item.json.idsPendientes || [];\n\nreturn [{ json: { run_id: $json.run_id, reply: $json.reply, status: $json.status, esAudio: $json.esAudio, bodyString: JSON.stringify(body) } }];"
       }
     },
     {
@@ -739,14 +848,25 @@
     "Resultado transcripcion": { "main": [[{ "node": "Preparar guardar mensaje", "type": "main", "index": 0 }]] },
     "Resultado sin transcripcion": { "main": [[{ "node": "Preparar guardar mensaje", "type": "main", "index": 0 }]] },
     "Preparar guardar mensaje": { "main": [[{ "node": "Guardar mensaje usuario", "type": "main", "index": 0 }]] },
-    "Guardar mensaje usuario": { "main": [[{ "node": "Limite de mensajes alcanzado?", "type": "main", "index": 0 }]] },
-    "Limite de mensajes alcanzado?": {
+    "Guardar mensaje usuario": { "main": [[{ "node": "Obtener mensajes conversacion", "type": "main", "index": 0 }]] },
+    "Obtener mensajes conversacion": { "main": [[{ "node": "Evaluar rafaga", "type": "main", "index": 0 }]] },
+    "Evaluar rafaga": { "main": [[{ "node": "Hay rafaga en curso?", "type": "main", "index": 0 }]] },
+    "Hay rafaga en curso?": {
       "main": [
-        [{ "node": "Respuesta por limite", "type": "main", "index": 0 }],
-        [{ "node": "Preparar prompt clasificacion", "type": "main", "index": 0 }]
+        [{ "node": "Esperar 20s", "type": "main", "index": 0 }],
+        [{ "node": "Construir mensaje del turno", "type": "main", "index": 0 }]
       ]
     },
-    "Respuesta por limite": { "main": [[{ "node": "Responder al frontend", "type": "main", "index": 0 }]] },
+    "Esperar 20s": { "main": [[{ "node": "Reobtener mensajes tras espera", "type": "main", "index": 0 }]] },
+    "Reobtener mensajes tras espera": { "main": [[{ "node": "Evaluar tras espera", "type": "main", "index": 0 }]] },
+    "Evaluar tras espera": { "main": [[{ "node": "Fue superado?", "type": "main", "index": 0 }]] },
+    "Fue superado?": {
+      "main": [
+        [{ "node": "Responder agrupado", "type": "main", "index": 0 }],
+        [{ "node": "Construir mensaje del turno", "type": "main", "index": 0 }]
+      ]
+    },
+    "Construir mensaje del turno": { "main": [[{ "node": "Preparar prompt clasificacion", "type": "main", "index": 0 }]] },
     "Preparar prompt clasificacion": { "main": [[{ "node": "Clasificar con OpenAI", "type": "main", "index": 0 }]] },
     "Clasificar con OpenAI": { "main": [[{ "node": "Procesar clasificacion", "type": "main", "index": 0 }]] },
     "Procesar clasificacion": { "main": [[{ "node": "Obtener pedidos usuario", "type": "main", "index": 0 }]] },

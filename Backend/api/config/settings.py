@@ -126,10 +126,12 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
-    # Controla rafagas de mensajes al chat (cada mensaje dispara una llamada
-    # a un LLM, tiene costo real). Ver apps.conversations.throttles.
+    # Freno tecnico contra abuso real (scripts, no usuarios humanos): las
+    # rafagas normales ya se agrupan en una sola respuesta desde n8n (ver
+    # el nodo "Evaluar rafaga" en orquestador-chat-alma.json), asi que este
+    # limite es solo un ultimo recurso, no el mecanismo de control de UX.
     "DEFAULT_THROTTLE_RATES": {
-        "mensajes_chat": "20/min",
+        "mensajes_chat": "60/min",
     },
 }
 

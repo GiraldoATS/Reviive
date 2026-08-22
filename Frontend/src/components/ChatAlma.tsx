@@ -202,6 +202,11 @@ export default function ChatAlma() {
       if (!res.ok) throw new Error("Alma no respondió a tiempo.");
       const data: RespuestaWebhookAlma = await res.json();
 
+      // "agrupado": este mensaje llegó en medio de una ráfaga y quedó
+      // absorbido en la respuesta que Alma ya le dará al último mensaje
+      // del grupo; no hay nada propio que mostrar aquí.
+      if (data.estado === "agrupado") return;
+
       setMensajes((prev) => [
         ...prev,
         {

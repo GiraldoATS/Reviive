@@ -168,6 +168,14 @@ class AgentRunCompleteView(APIView):
         ejecucion.completado_en = timezone.now()
         ejecucion.save()
 
+        mensajes_ids = data.get("mensajes_ids") or []
+        if mensajes_ids and ejecucion.conversacion_id:
+            Mensaje.objects.filter(
+                conversacion_id=ejecucion.conversacion_id,
+                id__in=mensajes_ids,
+                rol=Mensaje.Rol.USUARIO,
+            ).update(respondido=True)
+
         # La respuesta de un agente conversacional se convierte en el mensaje
         # de Alma en la conversación; así n8n nunca escribe Mensaje directo,
         # sólo reporta el resultado del agente y Django lo traduce al chat.

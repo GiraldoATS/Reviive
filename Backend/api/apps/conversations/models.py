@@ -40,6 +40,13 @@ class Mensaje(models.Model):
     rol = models.CharField(max_length=16, choices=Rol.choices)
     contenido = models.TextField()
     fecha = models.DateTimeField(auto_now_add=True)
+    # Marca explícita de si este mensaje de usuario ya quedó incorporado en
+    # una respuesta completada. No se puede inferir por orden cronológico:
+    # cuando llegan varios mensajes casi al mismo tiempo, cada uno dispara su
+    # propia ejecución de agente en paralelo y pueden completarse en un orden
+    # distinto al que llegaron, así que la fecha por sí sola no basta para
+    # saber cuáles siguen pendientes de respuesta.
+    respondido = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["fecha"]
