@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "apps.memorials",
     "apps.evaluations",
     "apps.analytics",
+    "apps.ml",
 ]
 
 MIDDLEWARE = [
