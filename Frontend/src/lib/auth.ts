@@ -21,6 +21,10 @@ export interface RespuestaAuth extends TokensAuth {
 async function leerError(res: Response): Promise<string> {
   try {
     const data = await res.json();
+    // Forma normalizada (ver Backend/api/config/exceptions.py).
+    if (typeof data?.error?.mensaje === "string") return data.error.mensaje;
+    // Formas previas a la normalizacion, por si algun endpoint viejo
+    // todavia no pasa por el exception handler global.
     if (typeof data?.detail === "string") return data.detail;
     const primerCampo = Object.values(data ?? {})[0];
     if (Array.isArray(primerCampo)) return String(primerCampo[0]);
