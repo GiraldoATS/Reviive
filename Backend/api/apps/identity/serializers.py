@@ -18,6 +18,7 @@ class PerfilSerializer(serializers.ModelSerializer):
             "id",
             "nombre",
             "ciudad",
+            "telefono",
             "canal_preferido",
             "consentimiento_datos",
             "creado_en",
@@ -42,6 +43,7 @@ class RegistroSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True, min_length=8)
     nombre = serializers.CharField(max_length=150)
     ciudad = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    telefono = serializers.CharField(max_length=30, required=False, allow_blank=True, default="")
     canal_preferido = serializers.ChoiceField(
         choices=Perfil.CanalPreferido.choices, default=Perfil.CanalPreferido.WEB
     )
@@ -81,6 +83,7 @@ class RegistroSerializer(serializers.Serializer):
         password = validated_data.pop("password")
         nombre = validated_data.pop("nombre")
         ciudad = validated_data.pop("ciudad", "")
+        telefono = validated_data.pop("telefono", "")
         canal_preferido = validated_data.pop("canal_preferido")
         consentimiento = validated_data.pop("consentimiento_datos")
         rol = validated_data.pop("rol")
@@ -94,6 +97,7 @@ class RegistroSerializer(serializers.Serializer):
             usuario=usuario,
             nombre=nombre,
             ciudad=ciudad,
+            telefono=telefono,
             canal_preferido=canal_preferido,
             consentimiento_datos=consentimiento,
         )

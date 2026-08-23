@@ -49,6 +49,7 @@ class Perfil(models.Model):
     )
     nombre = models.CharField(max_length=150)
     ciudad = models.CharField(max_length=100, blank=True)
+    telefono = models.CharField(max_length=30, blank=True, default="")
     canal_preferido = models.CharField(
         max_length=16, choices=CanalPreferido.choices, default=CanalPreferido.WEB
     )
