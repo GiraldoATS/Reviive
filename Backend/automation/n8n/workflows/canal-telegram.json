@@ -9,7 +9,7 @@
       "position": [0, 0],
       "parameters": {
         "rule": {
-          "interval": [{ "field": "seconds", "secondsInterval": 5 }]
+          "interval": [{ "field": "seconds", "secondsInterval": 1 }]
         }
       }
     },
