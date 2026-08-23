@@ -50,6 +50,7 @@ export interface DatosRegistro {
   password: string;
   nombre: string;
   ciudad?: string;
+  telefono?: string;
   consentimiento_datos: boolean;
   rol?: "cliente" | "proveedor";
   nombre_taller?: string;

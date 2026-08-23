@@ -66,6 +66,7 @@ export interface Mensaje {
   rol: "usuario" | "alma";
   contenido: string;
   hora: string;
+  imagenPreview?: string;
 }
 
 export interface ConversacionResumen {

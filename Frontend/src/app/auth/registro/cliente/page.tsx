@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -108,7 +109,7 @@ export default function RegistroClientePage() {
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!aceptaTerminos) {
       setError("Debes aceptar los Términos y la Política de Privacidad para continuar.");
@@ -127,6 +128,7 @@ export default function RegistroClientePage() {
         password,
         nombre: `${nombres} ${apellidos}`.trim(),
         ciudad: ciudad || undefined,
+        telefono: telefono || undefined,
         consentimiento_datos: aceptaTerminos,
         rol: "cliente",
       });

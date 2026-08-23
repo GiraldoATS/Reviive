@@ -221,6 +221,24 @@ export function IconLock(props: IconProps) {
   );
 }
 
+export function IconTelefono(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M6.5 3.5h3l1.5 4-2 1.5a11 11 0 0 0 5 5l1.5-2 4 1.5v3a1.5 1.5 0 0 1-1.6 1.5A17 17 0 0 1 5 5.1 1.5 1.5 0 0 1 6.5 3.5Z" />
+    </svg>
+  );
+}
+
+export function IconEyeOff(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3 3l18 18" />
+      <path d="M10.6 5.2A10.6 10.6 0 0 1 12 5c5 0 8.8 3.1 10 7-.5 1.4-1.3 2.7-2.4 3.8M6.7 6.7C4.7 8 3.2 9.8 2 12c1.2 3.9 5 7 10 7 1.4 0 2.7-.2 3.9-.7" />
+      <path d="M9.9 10a2.5 2.5 0 0 0 3.5 3.5" />
+    </svg>
+  );
+}
+
 export function IconMessage(props: IconProps) {
   return (
     <svg {...base} {...props}>

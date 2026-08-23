@@ -57,6 +57,7 @@ interface RespuestaWebhookAlma {
   reply: string;
   estado: string;
   reply_audio_base64?: string;
+  preview_imagen_base64?: string;
 }
 
 export default function ChatAlma() {
@@ -214,6 +215,7 @@ export default function ChatAlma() {
           rol: "alma",
           contenido: data.reply || "No pude generar una respuesta, intenta de nuevo.",
           hora: horaActual(),
+          imagenPreview: data.preview_imagen_base64 || undefined,
         },
       ]);
 
@@ -295,6 +297,14 @@ export default function ChatAlma() {
               }`}
             >
               <p>{m.contenido}</p>
+              {m.imagenPreview && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={m.imagenPreview}
+                  alt="Vista previa de cómo podría quedar el objeto restaurado"
+                  className="mt-2 rounded-xl max-w-full"
+                />
+              )}
               <p
                 className={`mt-1 text-[10px] ${
                   m.rol === "alma" ? "text-carbon/40" : "text-marfil/60"
