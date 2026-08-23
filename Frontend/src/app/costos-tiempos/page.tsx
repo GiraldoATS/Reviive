@@ -32,12 +32,12 @@ const pasos = [
 ];
 
 const preguntas = [
-  "¿La evaluación tiene algún costo?",
-  "¿Ofrecen servicio urgente?",
-  "¿Por qué los tiempos pueden variar?",
-  "¿Qué materiales y técnicas utilizan?",
-  "¿Pueden trabajar mi recuerdo si está muy dañado?",
-  "¿Cómo obtengo una cotización?",
+  { p: "¿La evaluación tiene algún costo?", r: "No. La evaluación inicial de tu objeto es gratuita y sin compromiso." },
+  { p: "¿Ofrecen servicio urgente?", r: "Sí, para solicitudes con una fecha límite priorizamos el proceso; cuéntanos tu caso al enviar tu evaluación." },
+  { p: "¿Por qué los tiempos pueden variar?", r: "Dependen del tipo de objeto, su estado, la técnica requerida y la complejidad de la intervención." },
+  { p: "¿Qué materiales y técnicas utilizan?", r: "Usamos materiales especializados y técnicas artesanales adecuadas para cada tipo de objeto y su nivel de deterioro." },
+  { p: "¿Pueden trabajar mi recuerdo si está muy dañado?", r: "Sí. Evaluamos cada caso, incluso los más deteriorados, y te damos una recomendación honesta sobre lo que es posible hacer." },
+  { p: "¿Cómo obtengo una cotización?", r: "Al solicitar una evaluación, nuestro equipo la revisa y te envía una propuesta con costos y tiempos estimados." },
 ];
 
 function Icono({ icono, className, size }: { icono: string | React.ComponentType<{ className?: string }>; className?: string; size: number }) {
@@ -209,12 +209,13 @@ export default function CostosTiemposPage() {
           Resolvemos las dudas más comunes sobre costos y tiempos.
         </p>
         <div className="mt-8 grid sm:grid-cols-2 gap-x-8">
-          {preguntas.map((p) => (
-            <details key={p} className="group border-b border-greige/60 py-3">
+          {preguntas.map((item) => (
+            <details key={item.p} className="group border-b border-greige/60 py-3">
               <summary className="flex items-center justify-between gap-3 cursor-pointer list-none text-sm text-carbon/80">
-                {p}
+                {item.p}
                 <IconChevronDown className="h-4 w-4 shrink-0 text-dorado-suave transition-transform duration-200 group-open:rotate-180" />
               </summary>
+              <p className="mt-2 text-sm text-carbon/60">{item.r}</p>
             </details>
           ))}
         </div>

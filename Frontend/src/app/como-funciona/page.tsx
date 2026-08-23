@@ -142,7 +142,7 @@ export default function ComoFuncionaPage() {
 
           <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {compromisos.map((c) => (
-              <div key={c.titulo} className="rounded-2xl border border-greige/60 bg-white/70 overflow-hidden flex flex-col text-left">
+              <div key={c.titulo} className="rounded-2xl border border-greige/50 bg-greige/20 overflow-hidden flex flex-col text-left">
                 <div className="p-6 pb-4 text-center">
                   <div className="relative h-14 w-14 mx-auto">
                     <Image src={c.icono} alt="" fill sizes="56px" className="object-contain" />

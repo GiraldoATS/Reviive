@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import SiteShell from "@/components/SiteShell";
+import ClienteShell from "@/components/ClienteShell";
 import Button from "@/components/Button";
+import { useAuth } from "@/lib/AuthContext";
 import {
   IconMessage,
   IconEnviar,
@@ -70,6 +72,8 @@ function BranchTag({ children }: { children: string }) {
 type Foto = { id: string; url: string; nombre: string };
 
 export default function SolicitarEvaluacionPage() {
+  const router = useRouter();
+  const { accessToken, cargando } = useAuth();
   const [categoria, setCategoria] = useState<string | null>(null);
   const [deseo, setDeseo] = useState<string | null>(null);
   const [fotos, setFotos] = useState<Foto[]>([
@@ -100,8 +104,18 @@ export default function SolicitarEvaluacionPage() {
     setFotos((prev) => prev.filter((f) => f.id !== id));
   }
 
+  useEffect(() => {
+    if (!cargando && !accessToken) {
+      router.push("/auth/login");
+    }
+  }, [cargando, accessToken, router]);
+
+  if (cargando || !accessToken) {
+    return <div className="min-h-screen bg-marfil" />;
+  }
+
   return (
-    <SiteShell>
+    <ClienteShell activeHref="/recuerdos/nuevo">
       <div className="mx-auto max-w-6xl px-6 pt-4 text-xs text-carbon/50">
         <Link href="/" className="hover:text-borgona transition-colors">Inicio</Link>
         <span className="mx-1.5">›</span>
@@ -452,6 +466,6 @@ export default function SolicitarEvaluacionPage() {
           </div>
         </div>
       </section>
-    </SiteShell>
+    </ClienteShell>
   );
 }
