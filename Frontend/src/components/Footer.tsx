@@ -30,8 +30,8 @@ const servicios = [
 const ayuda = [
   { href: "/preguntas-frecuentes", label: "Preguntas frecuentes" },
   { href: "/chat", label: "Cuidados y consejos" },
-  { href: "/preguntas-frecuentes", label: "Términos y condiciones" },
-  { href: "/preguntas-frecuentes", label: "Política de privacidad" },
+  { href: "/terminos", label: "Términos y condiciones" },
+  { href: "/politica-privacidad", label: "Política de privacidad" },
 ];
 
 const tituloClase = "text-xs uppercase tracking-widest text-dorado-suave mb-3";
@@ -120,8 +120,8 @@ export default function Footer() {
         <div className="py-4 w-[94%] max-w-[1500px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-marfil/60">
           <span>© 2026 Reviive. Todos los derechos reservados.</span>
           <div className="flex gap-4">
-            <Link href="/preguntas-frecuentes" className="hover:text-marfil transition-colors">Términos y condiciones</Link>
-            <Link href="/preguntas-frecuentes" className="hover:text-marfil transition-colors">Política de privacidad</Link>
+            <Link href="/terminos" className="hover:text-marfil transition-colors">Términos y condiciones</Link>
+            <Link href="/politica-privacidad" className="hover:text-marfil transition-colors">Política de privacidad</Link>
           </div>
         </div>
       </div>

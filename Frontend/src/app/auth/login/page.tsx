@@ -181,12 +181,6 @@ function LoginForm() {
                 Crear cuenta
               </Link>
             </p>
-            <p className="mt-4 text-center text-xs text-carbon/45">
-              Al continuar, aceptas nuestros{" "}
-              <Link href="/terminos" className="text-borgona underline">Términos y condiciones</Link>
-              {" "}y{" "}
-              <Link href="/politica-privacidad" className="text-borgona underline">Política de privacidad.</Link>
-            </p>
           </div>
         </div>
       </div>
