@@ -32,12 +32,12 @@ const pasos = [
 ];
 
 const preguntas = [
-  "¿Hacen envíos a toda Colombia?",
-  "¿Qué pasa si mi objeto es muy delicado?",
-  "¿Cómo debo empacar mi objeto?",
-  "¿Cuánto tarda la entrega?",
-  "¿Puedo solicitar recolección?",
-  "¿Cómo hago seguimiento?",
+  { p: "¿Hacen envíos a toda Colombia?", r: "Sí, realizamos envíos a todo el país. Consulta con nuestro equipo la disponibilidad de recolección en tu zona." },
+  { p: "¿Qué pasa si mi objeto es muy delicado?", r: "Usamos empaques especializados y amortiguación adicional para piezas frágiles, bordes y superficies sensibles." },
+  { p: "¿Cómo debo empacar mi objeto?", r: "Te damos indicaciones específicas según el tipo de objeto; si prefieres, podemos coordinar la recolección para evitarte ese paso." },
+  { p: "¿Cuánto tarda la entrega?", r: "La entrega final toma entre 2 y 5 días una vez finalizado el proceso, con seguro y trazabilidad incluidos." },
+  { p: "¿Puedo solicitar recolección?", r: "Sí, puedes solicitar que recojamos tu objeto directamente en lugar de enviarlo por tu cuenta." },
+  { p: "¿Cómo hago seguimiento?", r: "Desde tu cuenta, en la sección \"Envíos\", puedes consultar el estado de cada traslado en tiempo real." },
 ];
 
 function BranchTag({ children }: { children: string }) {
@@ -196,12 +196,13 @@ export default function EnviosEntregasPage() {
           Resolvemos las dudas más comunes sobre nuestros envíos y entregas.
         </p>
         <div className="mt-8 grid sm:grid-cols-2 gap-x-8">
-          {preguntas.map((p) => (
-            <details key={p} className="group border-b border-greige/60 py-3">
+          {preguntas.map((item) => (
+            <details key={item.p} className="group border-b border-greige/60 py-3">
               <summary className="flex items-center justify-between gap-3 cursor-pointer list-none text-sm text-carbon/80">
-                {p}
+                {item.p}
                 <IconChevronDown className="h-4 w-4 shrink-0 text-dorado-suave transition-transform duration-200 group-open:rotate-180" />
               </summary>
+              <p className="mt-2 text-sm text-carbon/60">{item.r}</p>
             </details>
           ))}
         </div>

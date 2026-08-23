@@ -6,7 +6,7 @@ export interface SesionUsuario {
   email: string;
   rol: RolUsuario;
   estado: string;
-  perfil: { nombre: string; ciudad: string } | null;
+  perfil: { nombre: string; ciudad: string; telefono?: string; creado_en?: string } | null;
 }
 
 export interface TokensAuth {

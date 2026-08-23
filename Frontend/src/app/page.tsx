@@ -103,7 +103,7 @@ export default function Home() {
           </div>
           <div className="mt-8 grid sm:grid-cols-2 md:grid-cols-5 gap-6">
             {categorias.map((c) => (
-              <div key={c.titulo} className="rounded-2xl border border-greige/70 bg-white/70 overflow-hidden">
+              <div key={c.titulo} className="rounded-2xl border border-greige/50 bg-greige/20 overflow-hidden">
                 <div className="relative h-28 w-full">
                   <Image src={c.foto} alt="" fill sizes="220px" className="object-cover" />
                 </div>

@@ -69,10 +69,22 @@ function iconoSidebar(c: (typeof categorias)[number], activo: boolean) {
 }
 
 const preguntas = [
-  "¿Qué tipo de recuerdos puedo enviar?",
-  "¿Mis recuerdos están asegurados?",
-  "¿Cuánto tiempo tarda el proceso completo?",
-  "¿Cómo sé el estado de mi envío?",
+  {
+    p: "¿Qué tipo de recuerdos puedo enviar?",
+    r: "Joyas y relojes, fotografías y cartas, textiles, peluches, muebles, prendas de vestir y objetos decorativos con un significado especial para ti.",
+  },
+  {
+    p: "¿Mis recuerdos están asegurados?",
+    r: "Sí. Cada recuerdo que recibimos queda registrado y documentado, y su traslado incluye protección durante todo el proceso.",
+  },
+  {
+    p: "¿Cuánto tiempo tarda el proceso completo?",
+    r: "Depende del tipo de intervención: entre 2 y 8 semanas en promedio. Siempre recibirás un tiempo estimado antes de confirmar tu solicitud.",
+  },
+  {
+    p: "¿Cómo sé el estado de mi envío?",
+    r: "Desde tu cuenta puedes consultar en \"Envíos\" el estado de la recolección y la entrega de tu recuerdo en cada etapa.",
+  },
 ];
 
 export default function PreguntasFrecuentesPage() {
@@ -296,12 +308,13 @@ export default function PreguntasFrecuentesPage() {
             <div>
               <h2 className="font-display text-xl text-borgona">Preguntas frecuentes</h2>
               <div className="mt-4">
-                {preguntas.map((p) => (
-                  <details key={p} className="group border-b border-greige/60 py-3">
+                {preguntas.map((item) => (
+                  <details key={item.p} className="group border-b border-greige/60 py-3">
                     <summary className="flex items-center justify-between gap-3 cursor-pointer list-none text-sm text-carbon/80">
-                      {p}
+                      {item.p}
                       <IconChevronDown className="h-4 w-4 shrink-0 text-dorado-suave transition-transform duration-200 group-open:rotate-180" />
                     </summary>
+                    <p className="mt-2 text-sm text-carbon/60">{item.r}</p>
                   </details>
                 ))}
               </div>

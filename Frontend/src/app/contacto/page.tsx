@@ -40,12 +40,12 @@ const redes = [
 ];
 
 const preguntas = [
-  "¿Cómo solicito una evaluación?",
-  "¿Debo enviar fotografías del objeto?",
-  "¿Puedo contactar a Reviive desde otra ciudad?",
-  "¿Cómo entrego mi objeto?",
-  "¿Cuánto tarda una evaluación inicial?",
-  "¿Cómo puedo convertirme en proveedor de Reviive?",
+  { p: "¿Cómo solicito una evaluación?", r: "Desde el botón \"Solicitar evaluación\" cuéntanos sobre tu objeto y nuestro equipo te enviará una recomendación." },
+  { p: "¿Debo enviar fotografías del objeto?", r: "Sí, ayudan mucho a nuestros especialistas a evaluar el estado y las posibilidades de tu recuerdo." },
+  { p: "¿Puedo contactar a Reviive desde otra ciudad?", r: "Sí, atendemos solicitudes de todo el país y coordinamos la recolección o el envío según tu ubicación." },
+  { p: "¿Cómo entrego mi objeto?", r: "Puedes enviarlo por la transportadora de tu preferencia o solicitar que lo recojamos directamente." },
+  { p: "¿Cuánto tarda una evaluación inicial?", r: "Normalmente recibirás una respuesta dentro de 24 a 48 horas hábiles." },
+  { p: "¿Cómo puedo convertirme en proveedor de Reviive?", r: "Escríbenos por este formulario o a hola@reviive.com contándonos tu experiencia y con gusto te contactaremos." },
 ];
 
 function BranchTag({ children }: { children: string }) {
@@ -188,7 +188,7 @@ export default function ContactoPage() {
           </h2>
           <div className="mt-6 grid sm:grid-cols-3 gap-4">
             {contactoDirecto.map((c) => (
-              <div key={c.titulo} className="rounded-2xl border border-greige/60 bg-white/70 p-5 text-center">
+              <div key={c.titulo} className="rounded-2xl border border-greige/50 bg-greige/20 p-5 text-center">
                 <div className="relative h-14 w-14 mx-auto">
                   <Image src={`/images/contacto/contact-${c.icono}.png`} alt="" fill sizes="56px" className="object-contain" unoptimized />
                 </div>
@@ -308,12 +308,13 @@ export default function ContactoPage() {
             <BranchTag>Preguntas frecuentes</BranchTag>
           </h2>
           <div className="mt-4">
-            {preguntas.map((p) => (
-              <details key={p} className="group border-b border-greige/60 py-3">
+            {preguntas.map((item) => (
+              <details key={item.p} className="group border-b border-greige/60 py-3">
                 <summary className="flex items-center justify-between gap-3 cursor-pointer list-none text-sm text-carbon/80">
-                  {p}
+                  {item.p}
                   <IconPlus className="h-4 w-4 shrink-0 text-dorado-suave transition-transform duration-200 group-open:rotate-45" />
                 </summary>
+                <p className="mt-2 text-sm text-carbon/60">{item.r}</p>
               </details>
             ))}
           </div>
