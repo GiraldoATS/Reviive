@@ -47,6 +47,13 @@ class Mensaje(models.Model):
     # distinto al que llegaron, así que la fecha por sí sola no basta para
     # saber cuáles siguen pendientes de respuesta.
     respondido = models.BooleanField(default=False)
+    # Copia inline (data URL base64) de la imagen adjunta a este mensaje,
+    # si tenía una. No hay almacenamiento durable de medios de chat todavía
+    # (ver limitación conocida documentada en el proyecto); esto es lo
+    # mínimo necesario para que un turno posterior ("sí, muéstrame cómo
+    # quedaría") pueda referenciar una foto que se envió en un turno
+    # anterior, sin tener que pedir que la reenvíen.
+    imagen_base64 = models.TextField(blank=True, default="")
 
     class Meta:
         ordering = ["fecha"]
