@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -14,6 +15,20 @@ class ProveedorViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProveedorSerializer
     permission_classes = [IsAuthenticated]
     queryset = Proveedor.objects.filter(estado_validacion="validado")
+
+
+class ProveedorMeView(APIView):
+    """GET /api/v1/providers/me — el proveedor autenticado ve su propio taller,
+    esté o no validado (a diferencia del listado público, que solo muestra
+    proveedores ya validados)."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request) -> Response:
+        proveedor = Proveedor.objects.filter(usuario=request.user).first()
+        if proveedor is None:
+            raise NotFound("El usuario autenticado no tiene un perfil de proveedor.")
+        return Response(ProveedorSerializer(proveedor).data)
 
 
 class ProviderMatchView(APIView):

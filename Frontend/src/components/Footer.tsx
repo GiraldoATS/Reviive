@@ -40,16 +40,16 @@ const listaClase = "space-y-[16px] text-sm text-carbon/80";
 export default function Footer() {
   return (
     <footer className="border-t border-greige/70 bg-[#e8ded2]">
-      <div className="mx-auto w-[94%] max-w-[1500px] pt-14 pb-15 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-[1.15fr_0.85fr_0.85fr_1fr_0.75fr] gap-x-8 xl:gap-x-10 gap-y-10 xl:items-start">
+      <div className="mx-auto w-[94%] max-w-[1500px] pt-14 pb-15 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:flex xl:justify-between gap-x-8 gap-y-10 xl:items-start">
         {/* Marca */}
-        <div className="flex flex-col items-center text-center xl:-mt-3">
+        <div className="flex flex-col items-center text-center">
           <div className="relative h-36 w-[122px] mx-auto">
             <Image src="/images/sello.png" alt="Reviive" fill sizes="122px" className="object-contain" />
           </div>
-          <p className="mt-3 text-sm italic text-carbon/70">
+          <p className="mt-3 text-sm italic text-carbon/70 whitespace-nowrap">
             El taller donde el tiempo se devuelve.
           </p>
-          <div className="mt-4 flex flex-wrap justify-center gap-3">
+          <div className="mt-4 flex flex-nowrap justify-center gap-3">
             {redes.map((r) => (
               <a
                 key={r.label}
@@ -63,8 +63,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Navegación + Servicios: una sola columna en tablet, dos columnas propias en desktop */}
-        <div className="xl:contents grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-8 gap-y-10 sm:gap-y-0">
+        {/* Navegación, Servicios, Ayuda y Contacto: grid propia en tablet, fila centrada como grupo en desktop */}
+        <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 xl:flex xl:justify-center gap-x-6 md:gap-x-8 xl:gap-x-10 gap-y-10">
           <div>
             <h3 className={tituloClase}>Navegación</h3>
             <ul className={listaClase}>
@@ -85,33 +85,33 @@ export default function Footer() {
               ))}
             </ul>
           </div>
+          <div>
+            <h3 className={tituloClase}>Ayuda</h3>
+            <ul className={listaClase}>
+              {ayuda.map((a) => (
+                <li key={a.label}>
+                  <Link href={a.href} className="hover:text-borgona transition-colors">{a.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 className={tituloClase}>Contacto</h3>
+            <p className="text-sm text-carbon/80">hola@reviive.com</p>
+            <p className="text-sm text-carbon/80">+57 318 485 5941</p>
+            <p className="text-sm text-carbon/80">Medellín, Colombia</p>
+            <Button href="/contacto" variant="secondary" className="mt-4 text-xs">Escríbenos</Button>
+          </div>
         </div>
 
-        {/* Ayuda + Contacto: un solo bloque */}
-        <div>
-          <h3 className={tituloClase}>Ayuda</h3>
-          <ul className={listaClase}>
-            {ayuda.map((a) => (
-              <li key={a.label}>
-                <Link href={a.href} className="hover:text-borgona transition-colors">{a.label}</Link>
-              </li>
-            ))}
-          </ul>
-          <h3 className={`${tituloClase} mt-7`}>Contacto</h3>
-          <p className="text-sm text-carbon/80">hola@reviive.com</p>
-          <p className="text-sm text-carbon/80">+57 318 485 5941</p>
-          <p className="text-sm text-carbon/80">Medellín, Colombia</p>
-          <Button href="/contacto" variant="secondary" className="mt-4 text-xs">Escríbenos</Button>
-        </div>
-
-        {/* Reloj de arena: columna propia, con aire respecto a Ayuda/Contacto */}
-        <div className="flex justify-center md:col-span-3 xl:col-span-1 xl:justify-start xl:-ml-8 xl:self-center mt-2 md:mt-8 xl:mt-0">
+        {/* Reloj de arena: columna propia, alineado con el nivel de los títulos */}
+        <div className="flex justify-center md:col-span-3 xl:col-span-1 xl:self-start mt-2 md:mt-8 xl:mt-0">
           <Image
             src="/images/footer-hourglass.png"
             alt=""
             width={700}
             height={541}
-            className="w-[180px] xl:w-[225px] h-auto opacity-90"
+            className="w-[180px] xl:w-[250px] h-auto opacity-90"
           />
         </div>
       </div>
