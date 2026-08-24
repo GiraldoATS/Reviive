@@ -17,7 +17,7 @@ interface RecomendacionApi {
   titulo: string;
   justificacion: string;
   puntaje: string;
-  producto: { id: number; nombre: string; icono: string };
+  producto: { id: number; nombre: string; icono: string; imagen_url: string };
 }
 
 function ListaRecomendaciones() {
@@ -90,7 +90,7 @@ function ListaRecomendaciones() {
     <div className="grid sm:grid-cols-2 gap-6">
       {recomendaciones.map((rec) => (
         <Card key={rec.id} className="flex gap-0 !p-0 overflow-hidden">
-          <ProductPhoto icono={rec.producto.icono} className="h-auto w-28 shrink-0 self-stretch" />
+          <ProductPhoto icono={rec.producto.icono} src={rec.producto.imagen_url} className="h-auto w-28 shrink-0 self-stretch" />
           <div className="p-5 flex-1">
             <h3 className="font-display text-lg text-carbon">{rec.titulo}</h3>
             <p className="mt-1 text-sm text-carbon/65">{rec.justificacion}</p>

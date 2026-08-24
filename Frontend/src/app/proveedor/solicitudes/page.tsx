@@ -1,149 +1,89 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Button from "@/components/Button";
 import ProveedorShell from "@/components/ProveedorShell";
+import { useAuth } from "@/lib/AuthContext";
+import { API_URL } from "@/lib/api";
 
 const ICONS = "/images/proveedor";
 
-// El backend no tiene ningún concepto de "solicitud" asignada a un
-// proveedor específico (no existe una tabla ni un campo que derive una
-// evaluación/recomendación hacia un taller): solo existe Cotizacion, que
-// el propio proveedor crea manualmente. Mientras esa funcionalidad no
-// exista, esta vista muestra el diseño del prototipo con datos de
-// ejemplo, para validar la visual antes de conectarla a datos reales.
-
-const stats = [
-  { icono: "sol-icon-documento.png", numero: 12, label: "Solicitudes nuevas" },
-  { icono: "sol-icon-magnifier.png", numero: 5, label: "En revisión" },
-  { icono: "sol-icon-star.png", numero: 4, label: "Priorizadas" },
-  { icono: "sol-icon-documento-check.png", numero: 7, label: "Aceptadas para cotizar" },
-];
-
-const filtros = [
-  { id: "todas", label: "Todas" },
-  { id: "nueva", label: "Nuevas" },
-  { id: "en_revision", label: "En revisión" },
-  { id: "priorizada", label: "Priorizadas" },
-  { id: "aceptada", label: "Aceptadas para cotizar" },
-  { id: "descartada", label: "Descartadas" },
-] as const;
-
-const ESTADO_INFO: Record<string, { label: string; clase: string }> = {
-  nueva: { label: "Nueva", clase: "bg-rosa/50 text-borgona-dark" },
-  en_revision: { label: "En revisión", clase: "bg-dorado-suave/20 text-borgona-dark" },
-  priorizada: { label: "Priorizada", clase: "bg-borgona/10 text-borgona-dark" },
-  aceptada: { label: "Aceptada para cotizar", clase: "bg-emerald-50 text-emerald-700" },
-  descartada: { label: "Descartada", clase: "bg-carbon/10 text-carbon/50" },
-};
-
-const URGENCIA_COLOR: Record<string, string> = {
-  Alta: "text-borgona",
-  Media: "text-dorado-suave",
-  Baja: "text-emerald-700",
-};
-
-interface SolicitudEjemplo {
+interface CotizacionApi {
   id: string;
-  titulo: string;
-  icono: string;
-  estado: keyof typeof ESTADO_INFO;
-  cliente: string;
-  ciudad: string;
-  fecha: string;
-  servicio: string;
-  categoria: string;
-  urgencia: "Alta" | "Media" | "Baja";
-  nota: string;
-  accion: string;
+  recuerdo: string;
+  cliente_nombre: string;
+  producto_nombre: string;
+  generada_por_ia: boolean;
+  total: string;
+  vigencia: string;
+  estado: string;
+  creado_en: string;
 }
 
-const SOLICITUDES: SolicitudEjemplo[] = [
-  {
-    id: "1",
-    titulo: "Reloj de bolsillo familiar",
-    icono: "sol-icon-clock.png",
-    estado: "nueva",
-    cliente: "Familia Ramírez",
-    ciudad: "Medellín",
-    fecha: "15 may 2026",
-    servicio: "Restauración",
-    categoria: "Relojes",
-    urgencia: "Alta",
-    nota: "El reloj dejó de funcionar y la tapa está suelta. Tiene gran valor sentimental.",
-    accion: "Analizar solicitud",
-  },
-  {
-    id: "2",
-    titulo: "Álbum de fotos antiguo",
-    icono: "icon-evidencias.png",
-    estado: "en_revision",
-    cliente: "Lucía Torres",
-    ciudad: "Bogotá",
-    fecha: "14 may 2026",
-    servicio: "Preservación",
-    categoria: "Papel y fotografía",
-    urgencia: "Media",
-    nota: "Las páginas están frágiles y algunas fotos se están despegando.",
-    accion: "Continuar análisis",
-  },
-  {
-    id: "3",
-    titulo: "Baúl de madera heredado",
-    icono: "sol-icon-caja.png",
-    estado: "priorizada",
-    cliente: "Andrés Pineda",
-    ciudad: "Cali",
-    fecha: "13 may 2026",
-    servicio: "Transformación",
-    categoria: "Muebles",
-    urgencia: "Alta",
-    nota: "La madera está dañada por la humedad y quiero darle una nueva vida.",
-    accion: "Preparar cotización",
-  },
-  {
-    id: "4",
-    titulo: "Canasta artesanal",
-    icono: "sol-icon-caja.png",
-    estado: "aceptada",
-    cliente: "Natalia Gómez",
-    ciudad: "Bucaramanga",
-    fecha: "12 may 2026",
-    servicio: "Restauración",
-    categoria: "Artesanías",
-    urgencia: "Baja",
-    nota: "Algunas fibras están rotas y necesita limpieza y refuerzo.",
-    accion: "Crear cotización",
-  },
-];
+function formatoCOP(valor: number) {
+  return valor.toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+}
 
-const proximasAcciones = [
-  "Completa tu perfil y portafolio para generar confianza.",
-  "Mantén tu disponibilidad actualizada.",
-  "Revisa esta sección diariamente para no perder oportunidades.",
-  "Responde y cotiza a tiempo para mejorar tu posicionamiento.",
-];
+function fechaCorta(iso: string) {
+  return new Date(iso).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" });
+}
 
 function ContenidoSolicitudes() {
-  const [filtro, setFiltro] = useState<(typeof filtros)[number]["id"]>("todas");
-  const [busqueda, setBusqueda] = useState("");
+  const { accessToken } = useAuth();
+  const [solicitudes, setSolicitudes] = useState<CotizacionApi[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [editando, setEditando] = useState<Record<string, string>>({});
+  const [enviando, setEnviando] = useState<string | null>(null);
 
-  const visibles = useMemo(() => {
-    return SOLICITUDES.filter((s) => {
-      if (filtro !== "todas" && s.estado !== filtro) return false;
-      if (busqueda.trim()) {
-        const q = busqueda.trim().toLowerCase();
-        return (
-          s.titulo.toLowerCase().includes(q) ||
-          s.cliente.toLowerCase().includes(q) ||
-          s.ciudad.toLowerCase().includes(q)
-        );
-      }
-      return true;
+  function cargar() {
+    if (!accessToken) return;
+    fetch(`${API_URL}/quotations/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+      .then((r) => (r.ok ? r.json() : { results: [] }))
+      .then((data) => {
+        const todas: CotizacionApi[] = Array.isArray(data) ? data : data.results ?? [];
+        setSolicitudes(todas.filter((c) => c.estado === "borrador"));
+      })
+      .catch(() => setError("No se pudieron cargar las solicitudes."));
+  }
+
+  useEffect(cargar, [accessToken]);
+
+  async function guardarMonto(id: string) {
+    if (!accessToken) return;
+    const nuevoTotal = editando[id];
+    if (!nuevoTotal) return;
+    await fetch(`${API_URL}/quotations/${id}/`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+      body: JSON.stringify({ total: nuevoTotal }),
     });
-  }, [filtro, busqueda]);
+    setEditando((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+    cargar();
+  }
+
+  async function enviar(id: string) {
+    if (!accessToken) return;
+    setEnviando(id);
+    try {
+      await fetch(`${API_URL}/quotations/${id}/`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({ estado: "enviada" }),
+      });
+      cargar();
+    } finally {
+      setEnviando(null);
+    }
+  }
+
+  if (!solicitudes && !error) {
+    return <div className="min-h-[60vh]" />;
+  }
 
   return (
     <div className="relative">
@@ -156,7 +96,8 @@ function ContenidoSolicitudes() {
           <div className="px-6 py-12 lg:pl-16">
             <h1 className="font-display text-4xl text-borgona">Solicitudes</h1>
             <p className="mt-1 text-sm text-carbon/70 max-w-md">
-              Aquí revisas las oportunidades recibidas y decides cuáles analizar, cotizar o descartar.
+              Estas son las cotizaciones que nuestro sistema preparó para ti — algunas con un borrador generado
+              automáticamente. Revísalas, ajusta el valor si lo necesitas, y envíalas al cliente.
             </p>
           </div>
           <div className="relative hidden lg:block min-h-[240px]">
@@ -166,153 +107,80 @@ function ContenidoSolicitudes() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl w-full px-6 pt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((s) => (
-          <div key={s.label} className="rounded-2xl border border-greige/50 bg-greige/20 p-4">
-            <div className="flex items-center gap-3">
-              <span className="relative h-11 w-11 shrink-0 block">
-                <Image src={`${ICONS}/${s.icono}`} alt="" fill sizes="44px" className="object-contain" unoptimized />
-              </span>
-              <p className="font-display text-2xl text-carbon">{s.numero}</p>
-            </div>
-            <p className="mt-2 text-xs text-carbon/60">{s.label}</p>
-            <span className="mt-1 inline-block text-xs text-borgona">Ver detalle →</span>
-          </div>
-        ))}
-      </section>
+      <section className="mx-auto max-w-6xl w-full px-6 py-8">
+        {error && <p className="text-sm text-borgona mb-4">{error}</p>}
 
-      <section className="mx-auto max-w-6xl w-full px-6 py-8 grid lg:grid-cols-[1fr_300px] gap-6 items-start">
-        <div>
-          <div className="rounded-2xl border border-greige/50 bg-greige/20 p-3 flex flex-wrap items-center gap-2">
-            {filtros.map((f) => (
-              <button
-                key={f.id}
-                type="button"
-                onClick={() => setFiltro(f.id)}
-                className={`rounded-full px-4 py-2 text-sm transition-colors ${
-                  filtro === f.id ? "bg-borgona text-marfil" : "bg-white/60 text-carbon/60 hover:bg-white"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <input
-              type="text"
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Buscar por objeto, cliente o ciudad..."
-              className="flex-1 min-w-[220px] rounded-xl border border-greige/70 bg-white/70 px-4 py-2.5 text-sm outline-none focus:border-borgona/50"
-            />
-          </div>
-
-          {visibles.length === 0 ? (
-            <div className="mt-6 rounded-2xl border border-greige/50 bg-greige/20 p-8 text-center text-sm text-carbon/60">
-              No hay solicitudes que coincidan con este filtro.
-            </div>
-          ) : (
-            <div className="mt-6 space-y-4">
-              {visibles.map((s) => {
-                const info = ESTADO_INFO[s.estado];
-                return (
-                  <div key={s.id} className="rounded-2xl border border-greige/50 bg-greige/20 p-5">
-                    <div className="flex flex-wrap items-start gap-4">
-                      <span className="relative h-16 w-16 shrink-0 rounded-xl bg-white/70 flex items-center justify-center overflow-hidden">
-                        <span className="relative h-9 w-9 block">
-                          <Image src={`${ICONS}/${s.icono}`} alt="" fill sizes="36px" className="object-contain" unoptimized />
-                        </span>
-                      </span>
-
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-display text-lg text-carbon">{s.titulo}</p>
-                          <span className={`rounded-full px-3 py-1 text-[11px] font-medium ${info.clase}`}>{info.label}</span>
-                        </div>
-                        <div className="mt-1.5 flex flex-wrap gap-x-5 gap-y-1 text-xs text-carbon/65">
-                          <span>Cliente: {s.cliente}</span>
-                          <span>{s.fecha}</span>
-                          <span>Ciudad: {s.ciudad}</span>
-                          <span>Servicio sugerido: {s.servicio}</span>
-                        </div>
-                        <p className="mt-2 text-sm text-carbon/60 italic">&ldquo;{s.nota}&rdquo;</p>
-                      </div>
-
-                      <div className="shrink-0 text-xs text-carbon/60 space-y-1">
-                        <p>
-                          Urgencia <span className={`font-medium ${URGENCIA_COLOR[s.urgencia]}`}>{s.urgencia}</span>
-                        </p>
-                        <p>
-                          Categoría <span className="text-carbon/80">{s.categoria}</span>
-                        </p>
-                      </div>
-
-                      <div className="shrink-0 flex flex-col gap-2 w-full sm:w-auto">
-                        {s.estado === "aceptada" ? (
-                          <Button href="/proveedor/cotizaciones" variant="primary" className="text-xs whitespace-nowrap">
-                            {s.accion}
-                          </Button>
-                        ) : (
-                          <span
-                            className="inline-flex items-center justify-center rounded-full bg-borgona/90 px-6 py-2.5 text-xs text-marfil cursor-default whitespace-nowrap"
-                            title="Próximamente"
-                          >
-                            {s.accion}
-                          </span>
-                        )}
-                        {s.estado === "nueva" && (
-                          <span
-                            className="inline-flex items-center justify-center rounded-full border border-greige/60 px-6 py-2.5 text-xs text-carbon/40 cursor-default whitespace-nowrap"
-                            title="Próximamente"
-                          >
-                            Descartar
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-5">
-          <div className="rounded-2xl border border-greige/50 bg-greige/20 p-5">
-            <h3 className="inline-flex items-center gap-2 font-display text-base text-carbon">
-              <span className="relative h-9 w-9 shrink-0">
-                <Image src={`${ICONS}/sol-icon-hourglass.png`} alt="" fill sizes="36px" className="object-contain" unoptimized />
-              </span>
-              Regla del proceso
-            </h3>
-            <p className="mt-2 text-sm text-carbon/70">
-              El trabajo no inicia en Solicitudes. Primero analizas la oportunidad, luego preparas la cotización.
-              El pedido solo comienza cuando el cliente aprueba, el pago es confirmado y el objeto es recibido por
-              el taller.
+        {solicitudes && solicitudes.length === 0 ? (
+          <div className="rounded-2xl border border-greige/50 bg-greige/20 p-10 text-center">
+            <h2 className="font-display text-xl text-carbon">No tienes solicitudes pendientes</h2>
+            <p className="mt-2 text-sm text-carbon/70 max-w-md mx-auto">
+              Cuando el sistema te asigne un recuerdo compatible con tu taller, aparecerá aquí con un borrador de
+              cotización listo para tu revisión.
             </p>
           </div>
+        ) : (
+          <div className="space-y-4">
+            {solicitudes?.map((s) => (
+              <div key={s.id} className="rounded-2xl border border-greige/50 bg-greige/20 p-5">
+                <div className="flex flex-wrap items-start gap-4">
+                  <span className="relative h-16 w-16 shrink-0 rounded-xl bg-white/70 flex items-center justify-center overflow-hidden">
+                    <span className="relative h-9 w-9 block">
+                      <Image src={`${ICONS}/sol-icon-documento.png`} alt="" fill sizes="36px" className="object-contain" unoptimized />
+                    </span>
+                  </span>
 
-          <div className="rounded-2xl border border-greige/50 bg-greige/20 p-5">
-            <h3 className="inline-flex items-center gap-2 font-display text-base text-carbon">
-              <span className="relative h-9 w-9 shrink-0">
-                <Image src={`${ICONS}/sol-icon-clipboard-checklist.png`} alt="" fill sizes="36px" className="object-contain" unoptimized />
-              </span>
-              Próximos pasos
-            </h3>
-            <ul className="mt-3 space-y-2 text-sm text-carbon/70">
-              {proximasAcciones.map((a) => (
-                <li key={a} className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-dorado-suave shrink-0" />
-                  {a}
-                </li>
-              ))}
-            </ul>
-            <Link href="/proveedor/cotizaciones" className="mt-4 inline-block text-sm text-borgona hover:text-borgona-dark transition-colors">
-              Conocer cómo funciona →
-            </Link>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-display text-lg text-carbon">{s.producto_nombre || "Servicio a definir"}</p>
+                      {s.generada_por_ia && (
+                        <span className="rounded-full px-3 py-1 text-[11px] font-medium bg-dorado-suave/20 text-borgona-dark">
+                          Borrador generado por IA
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap gap-x-5 gap-y-1 text-xs text-carbon/65">
+                      <span>Cliente: {s.cliente_nombre}</span>
+                      <span>Recibida: {fechaCorta(s.creado_en)}</span>
+                      <span>Vigencia: hasta {fechaCorta(s.vigencia)}</span>
+                    </div>
+                  </div>
+
+                  <div className="shrink-0 flex flex-col items-end gap-2 w-full sm:w-auto">
+                    <label className="text-xs text-carbon/60">
+                      Valor propuesto
+                      <input
+                        type="number"
+                        min="0"
+                        defaultValue={s.total}
+                        onChange={(e) => setEditando((prev) => ({ ...prev, [s.id]: e.target.value }))}
+                        className="mt-1 block w-40 rounded-lg border border-greige/70 bg-white px-3 py-1.5 text-sm text-right outline-none focus:border-borgona/50"
+                      />
+                    </label>
+                    <p className="text-xs text-carbon/45">{formatoCOP(Number(editando[s.id] ?? s.total))}</p>
+                    <div className="flex gap-2">
+                      {editando[s.id] !== undefined && (
+                        <button
+                          type="button"
+                          onClick={() => guardarMonto(s.id)}
+                          className="rounded-full border border-borgona text-borgona px-4 py-1.5 text-xs hover:bg-borgona/5 transition-colors"
+                        >
+                          Guardar valor
+                        </button>
+                      )}
+                      <Button
+                        onClick={() => enviar(s.id)}
+                        disabled={enviando === s.id}
+                        className="text-xs whitespace-nowrap"
+                      >
+                        {enviando === s.id ? "Enviando…" : "Enviar cotización"}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </section>
     </div>
   );

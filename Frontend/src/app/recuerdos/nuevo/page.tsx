@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import ClienteShell from "@/components/ClienteShell";
 import Button from "@/components/Button";
 import { useAuth } from "@/lib/AuthContext";
+import { crearSolicitudEvaluacion } from "@/lib/api";
 import {
   IconMessage,
   IconEnviar,
   IconUpload,
-  IconPlus,
+  IconChevronRight,
   IconMapPin,
   IconGrid,
   IconCamara,
@@ -69,19 +71,32 @@ function BranchTag({ children }: { children: string }) {
   );
 }
 
-type Foto = { id: string; url: string; nombre: string };
+type Foto = { id: string; url: string; nombre: string; base64: string };
+
+function archivoABase64(archivo: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const lector = new FileReader();
+    lector.onload = () => resolve(lector.result as string);
+    lector.onerror = reject;
+    lector.readAsDataURL(archivo);
+  });
+}
 
 export default function SolicitarEvaluacionPage() {
   const router = useRouter();
-  const { accessToken, cargando } = useAuth();
+  const { accessToken, usuario, cargando } = useAuth();
+  const [objeto, setObjeto] = useState("");
+  const [historia, setHistoria] = useState("");
+  const [estado, setEstado] = useState("");
+  const [fechaImportante, setFechaImportante] = useState("");
   const [categoria, setCategoria] = useState<string | null>(null);
   const [deseo, setDeseo] = useState<string | null>(null);
-  const [fotos, setFotos] = useState<Foto[]>([
-    { id: "ejemplo-reloj", url: "/images/solicitar-evaluacion/muestra-reloj.png", nombre: "reloj.jpg" },
-    { id: "ejemplo-tela", url: "/images/solicitar-evaluacion/muestra-tela.png", nombre: "tela.jpg" },
-    { id: "ejemplo-carta", url: "/images/solicitar-evaluacion/muestra-carta.png", nombre: "carta.jpg" },
-  ]);
+  const [fotos, setFotos] = useState<Foto[]>([]);
   const [aceptaPolitica, setAceptaPolitica] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
+  const [recuerdoId, setRecuerdoId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const categoriaTitulo = useMemo(
@@ -90,13 +105,16 @@ export default function SolicitarEvaluacionPage() {
   );
   const deseoTitulo = useMemo(() => deseos.find((d) => d.id === deseo)?.titulo, [deseo]);
 
-  function agregarFotos(lista: FileList | null) {
+  async function agregarFotos(lista: FileList | null) {
     if (!lista) return;
-    const nuevas = Array.from(lista).map((archivo) => ({
-      id: `${archivo.name}-${archivo.lastModified}-${archivo.size}`,
-      url: URL.createObjectURL(archivo),
-      nombre: archivo.name,
-    }));
+    const nuevas = await Promise.all(
+      Array.from(lista).map(async (archivo) => ({
+        id: `${archivo.name}-${archivo.lastModified}-${archivo.size}`,
+        url: URL.createObjectURL(archivo),
+        nombre: archivo.name,
+        base64: await archivoABase64(archivo),
+      }))
+    );
     setFotos((prev) => [...prev, ...nuevas]);
   }
 
@@ -109,6 +127,34 @@ export default function SolicitarEvaluacionPage() {
       router.push("/auth/login");
     }
   }, [cargando, accessToken, router]);
+
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (!accessToken || !aceptaPolitica || !objeto.trim() || enviando) return;
+    setError(null);
+    setEnviando(true);
+    try {
+      const historiaCompleta = fechaImportante.trim()
+        ? `${historia}\n\nFecha importante o necesidad especial: ${fechaImportante}`
+        : historia;
+      const creado = await crearSolicitudEvaluacion(accessToken, {
+        historia: historiaCompleta,
+        objeto: {
+          tipo: objeto,
+          categoria: categoriaTitulo ?? "",
+          estado,
+          nivel_transformacion: deseoTitulo ?? "",
+          fotos_base64: fotos.map((f) => f.base64),
+        },
+      });
+      setRecuerdoId(creado.id);
+      setEnviado(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo enviar tu solicitud.");
+    } finally {
+      setEnviando(false);
+    }
+  }
 
   if (cargando || !accessToken) {
     return <div className="min-h-screen bg-marfil" />;
@@ -173,45 +219,49 @@ export default function SolicitarEvaluacionPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 py-10 grid lg:grid-cols-[1fr_360px] gap-8 items-start">
+      <section id="formulario" className="mx-auto max-w-6xl px-6 py-10 grid lg:grid-cols-[1fr_360px] gap-8 items-start">
         <div>
           <h2 className="font-display text-xl text-borgona">
             <BranchTag>Cuéntanos sobre tu recuerdo</BranchTag>
           </h2>
-          <form className="mt-5 space-y-5">
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4">
-                  <Image src="/images/solicitar-evaluacion/icon-persona.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
-                </span>
-                <input className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50" placeholder="Nombre completo" />
-              </div>
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4">
-                  <Image src="/images/solicitar-evaluacion/icon-correo.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
-                </span>
-                <input type="email" className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50" placeholder="Correo electrónico" />
-              </div>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4">
-                  <Image src="/images/solicitar-evaluacion/icon-telefono.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
-                </span>
-                <input className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50" placeholder="Teléfono" />
-              </div>
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4">
-                  <Image src="/images/solicitar-evaluacion/icon-ubicacion.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
-                </span>
-                <input className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50" placeholder="Ciudad / País" />
+
+          {enviado ? (
+            <div className="mt-5 rounded-2xl border border-greige/50 bg-greige/20 p-8 text-center">
+              <p className="font-display text-lg text-borgona">¡Recibimos tu solicitud!</p>
+              <p className="mt-2 text-sm text-carbon/70">
+                Ya generamos una primera recomendación para tu objeto. Un asesor la revisará y te
+                contactaremos dentro de 24 a 48 horas hábiles para confirmar los detalles.
+              </p>
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                {recuerdoId && (
+                  <Button href={`/recomendaciones?recuerdo=${recuerdoId}`} variant="primary">
+                    Ver mi recomendación →
+                  </Button>
+                )}
+                <Button href="/chat" variant="secondary" className="inline-flex items-center gap-2">
+                  <IconMessage className="h-4 w-4" />
+                  Hablar con Alma
+                </Button>
               </div>
             </div>
+          ) : (
+          <form className="mt-5 space-y-5" onSubmit={onSubmit}>
+            {accessToken && usuario && (
+              <p className="text-xs text-carbon/50">
+                Enviando como <span className="font-medium text-carbon/70">{usuario.perfil?.nombre || usuario.email}</span>
+              </p>
+            )}
             <div className="relative">
               <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4">
                 <Image src="/images/solicitar-evaluacion/icon-pregunta.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
               </span>
-              <input className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50" placeholder="¿Qué objeto quieres evaluar?" />
+              <input
+                required
+                value={objeto}
+                onChange={(e) => setObjeto(e.target.value)}
+                className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50"
+                placeholder="¿Qué objeto quieres evaluar?"
+              />
             </div>
 
             <div>
@@ -265,6 +315,8 @@ export default function SolicitarEvaluacionPage() {
               <span className="block text-xs uppercase tracking-wide text-borgona mb-1.5">¿Qué representa este objeto para ti?</span>
               <textarea
                 rows={4}
+                value={historia}
+                onChange={(e) => setHistoria(e.target.value)}
                 placeholder="Cuéntanos la historia, los recuerdos y el significado detrás de este objeto..."
                 className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50 resize-none"
               />
@@ -274,6 +326,8 @@ export default function SolicitarEvaluacionPage() {
               <span className="block text-xs uppercase tracking-wide text-borgona mb-1.5">Estado actual del objeto</span>
               <textarea
                 rows={3}
+                value={estado}
+                onChange={(e) => setEstado(e.target.value)}
                 placeholder="Describenos su estado actual, daños visibles u observaciones importantes..."
                 className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50 resize-none"
               />
@@ -329,6 +383,8 @@ export default function SolicitarEvaluacionPage() {
                 ¿Hay una fecha importante o necesidad especial? <span className="text-carbon/40">(opcional)</span>
               </span>
               <input
+                value={fechaImportante}
+                onChange={(e) => setFechaImportante(e.target.value)}
                 placeholder="Ej: Una fecha límite, evento especial, etc."
                 className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50"
               />
@@ -347,15 +403,23 @@ export default function SolicitarEvaluacionPage() {
               </Link>
             </label>
 
-            <Button type="submit" variant="primary" className="w-full justify-center inline-flex items-center gap-2">
-              Enviar para evaluación
-              <IconEnviar className="h-4 w-4" />
+            {error && <p className="text-sm text-borgona">{error}</p>}
+
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={!accessToken || !aceptaPolitica || !objeto.trim() || enviando}
+              className="w-full justify-center inline-flex items-center gap-2 disabled:opacity-60"
+            >
+              {enviando ? "Enviando…" : "Enviar para evaluación"}
+              {!enviando && <IconEnviar className="h-4 w-4" />}
             </Button>
             <p className="flex items-center gap-1.5 text-xs text-carbon/50">
               <IconInfo className="h-3.5 w-3.5 shrink-0" />
               Tiempo estimado de respuesta: 24 a 48 horas hábiles.
             </p>
           </form>
+          )}
         </div>
 
         <div className="space-y-6">
@@ -432,12 +496,14 @@ export default function SolicitarEvaluacionPage() {
         </h2>
         <div className="mt-6 grid sm:grid-cols-2 gap-x-8">
           {preguntas.map((p) => (
-            <details key={p} className="group border-b border-greige/60 py-3">
-              <summary className="flex items-center justify-between gap-3 cursor-pointer list-none text-sm text-carbon/80">
-                {p}
-                <IconPlus className="h-4 w-4 shrink-0 text-dorado-suave transition-transform duration-200 group-open:rotate-45" />
-              </summary>
-            </details>
+            <Link
+              key={p}
+              href={`/chat?pregunta=${encodeURIComponent(p)}`}
+              className="flex items-center justify-between gap-3 border-b border-greige/60 py-3 text-sm text-carbon/80 hover:text-borgona transition-colors"
+            >
+              {p}
+              <IconChevronRight className="h-4 w-4 shrink-0 text-dorado-suave" />
+            </Link>
           ))}
         </div>
       </section>
@@ -455,7 +521,7 @@ export default function SolicitarEvaluacionPage() {
             <p className="mt-1.5 text-sm text-marfil/70">Permítenos ayudarte a descubrir el mejor camino para conservar su historia.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-3 shrink-0">
-            <Button href="#" variant="secondary" className="!text-borgona !bg-marfil !border-marfil hover:!bg-marfil/90 inline-flex items-center gap-2">
+            <Button href="#formulario" variant="secondary" className="!text-borgona !bg-marfil !border-marfil hover:!bg-marfil/90 inline-flex items-center gap-2">
               Enviar evaluación
               <IconEnviar className="h-4 w-4" />
             </Button>

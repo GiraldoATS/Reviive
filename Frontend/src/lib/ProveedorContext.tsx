@@ -12,6 +12,11 @@ export interface CapacidadProveedorAPI {
   tiempo_estimado_dias: number;
 }
 
+export interface DiaBloqueadoAPI {
+  id: number;
+  fecha: string;
+}
+
 export interface ProveedorAPI {
   id: number;
   nombre_taller: string;
@@ -19,16 +24,25 @@ export interface ProveedorAPI {
   estado_validacion: "pendiente" | "validado" | "suspendido";
   calificacion: string;
   capacidades: CapacidadProveedorAPI[];
+  direccion: string;
+  descripcion: string;
+  anios_experiencia: string;
+  horario_atencion: string;
+  capacidad_maxima: number;
+  disponible: boolean;
+  dias_bloqueados: DiaBloqueadoAPI[];
 }
 
 interface ProveedorContextValue {
   proveedor: ProveedorAPI | null;
   cargandoProveedor: boolean;
+  refrescarProveedor: () => void;
 }
 
 const ProveedorContext = createContext<ProveedorContextValue>({
   proveedor: null,
   cargandoProveedor: true,
+  refrescarProveedor: () => {},
 });
 
 export function ProveedorProvider({ children }: { children: ReactNode }) {
@@ -36,17 +50,19 @@ export function ProveedorProvider({ children }: { children: ReactNode }) {
   const [proveedor, setProveedor] = useState<ProveedorAPI | null>(null);
   const [cargandoProveedor, setCargandoProveedor] = useState(true);
 
-  useEffect(() => {
+  function cargar() {
     if (!accessToken) return;
     fetch(`${API_URL}/providers/me/`, { headers: { Authorization: `Bearer ${accessToken}` } })
       .then((r) => (r.ok ? r.json() : null))
       .then(setProveedor)
       .catch(() => setProveedor(null))
       .finally(() => setCargandoProveedor(false));
-  }, [accessToken]);
+  }
+
+  useEffect(cargar, [accessToken]);
 
   return (
-    <ProveedorContext.Provider value={{ proveedor, cargandoProveedor }}>
+    <ProveedorContext.Provider value={{ proveedor, cargandoProveedor, refrescarProveedor: cargar }}>
       {children}
     </ProveedorContext.Provider>
   );

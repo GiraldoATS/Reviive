@@ -19,18 +19,6 @@ const ADMIN_NAV: NavItem[] = [
   { href: "/admin/configuracion", label: "Configuración" },
 ];
 
-const PROVEEDOR_NAV: NavItem[] = [
-  { href: "/proveedores", label: "Dashboard" },
-  { href: "/proveedores/solicitudes", label: "Solicitudes" },
-  { href: "/proveedores/cotizaciones/nueva", label: "Cotizaciones" },
-  { href: "/proveedores/pedidos", label: "Pedidos" },
-  { href: "/proveedores/evidencias", label: "Evidencias" },
-  { href: "/proveedores/capacidad", label: "Capacidad" },
-  { href: "/proveedores/ingresos", label: "Ingresos" },
-  { href: "/proveedores/calificaciones", label: "Calificaciones" },
-  { href: "/proveedores/perfil", label: "Configuración" },
-];
-
 const SUPERVISION_NAV: NavItem[] = [
   { href: "/supervision", label: "Resumen" },
   { href: "/supervision/conversaciones", label: "Conversaciones" },
@@ -46,16 +34,12 @@ const SUPERVISION_NAV: NavItem[] = [
 function withActive(items: NavItem[], pathname: string) {
   return items.map((item) => ({
     ...item,
-    active: item.href === pathname || (item.href !== "/admin" && item.href !== "/proveedores" && item.href !== "/supervision" && pathname.startsWith(item.href)),
+    active: item.href === pathname || (item.href !== "/admin" && item.href !== "/supervision" && pathname.startsWith(item.href)),
   }));
 }
 
 export function adminNav(pathname: string) {
   return withActive(ADMIN_NAV, pathname);
-}
-
-export function proveedorNav(pathname: string) {
-  return withActive(PROVEEDOR_NAV, pathname);
 }
 
 export function supervisionNav(pathname: string) {

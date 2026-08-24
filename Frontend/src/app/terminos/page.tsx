@@ -131,7 +131,7 @@ const secciones: SeccionLegal[] = [
     id: "contacto",
     titulo: "Contacto",
     parrafos: [
-      "Si tienes preguntas sobre estos Términos y Condiciones, escríbenos a hola@reviive.com.",
+      "Si tienes preguntas sobre estos Términos y Condiciones, escríbenos a reviivemed@gmail.com.",
     ],
   },
 ];

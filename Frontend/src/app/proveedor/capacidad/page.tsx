@@ -10,12 +10,6 @@ import { API_URL } from "@/lib/api";
 
 const ICONS = "/images/proveedor";
 
-// El modelo Proveedor no tiene hoy campos para "capacidad máxima",
-// disponibilidad general ni fechas bloqueadas: no existe dónde
-// guardarlos. Por eso el formulario de configuración y el calendario
-// son visuales (permiten escribir/interactuar) pero no se guardan
-// todavía. Sí son reales: los pedidos activos y proveedor.capacidades.
-
 interface ResumenPedidoAPI {
   objeto?: string;
   historia?: string;
@@ -45,14 +39,21 @@ const DIAS_SEMANA = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sá", "Do"];
 
 function ContenidoCapacidad() {
   const { accessToken } = useAuth();
-  const { proveedor, cargandoProveedor } = useProveedor();
+  const { proveedor, cargandoProveedor, refrescarProveedor } = useProveedor();
   const [pedidos, setPedidos] = useState<PedidoAPI[]>([]);
   const [cargandoPedidos, setCargandoPedidos] = useState(true);
 
   const [capacidadMaxima, setCapacidadMaxima] = useState(8);
-  const [tiempoInicio, setTiempoInicio] = useState(3);
-  const [tiempoEjecucion, setTiempoEjecucion] = useState("3 - 5");
   const [disponible, setDisponible] = useState(true);
+  const [guardando, setGuardando] = useState(false);
+  const [guardado, setGuardado] = useState(false);
+
+  useEffect(() => {
+    if (!proveedor) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza el formulario local con el proveedor real al cargar/refrescar
+    setCapacidadMaxima(proveedor.capacidad_maxima);
+    setDisponible(proveedor.disponible);
+  }, [proveedor]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -62,6 +63,40 @@ function ContenidoCapacidad() {
       .catch(() => setPedidos([]))
       .finally(() => setCargandoPedidos(false));
   }, [accessToken]);
+
+  async function guardarCapacidad() {
+    if (!accessToken) return;
+    setGuardando(true);
+    setGuardado(false);
+    try {
+      await fetch(`${API_URL}/providers/me/`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({ capacidad_maxima: capacidadMaxima, disponible }),
+      });
+      setGuardado(true);
+      refrescarProveedor();
+    } finally {
+      setGuardando(false);
+    }
+  }
+
+  async function alternarDiaBloqueado(fechaIso: string, yaBloqueado: boolean) {
+    if (!accessToken) return;
+    if (yaBloqueado) {
+      await fetch(`${API_URL}/providers/me/dias-bloqueados?fecha=${fechaIso}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+    } else {
+      await fetch(`${API_URL}/providers/me/dias-bloqueados`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({ fecha: fechaIso }),
+      });
+    }
+    refrescarProveedor();
+  }
 
   const pedidosActivos = useMemo(
     () => pedidos.filter((p) => p.estado !== "entregado" && p.estado !== "cancelado"),
@@ -84,7 +119,15 @@ function ContenidoCapacidad() {
     return celdas;
   }, [hoy]);
   const nombreMes = hoy.toLocaleDateString("es-CO", { month: "long", year: "numeric" });
-  const diasBloqueados = [hoy.getDate() + 1, hoy.getDate() + 2].filter((d) => d <= diasDelMes.filter(Boolean).length);
+  const fechasBloqueadasIso = useMemo(
+    () => new Set((proveedor?.dias_bloqueados ?? []).map((d) => d.fecha)),
+    [proveedor]
+  );
+  function isoDelDia(dia: number) {
+    const anio = hoy.getFullYear();
+    const mes = hoy.getMonth();
+    return `${anio}-${String(mes + 1).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+  }
 
   if (cargandoProveedor || cargandoPedidos) {
     return <div className="min-h-[60vh]" />;
@@ -207,7 +250,6 @@ function ContenidoCapacidad() {
               </span>
               Configuración de capacidad
             </h3>
-            <span className="text-[11px] text-carbon/40 italic">Próximamente: guardar cambios</span>
           </div>
 
           <div className="mt-5 grid sm:grid-cols-2 gap-4">
@@ -222,31 +264,6 @@ function ContenidoCapacidad() {
                   className="w-full bg-transparent text-sm outline-none"
                 />
                 <span className="text-xs text-carbon/45 shrink-0">pedidos</span>
-              </div>
-            </label>
-            <label className="block">
-              <span className="block text-xs text-carbon/60 mb-1.5">Tiempo promedio para iniciar un nuevo trabajo</span>
-              <div className="flex items-center gap-2 rounded-xl border border-greige/70 bg-white/70 px-3.5 py-2.5">
-                <input
-                  type="number"
-                  min={0}
-                  value={tiempoInicio}
-                  onChange={(e) => setTiempoInicio(Math.max(0, Number(e.target.value) || 0))}
-                  className="w-full bg-transparent text-sm outline-none"
-                />
-                <span className="text-xs text-carbon/45 shrink-0">días</span>
-              </div>
-            </label>
-            <label className="block">
-              <span className="block text-xs text-carbon/60 mb-1.5">Tiempo promedio de ejecución</span>
-              <div className="flex items-center gap-2 rounded-xl border border-greige/70 bg-white/70 px-3.5 py-2.5">
-                <input
-                  type="text"
-                  value={tiempoEjecucion}
-                  onChange={(e) => setTiempoEjecucion(e.target.value)}
-                  className="w-full bg-transparent text-sm outline-none"
-                />
-                <span className="text-xs text-carbon/45 shrink-0">semanas</span>
               </div>
             </label>
             <div>
@@ -267,6 +284,18 @@ function ContenidoCapacidad() {
                 {disponible ? "Los clientes podrán enviarte solicitudes." : "No recibirás nuevas solicitudes."}
               </p>
             </div>
+          </div>
+
+          <div className="mt-4 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={guardarCapacidad}
+              disabled={guardando}
+              className="rounded-full bg-borgona text-marfil px-5 py-2 text-sm hover:bg-borgona-dark transition-colors disabled:opacity-60"
+            >
+              {guardando ? "Guardando…" : "Guardar cambios"}
+            </button>
+            {guardado && <span className="text-xs text-emerald-700">Cambios guardados.</span>}
           </div>
 
           <h4 className="mt-6 text-sm font-medium text-carbon">Disponibilidad por tipo de servicio</h4>
@@ -317,40 +346,38 @@ function ContenidoCapacidad() {
                 <span key={d} className="text-carbon/40 pb-1">{d}</span>
               ))}
               {diasDelMes.map((d, i) => {
+                if (d === null) return <span key={i} />;
+                const iso = isoDelDia(d);
                 const esHoy = d === hoy.getDate();
-                const bloqueado = d !== null && diasBloqueados.includes(d);
+                const bloqueado = fechasBloqueadasIso.has(iso);
                 return (
-                  <span
+                  <button
                     key={i}
-                    className={`h-7 flex items-center justify-center rounded-full ${
-                      d === null
-                        ? ""
-                        : esHoy
-                          ? "bg-borgona text-marfil"
-                          : bloqueado
-                            ? "bg-rosa/40 text-borgona-dark"
-                            : "text-carbon/70"
+                    type="button"
+                    onClick={() => alternarDiaBloqueado(iso, bloqueado)}
+                    title={bloqueado ? "Click para desbloquear" : "Click para bloquear este día"}
+                    className={`h-7 flex items-center justify-center rounded-full transition-colors ${
+                      esHoy
+                        ? "bg-borgona text-marfil"
+                        : bloqueado
+                          ? "bg-rosa/40 text-borgona-dark hover:bg-rosa/60"
+                          : "text-carbon/70 hover:bg-white/70"
                     }`}
                   >
                     {d}
-                  </span>
+                  </button>
                 );
               })}
             </div>
-            {diasBloqueados.length > 0 && (
+            {(proveedor?.dias_bloqueados.length ?? 0) > 0 && (
               <div className="mt-3 flex items-center gap-2 rounded-xl bg-white/60 p-3 text-xs text-carbon/60">
                 <span className="relative h-5 w-5 shrink-0">
                   <Image src={`${ICONS}/cap-icon-no-disponible-taller.png`} alt="" fill sizes="20px" className="object-contain" unoptimized />
                 </span>
-                Ejemplo: periodo marcado como no disponible.
+                {proveedor?.dias_bloqueados.length} día(s) marcados como no disponibles.
               </div>
             )}
-            <span
-              className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-greige/60 px-4 py-2 text-xs text-carbon/40 cursor-default"
-              title="Próximamente"
-            >
-              + Agregar periodo no disponible
-            </span>
+            <p className="mt-3 text-[11px] text-carbon/40">Haz clic en un día del calendario para bloquearlo o desbloquearlo.</p>
           </div>
 
           {capacidadAlta && (

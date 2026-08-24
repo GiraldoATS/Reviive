@@ -5,15 +5,14 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import PortalSidebar from "./PortalSidebar";
 import PortalTopbar from "./PortalTopbar";
-import { adminNav, proveedorNav, supervisionNav } from "@/lib/nav";
+import { adminNav, supervisionNav } from "@/lib/nav";
 import { useAuth } from "@/lib/AuthContext";
 import type { RolUsuario } from "@/types";
 
-type Role = "admin" | "proveedor" | "supervision";
+type Role = "admin" | "supervision";
 
 const rolesPermitidos: Record<Role, RolUsuario[]> = {
   admin: ["administrador", "superadministrador"],
-  proveedor: ["proveedor"],
   supervision: ["supervisor_ia", "administrador", "superadministrador"],
 };
 
@@ -22,7 +21,6 @@ const roleConfig: Record<
   { title: string; nav: (p: string) => { href: string; label: string; active: boolean }[] }
 > = {
   admin: { title: "Admin", nav: adminNav },
-  proveedor: { title: "Proveedor", nav: proveedorNav },
   supervision: { title: "Supervisión", nav: supervisionNav },
 };
 

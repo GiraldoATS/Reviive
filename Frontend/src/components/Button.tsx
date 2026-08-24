@@ -8,6 +8,7 @@ type ButtonProps = {
   className?: string;
   onClick?: () => void;
   type?: "button" | "submit";
+  disabled?: boolean;
 };
 
 const variants: Record<string, string> = {
@@ -25,6 +26,7 @@ export default function Button({
   className = "",
   onClick,
   type = "button",
+  disabled,
 }: ButtonProps) {
   const classes = `inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm tracking-wide transition-colors duration-200 ${variants[variant]} ${className}`;
 
@@ -37,7 +39,7 @@ export default function Button({
   }
 
   return (
-    <button type={type} onClick={onClick} className={classes}>
+    <button type={type} onClick={onClick} disabled={disabled} className={classes}>
       {children}
     </button>
   );

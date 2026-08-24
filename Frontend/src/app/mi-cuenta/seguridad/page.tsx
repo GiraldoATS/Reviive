@@ -158,7 +158,7 @@ function ContenidoSeguridad() {
                   </span>
                   <span>→</span>
                 </button>
-                <a href="mailto:hola@reviive.com?subject=Eliminar%20mi%20cuenta" className="flex w-full items-center justify-between text-left text-sm text-carbon/75 hover:text-borgona transition-colors">
+                <a href="mailto:reviivemed@gmail.com?subject=Eliminar%20mi%20cuenta" className="flex w-full items-center justify-between text-left text-sm text-carbon/75 hover:text-borgona transition-colors">
                   <span>
                     <span className="block font-medium text-borgona">Eliminar mi cuenta</span>
                     Escríbenos y con gusto gestionamos tu solicitud.

@@ -307,6 +307,9 @@ export default function PreguntasFrecuentesPage() {
           <div className="mt-14 grid lg:grid-cols-[1fr_360px] gap-8 text-left">
             <div>
               <h2 className="font-display text-xl text-borgona">Preguntas frecuentes</h2>
+              <p className="mt-1 text-xs text-carbon/55">
+                Haz clic en una pregunta para ver la respuesta.
+              </p>
               <div className="mt-4">
                 {preguntas.map((item) => (
                   <details key={item.p} className="group border-b border-greige/60 py-3">
@@ -328,8 +331,7 @@ export default function PreguntasFrecuentesPage() {
                   Estas cuatro opciones son las únicas categorías de ayuda.
                 </p>
                 <p className="mt-1.5 text-xs text-carbon/65">
-                  Al seleccionar cada una, el contenido de la derecha se actualiza con la información
-                  correspondiente. No te llevará a otras secciones.
+                  ¿No encuentras tu respuesta aquí? Habla con Alma para una orientación personalizada.
                 </p>
               </div>
             </div>

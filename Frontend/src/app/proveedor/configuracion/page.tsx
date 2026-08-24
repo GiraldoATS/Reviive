@@ -5,16 +5,18 @@ import Image from "next/image";
 import ProveedorShell from "@/components/ProveedorShell";
 import { useAuth } from "@/lib/AuthContext";
 import { useProveedor } from "@/lib/ProveedorContext";
+import { API_URL } from "@/lib/api";
+import { actualizarPerfil } from "@/lib/auth";
 
 const ICONS = "/images/proveedor";
 
-// El backend solo guarda nombre_taller, ciudad y estado_validacion del
-// proveedor, y email/perfil.nombre/perfil.telefono del usuario. No
-// existen campos reales para dirección, descripción, horarios, años de
-// experiencia, información bancaria, documentos, notificaciones,
-// sesiones, 2FA, portafolio ni preferencias. Por eso, igual que las
-// demás vistas sin respaldo real, esta pantalla es un formulario
-// visual: se puede escribir en los campos, pero nada se guarda todavía.
+// El perfil del taller (nombre/ciudad/responsable/telefono/dirección/
+// descripción/años/horarios) sí persiste de verdad, vía PATCH a
+// /providers/me/ y /users/me. Servicios/portafolio, información
+// bancaria, notificaciones, sesiones/2FA y documentos no tienen todavía
+// un modelo real detrás (no hay Pago con datos bancarios del proveedor,
+// ni modelo de sesiones, ni de documentos de validación) — esas
+// secciones quedan honestamente marcadas "Próximamente".
 
 const TABS = [
   { id: "perfil", label: "Perfil del taller", icono: "cfg-icon-perfil.png" },
@@ -52,14 +54,6 @@ const notificacionesFilas = [
   { label: "Comunicaciones de Reviive" },
 ];
 
-const documentos = [
-  { nombre: "Cámara de Comercio", estado: "verificado", fecha: "12 ago 2026" },
-  { nombre: "RUT", estado: "verificado", fecha: "12 ago 2026" },
-  { nombre: "Documento del responsable", estado: "verificado", fecha: "12 ago 2026" },
-  { nombre: "Certificación de experiencia", estado: "en_revision", fecha: "14 ago 2026" },
-  { nombre: "Otros soportes", estado: "verificado", fecha: "12 ago 2026" },
-];
-
 const portafolio = ["sol-icon-clock.png", "icon-evidencias.png", "sol-icon-caja.png", "cfg-icon-vase.png"];
 
 function Campo({
@@ -68,12 +62,14 @@ function Campo({
   value,
   onChange,
   multiline = false,
+  readOnly = false,
 }: {
   icono: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
   multiline?: boolean;
+  readOnly?: boolean;
 }) {
   return (
     <div className="flex items-start gap-2.5">
@@ -81,19 +77,21 @@ function Campo({
         <Image src={`${ICONS}/${icono}`} alt="" fill sizes="16px" className="object-contain" unoptimized />
       </span>
       <div className="flex-1">
-        <p className="text-xs text-carbon/50">{label}</p>
+        <p className="text-xs text-carbon/50">{label}{readOnly && <span className="ml-1 text-carbon/30">(no editable)</span>}</p>
         {multiline ? (
           <textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            readOnly={readOnly}
             rows={2}
-            className="w-full bg-transparent text-sm text-carbon border-b border-transparent focus:border-borgona/40 outline-none py-0.5 resize-none"
+            className={`w-full bg-transparent text-sm border-b border-transparent focus:border-borgona/40 outline-none py-0.5 resize-none ${readOnly ? "text-carbon/50" : "text-carbon"}`}
           />
         ) : (
           <input
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full bg-transparent text-sm text-carbon border-b border-transparent focus:border-borgona/40 outline-none py-0.5"
+            readOnly={readOnly}
+            className={`w-full bg-transparent text-sm border-b border-transparent focus:border-borgona/40 outline-none py-0.5 ${readOnly ? "text-carbon/50" : "text-carbon"}`}
           />
         )}
       </div>
@@ -102,8 +100,8 @@ function Campo({
 }
 
 function ContenidoConfiguracion() {
-  const { usuario } = useAuth();
-  const { proveedor, cargandoProveedor } = useProveedor();
+  const { usuario, accessToken, actualizarUsuario } = useAuth();
+  const { proveedor, cargandoProveedor, refrescarProveedor } = useProveedor();
 
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("perfil");
 
@@ -111,20 +109,48 @@ function ContenidoConfiguracion() {
   const [responsable, setResponsable] = useState("");
   const [telefono, setTelefono] = useState("");
   const [ciudad, setCiudad] = useState("");
-  const [direccion, setDireccion] = useState("Carrera 43A # 10-25");
-  const [descripcion, setDescripcion] = useState(
-    "Taller especializado en la restauración, conservación y transformación de objetos con valor histórico y sentimental."
-  );
-  const [anios, setAnios] = useState("12 años");
-  const [horarios, setHorarios] = useState("Lun - Vie: 8:00 a. m. - 6:00 p. m.\nSáb: 9:00 a. m. - 2:00 p. m.");
+  const [direccion, setDireccion] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [anios, setAnios] = useState("");
+  const [horarios, setHorarios] = useState("");
   const [camposListos, setCamposListos] = useState(false);
+  const [guardando, setGuardando] = useState(false);
+  const [guardado, setGuardado] = useState(false);
 
   if (!camposListos && !cargandoProveedor) {
     setNombreTaller(proveedor?.nombre_taller ?? "");
     setCiudad(proveedor?.ciudad ?? "");
     setResponsable(usuario?.perfil?.nombre ?? "");
     setTelefono(usuario?.perfil?.telefono ?? "");
+    setDireccion(proveedor?.direccion ?? "");
+    setDescripcion(proveedor?.descripcion ?? "");
+    setAnios(proveedor?.anios_experiencia ?? "");
+    setHorarios(proveedor?.horario_atencion ?? "");
     setCamposListos(true);
+  }
+
+  async function guardarPerfil() {
+    if (!accessToken) return;
+    setGuardando(true);
+    setGuardado(false);
+    try {
+      await fetch(`${API_URL}/providers/me/`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({
+          direccion,
+          descripcion,
+          anios_experiencia: anios,
+          horario_atencion: horarios,
+        }),
+      });
+      const perfilActualizado = await actualizarPerfil(accessToken, { nombre: responsable, telefono });
+      actualizarUsuario(perfilActualizado);
+      refrescarProveedor();
+      setGuardado(true);
+    } finally {
+      setGuardando(false);
+    }
   }
 
   const [notifs, setNotifs] = useState<Record<string, { reviive: boolean; correo: boolean }>>(
@@ -191,10 +217,10 @@ function ContenidoConfiguracion() {
                   </span>
                 </div>
                 <div className="space-y-3">
-                  <Campo icono="cfg-icon-perfil.png" label="Nombre del taller" value={nombreTaller} onChange={setNombreTaller} />
+                  <Campo icono="cfg-icon-perfil.png" label="Nombre del taller" value={nombreTaller} onChange={setNombreTaller} readOnly />
                   <Campo icono="cfg-icon-persona.png" label="Responsable" value={responsable} onChange={setResponsable} />
                   <Campo icono="cfg-icon-telefono.png" label="Teléfono" value={telefono} onChange={setTelefono} />
-                  <Campo icono="cfg-icon-pin.png" label="Ciudad" value={ciudad} onChange={setCiudad} />
+                  <Campo icono="cfg-icon-pin.png" label="Ciudad" value={ciudad} onChange={setCiudad} readOnly />
                 </div>
                 <div className="space-y-3">
                   <Campo icono="cfg-icon-pin.png" label="Dirección" value={direccion} onChange={setDireccion} />
@@ -217,11 +243,13 @@ function ContenidoConfiguracion() {
               </div>
               <button
                 type="button"
-                className="mt-5 w-full rounded-full bg-borgona text-marfil px-4 py-2.5 text-sm hover:bg-borgona-dark transition-colors"
-                title="Próximamente: guardar cambios"
+                onClick={guardarPerfil}
+                disabled={guardando}
+                className="mt-5 w-full rounded-full bg-borgona text-marfil px-4 py-2.5 text-sm hover:bg-borgona-dark transition-colors disabled:opacity-60"
               >
-                Guardar cambios
+                {guardando ? "Guardando…" : "Guardar cambios"}
               </button>
+              {guardado && <p className="mt-2 text-xs text-emerald-700 text-center">Cambios guardados.</p>}
             </div>
           </div>
         )}
@@ -274,18 +302,11 @@ function ContenidoConfiguracion() {
         {tab === "pago" && (
           <div className="mt-6 rounded-2xl border border-greige/50 bg-greige/20 p-5 max-w-xl">
             <h3 className="font-display text-base text-borgona">Información para recibir pagos</h3>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li className="flex justify-between"><span className="text-carbon/50">Titular de la cuenta</span><span className="text-carbon">Artesanía El Recuerdo</span></li>
-              <li className="flex justify-between"><span className="text-carbon/50">Banco</span><span className="text-carbon">Bancolombia</span></li>
-              <li className="flex justify-between"><span className="text-carbon/50">Tipo de cuenta</span><span className="text-carbon">Ahorros</span></li>
-              <li className="flex justify-between"><span className="text-carbon/50">Número de cuenta</span><span className="text-carbon">**** 4582</span></li>
-              <li className="flex justify-between"><span className="text-carbon/50">Documento / NIT del titular</span><span className="text-carbon">1.036.789.123-4</span></li>
-            </ul>
-            <div className="mt-3 flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-xs text-emerald-700">
-              <span className="relative h-4 w-4 shrink-0"><Image src={`${ICONS}/cfg-icon-shield-check.png`} alt="" fill sizes="16px" className="object-contain" unoptimized /></span>
-              Información verificada · Última verificación: 12 ago 2026
-            </div>
-            <span className="mt-4 inline-block text-sm text-borgona cursor-default" title="Próximamente">Actualizar información bancaria →</span>
+            <p className="mt-3 text-sm text-carbon/60">
+              Todavía no has registrado tu información bancaria. Mientras tanto, tus pagos se calculan y quedan
+              pendientes en <a href="/proveedor/ingresos" className="text-borgona hover:underline">Ingresos</a>.
+            </p>
+            <span className="mt-4 inline-block text-sm text-carbon/40 cursor-default" title="Próximamente">Agregar información de pago →</span>
           </div>
         )}
 
@@ -351,20 +372,12 @@ function ContenidoConfiguracion() {
         {tab === "documentos" && (
           <div className="mt-6 rounded-2xl border border-greige/50 bg-greige/20 p-5 max-w-xl">
             <h3 className="font-display text-base text-borgona">Documentos del proveedor</h3>
-            <ul className="mt-3 space-y-2.5 text-sm">
-              {documentos.map((d) => (
-                <li key={d.nombre} className="flex items-center justify-between">
-                  <span className="flex items-center gap-2">
-                    <span className="relative h-4 w-4 shrink-0"><Image src={`${ICONS}/cfg-icon-documentos.png`} alt="" fill sizes="16px" className="object-contain" unoptimized /></span>
-                    {d.nombre}
-                  </span>
-                  <span className={`text-xs ${d.estado === "verificado" ? "text-emerald-700" : "text-dorado-suave"}`}>
-                    {d.estado === "verificado" ? "✓ Verificado" : "⏳ En revisión"} · {d.fecha}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <span className="mt-4 inline-block text-sm text-borgona cursor-default" title="Próximamente">Ver todos los documentos →</span>
+            <p className="mt-3 text-sm text-carbon/60">
+              {verificado
+                ? "Tu taller ya está validado por el equipo de Reviive."
+                : "Tu taller está pendiente de validación por el equipo de Reviive."}
+            </p>
+            <span className="mt-4 inline-block text-sm text-carbon/40 cursor-default" title="Próximamente">Subir documentos de validación →</span>
           </div>
         )}
 
@@ -384,7 +397,6 @@ function ContenidoConfiguracion() {
                 <li>Términos y condiciones para proveedores →</li>
                 <li>Política de privacidad →</li>
               </ul>
-              <p className="mt-3 text-xs text-carbon/45">Última aceptación: 15 mayo 2026</p>
             </div>
             <div className="rounded-2xl border border-greige/50 bg-greige/20 p-5">
               <h3 className="font-display text-base text-borgona">Estado de la cuenta</h3>

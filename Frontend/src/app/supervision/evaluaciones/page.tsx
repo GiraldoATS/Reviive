@@ -1,41 +1,87 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import RolePortalShell from "@/components/RolePortalShell";
 import StatCard from "@/components/StatCard";
 import SimpleTable from "@/components/SimpleTable";
 import Badge from "@/components/Badge";
-import { IconStar, IconCheckCircle, IconAlertTriangle } from "@/components/icons";
+import { IconBox, IconCheckCircle, IconAlertTriangle } from "@/components/icons";
+import { useAuth } from "@/lib/AuthContext";
+import { API_URL } from "@/lib/api";
 
-const evaluaciones = [
-  ["Atenea", "Consultar planes", "4.8", "Aprobada"],
-  ["Chronos", "Duda sobre recordatorios", "3.1", "Requiere revisión"],
-  ["Hermes", "Cancelación", "2.4", "Rechazada"],
-];
+interface EvaluacionApi {
+  id: number;
+  ejecucion: string;
+  agente: string;
+  agente_display: string;
+  reply: string;
+  tipo: "automatica" | "supervisor";
+  puntaje: string;
+  requiere_revision: boolean;
+  creado_en: string;
+}
 
-const toneByEstado: Record<string, "success" | "progress" | "pending"> = {
-  Aprobada: "success",
-  "Requiere revisión": "pending",
-  Rechazada: "pending",
-};
+function fechaCorta(iso: string) {
+  return new Date(iso).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" });
+}
 
 export default function EvaluacionesSupervisionPage() {
+  const { accessToken, cargando: cargandoSesion } = useAuth();
+  const [evaluaciones, setEvaluaciones] = useState<EvaluacionApi[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (cargandoSesion || !accessToken) return;
+    fetch(`${API_URL}/evaluations/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+      .then((res) => {
+        if (!res.ok) throw new Error("No se pudo cargar las evaluaciones.");
+        return res.json();
+      })
+      .then((data) => setEvaluaciones(data.results ?? data))
+      .catch((err) => setError(err instanceof Error ? err.message : "Error inesperado."));
+  }, [accessToken, cargandoSesion]);
+
+  const total = evaluaciones?.length ?? 0;
+  const promedio = total
+    ? evaluaciones!.reduce((acc, e) => acc + Number(e.puntaje), 0) / total
+    : 0;
+  const requierenRevision = evaluaciones?.filter((e) => e.requiere_revision).length ?? 0;
+
   return (
     <RolePortalShell role="supervision" crumbs={["Supervisión", "Evaluaciones"]}>
-      <h1 className="font-display text-2xl text-carbon mb-1">Evaluación de calidad</h1>
-      <p className="text-sm text-carbon/55 mb-6">Criterios de exactitud, utilidad, seguridad, tono y cumplimiento.</p>
+      <h1 className="font-display text-2xl text-carbon mb-1">Evaluaciones de agentes</h1>
+      <p className="text-sm text-carbon/55 mb-6">
+        Calidad de cada respuesta generada por un agente: empatía, precisión y cumplimiento de las reglas de negocio.
+      </p>
+
+      {error && <p className="text-sm text-borgona mb-6">{error}</p>}
 
       <div className="grid sm:grid-cols-3 gap-6 mb-6">
-        <StatCard icon={<IconStar className="h-5 w-5" />} value="4.6 / 5" label="Puntaje promedio" tone="dorado" />
-        <StatCard icon={<IconCheckCircle className="h-5 w-5" />} value="86%" label="Evaluaciones aprobadas" tone="verde" />
-        <StatCard icon={<IconAlertTriangle className="h-5 w-5" />} value="12" label="Requieren revisión humana" tone="borgona" />
+        <StatCard icon={<IconBox className="h-5 w-5" />} value={String(total)} label="Evaluaciones totales" tone="rosa" />
+        <StatCard icon={<IconCheckCircle className="h-5 w-5" />} value={promedio.toFixed(2)} label="Puntaje promedio (0-1)" tone="verde" />
+        <StatCard icon={<IconAlertTriangle className="h-5 w-5" />} value={String(requierenRevision)} label="Requieren revisión" tone="dorado" />
       </div>
 
-      <SimpleTable
-        columns={["Agente", "Intención", "Puntaje", "Resultado", ""]}
-        rows={evaluaciones.map((e) => [
-          e[0], e[1], e[2],
-          <Badge key="s" tone={toneByEstado[e[3]] ?? "neutral"}>{e[3]}</Badge>,
-          <span key="a" className="text-borgona text-xs">Ver conversación →</span>,
-        ])}
-      />
+      {!evaluaciones && !error && <p className="text-sm text-carbon/50">Cargando…</p>}
+      {evaluaciones && evaluaciones.length === 0 && <p className="text-sm text-carbon/50">Todavía no hay evaluaciones registradas.</p>}
+
+      {evaluaciones && evaluaciones.length > 0 && (
+        <SimpleTable
+          columns={["Agente", "Respuesta evaluada", "Tipo", "Puntaje", "Fecha", ""]}
+          rows={evaluaciones.map((e) => [
+            e.agente_display,
+            <span key="r" className="line-clamp-2 max-w-xs text-xs text-carbon/70">{e.reply || "—"}</span>,
+            e.tipo === "automatica" ? "Automática" : "Supervisor",
+            e.puntaje,
+            fechaCorta(e.creado_en),
+            e.requiere_revision ? (
+              <Badge key="b" tone="pending">Requiere revisión</Badge>
+            ) : (
+              <Badge key="b" tone="success">OK</Badge>
+            ),
+          ])}
+        />
+      )}
     </RolePortalShell>
   );
 }

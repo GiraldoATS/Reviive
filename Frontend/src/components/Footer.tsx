@@ -6,7 +6,7 @@ const redes = [
   { icono: "/images/social/instagram.png", label: "Instagram", href: "https://instagram.com" },
   { icono: "/images/social/facebook.png", label: "Facebook", href: "https://facebook.com" },
   { icono: "/images/social/tiktok.png", label: "TikTok", href: "https://tiktok.com" },
-  { icono: "/images/social/correo.png", label: "Correo", href: "mailto:hola@reviive.com" },
+  { icono: "/images/social/correo.png", label: "Correo", href: "mailto:reviivemed@gmail.com" },
   { icono: "/images/social/telegram.png", label: "Telegram", href: "https://t.me" },
 ];
 
@@ -97,7 +97,7 @@ export default function Footer() {
           </div>
           <div>
             <h3 className={tituloClase}>Contacto</h3>
-            <p className="text-sm text-carbon/80">hola@reviive.com</p>
+            <p className="text-sm text-carbon/80">reviivemed@gmail.com</p>
             <p className="text-sm text-carbon/80">+57 318 485 5941</p>
             <p className="text-sm text-carbon/80">Medellín, Colombia</p>
             <Button href="/contacto" variant="secondary" className="mt-4 text-xs">Escríbenos</Button>

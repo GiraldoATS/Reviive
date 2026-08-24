@@ -172,11 +172,11 @@ function ContenidoAyuda() {
           <div className="rounded-2xl border border-greige/50 bg-greige/20 p-6">
             <h3 className="font-display text-lg text-borgona">¿Necesitas atención de nuestro equipo?</h3>
             <ul className="mt-3 space-y-1.5 text-sm text-carbon/70">
-              <li>Correo: hola@reviive.com</li>
+              <li>Correo: reviivemed@gmail.com</li>
               <li>Teléfono: +57 318 485 5941</li>
               <li>Ciudad: Medellín, Colombia</li>
             </ul>
-            <Button href="mailto:hola@reviive.com" variant="secondary" className="mt-4 w-full justify-center">
+            <Button href="mailto:reviivemed@gmail.com" variant="secondary" className="mt-4 w-full justify-center">
               Contactar con Reviive
             </Button>
           </div>

@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import type { FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SiteShell from "@/components/SiteShell";
 import Button from "@/components/Button";
+import { enviarMensajeContacto } from "@/lib/api";
 import {
   IconMessage,
   IconUpload,
@@ -15,11 +17,27 @@ import {
   IconGlobe,
 } from "@/components/icons";
 
+const MOTIVOS: Record<string, string> = {
+  "Restauración": "restauracion",
+  "Preservación": "preservacion",
+  "Transformación": "transformacion",
+  "Otra consulta": "otra",
+};
+
+function archivoABase64(archivo: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const lector = new FileReader();
+    lector.onload = () => resolve(lector.result as string);
+    lector.onerror = reject;
+    lector.readAsDataURL(archivo);
+  });
+}
+
 const contactoDirecto = [
   {
     icono: "correo",
     titulo: "Correo electrónico",
-    lineas: ["hola@reviive.com", "Te responderemos con dedicación."],
+    lineas: ["reviivemed@gmail.com", "Te responderemos con dedicación."],
   },
   {
     icono: "telegram",
@@ -45,7 +63,7 @@ const preguntas = [
   { p: "¿Puedo contactar a Reviive desde otra ciudad?", r: "Sí, atendemos solicitudes de todo el país y coordinamos la recolección o el envío según tu ubicación." },
   { p: "¿Cómo entrego mi objeto?", r: "Puedes enviarlo por la transportadora de tu preferencia o solicitar que lo recojamos directamente." },
   { p: "¿Cuánto tarda una evaluación inicial?", r: "Normalmente recibirás una respuesta dentro de 24 a 48 horas hábiles." },
-  { p: "¿Cómo puedo convertirme en proveedor de Reviive?", r: "Escríbenos por este formulario o a hola@reviive.com contándonos tu experiencia y con gusto te contactaremos." },
+  { p: "¿Cómo puedo convertirme en proveedor de Reviive?", r: "Escríbenos por este formulario o a reviivemed@gmail.com contándonos tu experiencia y con gusto te contactaremos." },
 ];
 
 function BranchTag({ children }: { children: string }) {
@@ -60,7 +78,38 @@ function BranchTag({ children }: { children: string }) {
 }
 
 export default function ContactoPage() {
+  const [nombre, setNombre] = useState("");
+  const [correo, setCorreo] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [motivo, setMotivo] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [foto, setFoto] = useState<{ base64: string; nombre: string } | null>(null);
   const [aceptaPolitica, setAceptaPolitica] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (!aceptaPolitica || enviando) return;
+    setError(null);
+    setEnviando(true);
+    try {
+      await enviarMensajeContacto({
+        nombre,
+        correo,
+        telefono: telefono || undefined,
+        motivo: MOTIVOS[motivo] || undefined,
+        mensaje,
+        foto_base64: foto?.base64,
+      });
+      setEnviado(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo enviar tu mensaje.");
+    } finally {
+      setEnviando(false);
+    }
+  }
 
   return (
     <SiteShell>
@@ -106,80 +155,136 @@ export default function ContactoPage() {
           <h2 className="font-display text-2xl text-borgona">
             <BranchTag>Envíanos un mensaje</BranchTag>
           </h2>
-          <form className="mt-6 space-y-4">
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4">
-                  <Image src="/images/contacto/icon-person.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
-                </span>
-                <input className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50" placeholder="Nombre completo" />
-              </div>
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4">
-                  <Image src="/images/contacto/icon-envelope.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
-                </span>
-                <input type="email" className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50" placeholder="Correo electrónico" />
-              </div>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4">
-                  <Image src="/images/contacto/icon-phone.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
-                </span>
-                <input className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50" placeholder="Teléfono (opcional)" />
-              </div>
-              <div className="relative">
-                <select className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pr-9 text-sm text-carbon/70 outline-none transition-colors focus:border-borgona/50 appearance-none">
-                  <option>¿En qué podemos ayudarte?</option>
-                  <option>Restauración</option>
-                  <option>Preservación</option>
-                  <option>Transformación</option>
-                  <option>Otra consulta</option>
-                </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5">
-                  <Image src="/images/contacto/icon-chevron.png" alt="" fill sizes="14px" className="object-contain" unoptimized />
-                </span>
-              </div>
-            </div>
-            <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-3 h-4 w-4">
-                <Image src="/images/contacto/icon-message.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
-              </span>
-              <textarea className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50 resize-none" rows={4} placeholder="Cuéntanos la historia de tu objeto..." />
-            </div>
 
-            <label className="flex items-center gap-3 rounded-xl border border-greige/60 bg-white/60 px-4 py-3 cursor-pointer">
-              <span className="relative h-6 w-6 shrink-0">
-                <Image src="/images/contacto/icon-upload.png" alt="" fill sizes="24px" className="object-contain" unoptimized />
-              </span>
-              <span className="text-sm text-carbon/70">
-                Adjuntar fotografía del objeto (opcional)
-                <span className="block text-xs text-carbon/45">Formatos: JPG, PNG. Máx. 10MB</span>
-              </span>
-              <input type="file" accept="image/*" className="hidden" />
-            </label>
+          {enviado ? (
+            <div className="mt-6 rounded-2xl border border-greige/50 bg-greige/20 p-6 text-center">
+              <p className="font-display text-lg text-borgona">¡Gracias por escribirnos!</p>
+              <p className="mt-2 text-sm text-carbon/70">
+                Recibimos tu mensaje y te responderemos dentro de las próximas 24 horas hábiles.
+              </p>
+            </div>
+          ) : (
+            <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4">
+                    <Image src="/images/contacto/icon-person.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
+                  </span>
+                  <input
+                    required
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                    className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50"
+                    placeholder="Nombre completo"
+                  />
+                </div>
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4">
+                    <Image src="/images/contacto/icon-envelope.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
+                  </span>
+                  <input
+                    type="email"
+                    required
+                    value={correo}
+                    onChange={(e) => setCorreo(e.target.value)}
+                    className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50"
+                    placeholder="Correo electrónico"
+                  />
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4">
+                    <Image src="/images/contacto/icon-phone.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
+                  </span>
+                  <input
+                    value={telefono}
+                    onChange={(e) => setTelefono(e.target.value)}
+                    className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50"
+                    placeholder="Teléfono (opcional)"
+                  />
+                </div>
+                <div className="relative">
+                  <select
+                    value={motivo}
+                    onChange={(e) => setMotivo(e.target.value)}
+                    className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pr-9 text-sm text-carbon/70 outline-none transition-colors focus:border-borgona/50 appearance-none"
+                  >
+                    <option value="">¿En qué podemos ayudarte?</option>
+                    <option>Restauración</option>
+                    <option>Preservación</option>
+                    <option>Transformación</option>
+                    <option>Otra consulta</option>
+                  </select>
+                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5">
+                    <Image src="/images/contacto/icon-chevron.png" alt="" fill sizes="14px" className="object-contain" unoptimized />
+                  </span>
+                </div>
+              </div>
+              <div className="relative">
+                <span className="pointer-events-none absolute left-3 top-3 h-4 w-4">
+                  <Image src="/images/contacto/icon-message.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
+                </span>
+                <textarea
+                  required
+                  value={mensaje}
+                  onChange={(e) => setMensaje(e.target.value)}
+                  className="w-full rounded-xl border border-greige/70 bg-marfil px-3.5 py-2.5 pl-9 text-sm text-carbon/80 outline-none transition-colors focus:border-borgona/50 resize-none"
+                  rows={4}
+                  placeholder="Cuéntanos la historia de tu objeto..."
+                />
+              </div>
 
-            <label className="flex items-center gap-2.5 text-xs text-carbon/60">
-              <input
-                type="checkbox"
-                checked={aceptaPolitica}
-                onChange={(e) => setAceptaPolitica(e.target.checked)}
-                className="h-4 w-4 rounded border-greige/60 accent-borgona"
-              />
-              He leído y acepto la{" "}
-              <Link href="/politica-privacidad" className="text-borgona hover:text-borgona-dark underline">
-                Política de privacidad.
-              </Link>
-            </label>
+              <label className="flex items-center gap-3 rounded-xl border border-greige/60 bg-white/60 px-4 py-3 cursor-pointer">
+                <span className="relative h-6 w-6 shrink-0">
+                  <Image src="/images/contacto/icon-upload.png" alt="" fill sizes="24px" className="object-contain" unoptimized />
+                </span>
+                <span className="text-sm text-carbon/70">
+                  {foto ? foto.nombre : "Adjuntar fotografía del objeto (opcional)"}
+                  <span className="block text-xs text-carbon/45">Formatos: JPG, PNG. Máx. 10MB</span>
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const archivo = e.target.files?.[0];
+                    if (!archivo) return;
+                    const base64 = await archivoABase64(archivo);
+                    setFoto({ base64, nombre: archivo.name });
+                  }}
+                />
+              </label>
 
-            <Button type="submit" variant="primary" className="w-full justify-center inline-flex items-center gap-2">
-              Enviar mensaje
-              <IconEnviar className="h-4 w-4" />
-            </Button>
-            <p className="text-xs text-carbon/50">
-              Tiempo estimado de respuesta: dentro de 24 horas hábiles.
-            </p>
-          </form>
+              <label className="flex items-center gap-2.5 text-xs text-carbon/60">
+                <input
+                  type="checkbox"
+                  checked={aceptaPolitica}
+                  onChange={(e) => setAceptaPolitica(e.target.checked)}
+                  className="h-4 w-4 rounded border-greige/60 accent-borgona"
+                />
+                He leído y acepto la{" "}
+                <Link href="/politica-privacidad" className="text-borgona hover:text-borgona-dark underline">
+                  Política de privacidad.
+                </Link>
+              </label>
+
+              {error && <p className="text-sm text-borgona">{error}</p>}
+
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={!aceptaPolitica || enviando}
+                className="w-full justify-center inline-flex items-center gap-2 disabled:opacity-60"
+              >
+                {enviando ? "Enviando…" : "Enviar mensaje"}
+                {!enviando && <IconEnviar className="h-4 w-4" />}
+              </Button>
+              <p className="text-xs text-carbon/50">
+                Tiempo estimado de respuesta: dentro de 24 horas hábiles.
+              </p>
+            </form>
+          )}
         </div>
 
         <div>
@@ -319,7 +424,7 @@ export default function ContactoPage() {
             ))}
           </div>
           <p className="mt-4 text-xs text-carbon/60">
-            ¿No encuentras lo que buscas? Escríbenos y con gusto te ayudaremos.
+            ¿No encuentras lo que buscas? Pregúntale a Alma y con gusto te ayudará.
           </p>
         </div>
       </section>

@@ -60,7 +60,7 @@ interface RespuestaWebhookAlma {
   preview_imagen_base64?: string;
 }
 
-export default function ChatAlma() {
+export default function ChatAlma({ mensajeInicial }: { mensajeInicial?: string }) {
   const { accessToken, cargando } = useAuth();
   const [mensajes, setMensajes] = useState<Mensaje[]>([
     {
@@ -109,6 +109,14 @@ export default function ChatAlma() {
     }
     asegurarConversacion();
   }, [accessToken]);
+
+  const mensajeInicialEnviado = useRef(false);
+  useEffect(() => {
+    if (!mensajeInicial || mensajeInicialEnviado.current || !accessToken) return;
+    mensajeInicialEnviado.current = true;
+    enviar(mensajeInicial);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mensajeInicial, accessToken]);
 
   async function elegirArchivo(tipo: "imagen" | "video", archivo: File | undefined) {
     if (!archivo) return;
@@ -327,7 +335,6 @@ export default function ChatAlma() {
         )}
       </div>
 
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <audio ref={audioReproductorRef} className="hidden" />
 
       {avisoLimite && (

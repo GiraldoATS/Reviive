@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { IconInfo, IconClockAlert, IconRefresh } from "@/components/icons";
+import { solicitarRestablecimiento } from "@/lib/auth";
 
 const ICONS = "/images/auth";
 const ESPERA_REENVIO = 60;
@@ -51,6 +52,7 @@ export default function RecuperarContrasenaPage() {
   const [email, setEmail] = useState("");
   const [estado, setEstado] = useState<"idle" | "enviando" | "enviado">("idle");
   const [segundos, setSegundos] = useState(ESPERA_REENVIO);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (estado !== "enviado" || segundos <= 0) return;
@@ -58,19 +60,28 @@ export default function RecuperarContrasenaPage() {
     return () => clearTimeout(t);
   }, [estado, segundos]);
 
+  async function enviarSolicitud() {
+    setEstado("enviando");
+    setError(null);
+    try {
+      await solicitarRestablecimiento(email);
+      setEstado("enviado");
+      setSegundos(ESPERA_REENVIO);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo enviar el enlace.");
+      setEstado("idle");
+    }
+  }
+
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim() || estado === "enviando") return;
-    setEstado("enviando");
-    setTimeout(() => {
-      setEstado("enviado");
-      setSegundos(ESPERA_REENVIO);
-    }, 700);
+    void enviarSolicitud();
   }
 
   function reenviar() {
     if (segundos > 0) return;
-    setSegundos(ESPERA_REENVIO);
+    void enviarSolicitud();
   }
 
   if (estado === "enviado") {
@@ -197,6 +208,8 @@ export default function RecuperarContrasenaPage() {
                   />
                 </div>
               </label>
+
+              {error && <p className="text-sm text-borgona">{error}</p>}
 
               <button
                 type="submit"

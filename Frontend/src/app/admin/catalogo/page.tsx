@@ -24,7 +24,7 @@ export default async function CatalogoAdminPage() {
       <SimpleTable
         columns={["", "Nombre", "Categoría", "Precio base", "Estado", ""]}
         rows={productos.map((p) => [
-          <ProductPhoto key="i" icono={p.imagen} className="h-10 w-10 rounded-lg" />,
+          <ProductPhoto key="i" icono={p.imagen} src={p.imagenUrl} className="h-10 w-10 rounded-lg" />,
           p.nombre,
           p.categoria,
           `$${p.precioBase.toLocaleString("es-CO")}`,
