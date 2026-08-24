@@ -23,9 +23,34 @@ class Proveedor(models.Model):
         default=EstadoValidacion.PENDIENTE,
     )
     calificacion = models.DecimalField(max_digits=3, decimal_places=2, default=0)
+    # Configuración real del taller (antes sólo visual en el portal proveedor).
+    direccion = models.CharField(max_length=200, blank=True, default="")
+    descripcion = models.TextField(blank=True, default="")
+    anios_experiencia = models.CharField(max_length=50, blank=True, default="")
+    horario_atencion = models.TextField(blank=True, default="")
+    capacidad_maxima = models.PositiveIntegerField(
+        default=5, help_text="Pedidos simultáneos que el taller puede atender."
+    )
+    disponible = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return self.nombre_taller
+
+
+class DiaBloqueadoProveedor(models.Model):
+    """Fechas en las que un proveedor no puede recibir nuevos pedidos."""
+
+    proveedor = models.ForeignKey(
+        Proveedor, on_delete=models.CASCADE, related_name="dias_bloqueados"
+    )
+    fecha = models.DateField()
+
+    class Meta:
+        unique_together = ["proveedor", "fecha"]
+        ordering = ["fecha"]
+
+    def __str__(self) -> str:
+        return f"{self.proveedor} bloqueado el {self.fecha}"
 
 
 class CapacidadProveedor(models.Model):

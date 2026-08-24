@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     "apps.recommendations",
     "apps.quotations",
     "apps.orders",
+    "apps.payments",
     "apps.memorials",
     "apps.evaluations",
     "apps.analytics",
     "apps.ml",
+    "apps.contact",
 ]
 
 MIDDLEWARE = [
@@ -132,7 +134,7 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Reviive <no-responder@reviive.com>")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Reviive <reviivemed@gmail.com>")
 EMAIL_BACKEND = (
     "django.core.mail.backends.smtp.EmailBackend"
     if EMAIL_HOST_USER

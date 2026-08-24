@@ -23,6 +23,7 @@ from .serializers import (
     ConfirmarRestablecimientoSerializer,
     IdentificarTelegramSerializer,
     LiberarBloqueoTelegramSerializer,
+    PerfilSerializer,
     RegistroSerializer,
     SolicitarRestablecimientoSerializer,
     UsuarioSerializer,
@@ -32,13 +33,25 @@ logger = logging.getLogger(__name__)
 
 
 class MeView(APIView):
-    """GET /api/v1/users/me — perfil del usuario autenticado."""
+    """GET/PATCH /api/v1/users/me — perfil del usuario autenticado.
+
+    PATCH sólo permite editar los campos propios del `Perfil` (nombre,
+    ciudad, teléfono): el correo es el identificador de acceso (email) y
+    no se cambia desde aquí (ver validate en el frontend/mi-cuenta/datos).
+    """
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request: Request) -> Response:
         serializer = UsuarioSerializer(request.user)
         return Response(serializer.data)
+
+    def patch(self, request: Request) -> Response:
+        perfil, _ = Perfil.objects.get_or_create(usuario=request.user, defaults={"nombre": ""})
+        serializer = PerfilSerializer(perfil, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(UsuarioSerializer(request.user).data)
 
 
 class RegistroView(APIView):

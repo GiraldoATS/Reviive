@@ -4,8 +4,8 @@ from rest_framework.permissions import BasePermission
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from .models import EjemploDataset
-from .serializers import EjemploDatasetSerializer
+from .models import EjemploDataset, Evaluacion
+from .serializers import EjemploDatasetSerializer, EvaluacionSerializer
 
 
 class EsSupervisorIA(BasePermission):
@@ -41,3 +41,11 @@ class EjemploDatasetViewSet(viewsets.ReadOnlyModelViewSet):
         ejemplo.aprobado_por = request.user
         ejemplo.save(update_fields=["estado_revision", "aprobado_por"])
         return Response(EjemploDatasetSerializer(ejemplo).data)
+
+
+class EvaluacionViewSet(viewsets.ReadOnlyModelViewSet):
+    """/api/v1/evaluations — sólo supervisor_ia/staff, califica ejecuciones de agentes."""
+
+    serializer_class = EvaluacionSerializer
+    permission_classes = [EsSupervisorIA]
+    queryset = Evaluacion.objects.select_related("ejecucion").order_by("-creado_en")

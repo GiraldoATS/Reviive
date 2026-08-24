@@ -55,12 +55,18 @@ class ObjetoMemoria(models.Model):
         Recuerdo, on_delete=models.CASCADE, related_name="objetos"
     )
     tipo = models.CharField(max_length=100)
+    categoria = models.CharField(max_length=100, blank=True, default="")
     marca = models.CharField(max_length=100, blank=True)
     anio_aproximado = models.CharField(max_length=20, blank=True)
     material = models.CharField(max_length=100, blank=True)
     estado = models.TextField(blank=True)
     nivel_transformacion = models.CharField(max_length=100, blank=True)
     archivos = models.ManyToManyField(Archivo, blank=True, related_name="objetos_memoria")
+    # Las fotos del formulario público se guardan aquí como data URLs (igual
+    # que Mensaje.imagen_base64 en conversations): el flujo real de Archivo
+    # requiere un bucket S3/MinIO (ver AssetPresignView) que no corre en este
+    # entorno de desarrollo, así que este campo es el camino que sí funciona.
+    fotos_base64 = models.JSONField(default=list, blank=True)
 
     def __str__(self) -> str:
         return f"{self.tipo} ({self.recuerdo_id})"

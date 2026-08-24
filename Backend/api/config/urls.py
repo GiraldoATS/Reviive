@@ -12,8 +12,10 @@ urlpatterns = [
     path("api/v1/", include("apps.recommendations.urls")),
     path("api/v1/", include("apps.quotations.urls")),
     path("api/v1/", include("apps.orders.urls")),
+    path("api/v1/", include("apps.payments.urls")),
     path("api/v1/", include("apps.memorials.urls")),
     path("api/v1/", include("apps.evaluations.urls")),
     path("api/v1/", include("apps.analytics.urls")),
     path("api/v1/", include("apps.ml.urls")),
+    path("api/v1/", include("apps.contact.urls")),
 ]

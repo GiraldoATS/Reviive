@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
-from django.db.models import Count
+from django.db.models import Avg, Count, Sum
 from django.utils import timezone
 from rest_framework.permissions import BasePermission
 from rest_framework.request import Request
@@ -41,6 +41,8 @@ class DashboardView(APIView):
             .order_by("dia")
         )
 
+        agregados = Pedido.objects.aggregate(ingresos=Sum("total"), ticket_promedio=Avg("total"))
+
         return Response(
             {
                 "pedidos_totales": Pedido.objects.count(),
@@ -49,6 +51,8 @@ class DashboardView(APIView):
                 "nuevos_clientes": Usuario.objects.filter(
                     rol="cliente", date_joined__gte=hace_7_dias
                 ).count(),
+                "ingresos_totales": agregados["ingresos"] or 0,
+                "ticket_promedio": agregados["ticket_promedio"] or 0,
                 "pedidos_por_estado": por_estado,
                 "tendencia_pedidos": tendencia,
             }

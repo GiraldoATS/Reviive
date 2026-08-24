@@ -43,6 +43,10 @@ class EventoPedido(models.Model):
     evidencia = models.ForeignKey(
         Archivo, on_delete=models.SET_NULL, null=True, blank=True, related_name="eventos_pedido"
     )
+    # Camino real que sí funciona sin bucket S3/MinIO (ver Archivo y el
+    # mismo workaround en ObjetoMemoria.fotos_base64): fotos de evidencia
+    # como data URLs, en vez de forzar el flujo roto de AssetPresignView.
+    evidencias_base64 = models.JSONField(default=list, blank=True)
     responsable = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -55,3 +59,33 @@ class EventoPedido(models.Model):
 
     def __str__(self) -> str:
         return f"{self.pedido.codigo} → {self.estado}"
+
+
+class Resena(models.Model):
+    """RN-15: sólo se califica un pedido entregado/cerrado."""
+
+    pedido = models.OneToOneField(Pedido, on_delete=models.CASCADE, related_name="resena")
+    puntaje = models.PositiveSmallIntegerField()
+    comentario = models.TextField(blank=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"Reseña {self.pedido.codigo} ({self.puntaje}/5)"
+
+
+class MensajePedido(models.Model):
+    """Mensajería real cliente↔proveedor por pedido (distinta del chat con
+    Alma, que es exclusivo del asistente de IA)."""
+
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="mensajes")
+    autor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="mensajes_pedido"
+    )
+    contenido = models.TextField()
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["creado_en"]
+
+    def __str__(self) -> str:
+        return f"Mensaje {self.pedido.codigo} de {self.autor_id}"

@@ -1,12 +1,31 @@
+import json
+from collections import Counter
+
 import pandas as pd
+from rest_framework.permissions import AllowAny, BasePermission
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.agents.permissions import IsN8nOrchestrator
+from apps.catalog.models import Producto
+from apps.memories.models import ObjetoMemoria
 
-from .model_loader import COLUMNAS_ENTRADA, obtener_pipeline
+from .model_loader import (
+    COLUMNAS_ENTRADA,
+    RUTA_METRICAS,
+    fila_desde_objeto_memoria,
+    obtener_pipeline,
+)
 from .serializers import RecomendarProductoSerializer
+
+
+class EsSupervisorOAdmin(BasePermission):
+    def has_permission(self, request, view) -> bool:
+        user = request.user
+        return user.is_authenticated and (
+            user.is_staff or user.rol in {"supervisor_ia", "administrador", "superadministrador"}
+        )
 
 
 class RecomendarProductoView(APIView):
@@ -45,3 +64,74 @@ class RecomendarProductoView(APIView):
                 "distribucion": distribucion,
             }
         )
+
+
+class MasExploradosView(APIView):
+    """GET /api/v1/ml/mas-explorados — vitrina pública del catálogo.
+
+    En vez de una lista de "tendencias" inventada, corre el mismo
+    clasificador de RecomendarProductoView sobre los objetos reales que los
+    clientes ya registraron (ObjetoMemoria) y muestra los productos que el
+    modelo más recomienda para esos casos reales. Si todavía no hay
+    objetos registrados, devuelve una lista vacía — no rellena con datos
+    falsos.
+    """
+
+    permission_classes = [AllowAny]
+
+    def get(self, request: Request) -> Response:
+        objetos = ObjetoMemoria.objects.select_related("recuerdo").order_by("-id")[:200]
+        if not objetos:
+            return Response([])
+
+        pipeline = obtener_pipeline()
+        conteos = Counter()
+        for objeto in objetos:
+            fila = fila_desde_objeto_memoria(
+                {
+                    "tipo": objeto.tipo,
+                    "material": objeto.material,
+                    "estado": objeto.estado,
+                    "nivel_transformacion": objeto.nivel_transformacion,
+                }
+            )
+            entrada = pd.DataFrame([{col: fila[col] for col in COLUMNAS_ENTRADA}])
+            prediccion = pipeline.predict(entrada)[0]
+            conteos[prediccion] += 1
+
+        productos_por_nombre = {p.nombre: p for p in Producto.objects.filter(activo=True)}
+        resultado = []
+        for nombre, total in conteos.most_common(10):
+            producto = productos_por_nombre.get(nombre)
+            if not producto:
+                continue
+            resultado.append(
+                {
+                    "id": producto.id,
+                    "nombre": producto.nombre,
+                    "categoria": producto.categoria,
+                    "icono": producto.icono,
+                    "imagen_url": producto.imagen_url,
+                    "veces_recomendado": total,
+                }
+            )
+        return Response(resultado)
+
+
+class MetricasModeloView(APIView):
+    """GET /api/v1/ml/metricas — métricas reales del entrenamiento del
+    clasificador (ver Backend/ml/entrenar_modelo.py), para el panel de
+    supervisión. Lee el reporte que el propio script de entrenamiento
+    genera (accuracy/precision/recall/f1 por modelo comparado, matriz de
+    confusión) en vez de mostrar cifras inventadas."""
+
+    permission_classes = [EsSupervisorOAdmin]
+
+    def get(self, request: Request) -> Response:
+        if not RUTA_METRICAS.exists():
+            return Response(
+                {"detail": "Todavía no se ha entrenado el modelo (falta reporte_metricas.json)."},
+                status=404,
+            )
+        with open(RUTA_METRICAS, encoding="utf-8") as f:
+            return Response(json.load(f))
