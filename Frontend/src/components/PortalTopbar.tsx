@@ -1,4 +1,4 @@
-import { IconBell, IconSearch } from "./icons";
+import { IconBell } from "./icons";
 
 type PortalTopbarProps = {
   crumbs?: string[];
@@ -22,10 +22,6 @@ export default function PortalTopbar({
               {crumbs.join(" / ")}
             </p>
           )}
-          <label className="flex items-center gap-2 rounded-full border border-greige/70 bg-white/60 px-4 py-2 text-sm text-carbon/50">
-            <IconSearch className="h-4 w-4 shrink-0" />
-            <span>Buscar en Reviive...</span>
-          </label>
         </div>
         <div className="flex items-center gap-4 shrink-0">
           <div className="relative">

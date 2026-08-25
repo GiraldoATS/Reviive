@@ -16,9 +16,11 @@ export default async function CatalogoAdminPage() {
           <h1 className="font-display text-2xl text-carbon">Gestión del catálogo</h1>
           <p className="text-sm text-carbon/55">Servicios de restauración activos, cargados desde la API.</p>
         </div>
-        <Button variant="primary" className="text-xs">
-          <IconPlus className="h-4 w-4" /> Nuevo producto
-        </Button>
+        <span title="Próximamente">
+          <Button variant="primary" className="text-xs opacity-50 cursor-not-allowed" disabled>
+            <IconPlus className="h-4 w-4" /> Nuevo producto
+          </Button>
+        </span>
       </div>
 
       <SimpleTable
@@ -29,7 +31,7 @@ export default async function CatalogoAdminPage() {
           p.categoria,
           `$${p.precioBase.toLocaleString("es-CO")}`,
           <Badge key="e" tone={p.activo ? "success" : "pending"}>{p.activo ? "Activo" : "Inactivo"}</Badge>,
-          <span key="a" className="text-borgona text-xs">Editar →</span>,
+          <span key="a" className="text-carbon/35 text-xs" title="Próximamente">Editar</span>,
         ])}
       />
     </RolePortalShell>
