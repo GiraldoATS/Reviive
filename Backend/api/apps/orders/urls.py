@@ -2,15 +2,19 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
+    EnvioViewSet,
     MensajePedidoNoLeidosView,
     PedidoEventosView,
     PedidoMensajesView,
     PedidoResenaView,
     PedidoViewSet,
+    ReclamacionViewSet,
 )
 
 router = DefaultRouter()
 router.register("orders", PedidoViewSet, basename="orders")
+router.register("shipments", EnvioViewSet, basename="shipments")
+router.register("claims", ReclamacionViewSet, basename="claims")
 
 urlpatterns = [
     path("orders/messages/unread-count", MensajePedidoNoLeidosView.as_view(), name="orders-messages-unread"),

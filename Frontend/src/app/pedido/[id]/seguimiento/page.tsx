@@ -49,6 +49,12 @@ interface EventoApi {
   estado: string;
   fecha: string;
   descripcion: string;
+  evidencias_base64: string[];
+}
+
+interface ResenaApi {
+  puntaje: number;
+  comentario: string;
 }
 
 interface PedidoApi {
@@ -62,6 +68,7 @@ interface PedidoApi {
     memorial_slug: string | null;
   };
   eventos: EventoApi[];
+  resena: ResenaApi | null;
 }
 
 export default function SeguimientoPedidoPage() {
@@ -72,6 +79,32 @@ export default function SeguimientoPedidoPage() {
   const [error, setError] = useState<string | null>(null);
   const [creandoMemorial, setCreandoMemorial] = useState(false);
   const [errorMemorial, setErrorMemorial] = useState<string | null>(null);
+  const [puntajeSeleccionado, setPuntajeSeleccionado] = useState(0);
+  const [comentarioResena, setComentarioResena] = useState("");
+  const [enviandoResena, setEnviandoResena] = useState(false);
+  const [errorResena, setErrorResena] = useState<string | null>(null);
+
+  async function enviarResena() {
+    if (!accessToken || !id || puntajeSeleccionado === 0) return;
+    setEnviandoResena(true);
+    setErrorResena(null);
+    try {
+      const res = await fetch(`${API_URL}/orders/${id}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({ puntaje: puntajeSeleccionado, comentario: comentarioResena }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error?.mensaje || "No se pudo enviar tu calificación.");
+      }
+      setPedido((prev) => (prev ? { ...prev, resena: { puntaje: puntajeSeleccionado, comentario: comentarioResena } } : prev));
+    } catch (err) {
+      setErrorResena(err instanceof Error ? err.message : "No se pudo enviar tu calificación.");
+    } finally {
+      setEnviandoResena(false);
+    }
+  }
 
   async function crearMemorial() {
     if (!pedido || !accessToken) return;
@@ -219,6 +252,83 @@ export default function SeguimientoPedidoPage() {
             </div>
           </Card>
         </div>
+
+        {pedido.eventos.some((e) => e.evidencias_base64.length > 0) && (
+          <Card className="mt-6">
+            <h2 className="text-xs uppercase tracking-wide text-carbon/50 mb-3">
+              Evidencia del proceso
+            </h2>
+            <div className="space-y-4">
+              {pedido.eventos
+                .filter((e) => e.evidencias_base64.length > 0)
+                .map((e) => (
+                  <div key={e.id}>
+                    <p className="text-xs text-carbon/55 mb-1.5">
+                      {etiquetas[e.estado] ?? e.estado} · {new Date(e.fecha).toLocaleDateString("es-CO")}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {e.evidencias_base64.map((foto, i) => (
+                        <span key={i} className="relative h-20 w-20 rounded-lg overflow-hidden border border-greige/60 block">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={foto} alt="Evidencia del taller" className="h-full w-full object-cover" />
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </Card>
+        )}
+
+        {pedido.estado === "entregado" && (
+          <Card className="mt-6">
+            <h2 className="font-display text-lg text-borgona">Tu opinión</h2>
+            {pedido.resena ? (
+              <>
+                <div className="mt-2 flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <span key={i} className={`text-lg ${pedido.resena!.puntaje >= i + 1 ? "text-dorado-suave" : "text-greige/60"}`}>★</span>
+                  ))}
+                </div>
+                {pedido.resena.comentario && <p className="mt-2 text-sm text-carbon/65 italic">&ldquo;{pedido.resena.comentario}&rdquo;</p>}
+                <p className="mt-2 text-xs text-carbon/45">Gracias por calificar tu experiencia.</p>
+              </>
+            ) : (
+              <>
+                <p className="mt-2 text-sm text-carbon/65">Tu pedido fue entregado. ¿Cómo fue tu experiencia con el taller?</p>
+                <div className="mt-3 flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setPuntajeSeleccionado(i + 1)}
+                      className={`text-2xl transition-colors ${puntajeSeleccionado >= i + 1 ? "text-dorado-suave" : "text-greige/60 hover:text-dorado-suave/60"}`}
+                      aria-label={`${i + 1} estrellas`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+                <textarea
+                  value={comentarioResena}
+                  onChange={(e) => setComentarioResena(e.target.value)}
+                  rows={2}
+                  placeholder="Cuéntanos cómo te fue (opcional)…"
+                  className="mt-3 w-full rounded-xl border border-greige/70 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-borgona/50"
+                />
+                {errorResena && <p className="mt-2 text-sm text-borgona">{errorResena}</p>}
+                <Button
+                  variant="primary"
+                  className="mt-3"
+                  onClick={enviarResena}
+                  disabled={enviandoResena || puntajeSeleccionado === 0}
+                >
+                  {enviandoResena ? "Enviando…" : "Enviar calificación"}
+                </Button>
+              </>
+            )}
+          </Card>
+        )}
 
         {pedido.estado === "entregado" && (
           <Card className="mt-6 bg-gradient-to-br from-rosa/30 to-marfil">

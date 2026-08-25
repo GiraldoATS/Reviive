@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Pago
+from .models import Pago, PagoCliente
 
 
 class PagoSerializer(serializers.ModelSerializer):
@@ -32,3 +32,10 @@ class PagoSerializer(serializers.ModelSerializer):
             "fecha_pago",
             "creado_en",
         ]
+
+
+class PagoClienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PagoCliente
+        fields = ["id", "cotizacion", "preference_id", "payment_id", "monto", "estado", "creado_en", "pagado_en"]
+        read_only_fields = fields

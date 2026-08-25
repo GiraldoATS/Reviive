@@ -7,7 +7,8 @@ from django.conf import settings
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework import status
+from rest_framework import status, viewsets
+from rest_framework.permissions import BasePermission
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -30,6 +31,30 @@ from .serializers import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class EsSupervisorOAdmin(BasePermission):
+    def has_permission(self, request, view) -> bool:
+        user = request.user
+        return user.is_authenticated and (
+            user.is_staff or user.rol in {"supervisor_ia", "administrador", "superadministrador"}
+        )
+
+
+class EjecucionAgenteViewSet(viewsets.ReadOnlyModelViewSet):
+    """/api/v1/agent-runs — sólo lectura para supervisión (las escrituras
+    siguen siendo exclusivas de n8n vía agent-runs/request y /complete,
+    con HMAC). Filtra por ?agente=<codigo>."""
+
+    serializer_class = EjecucionAgenteSerializer
+    permission_classes = [EsSupervisorOAdmin]
+
+    def get_queryset(self):
+        queryset = EjecucionAgente.objects.order_by("-creado_en")
+        agente = self.request.query_params.get("agente")
+        if agente:
+            queryset = queryset.filter(agente=agente)
+        return queryset
 
 
 class AgentRunRequestView(APIView):

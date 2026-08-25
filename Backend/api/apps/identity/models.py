@@ -65,6 +65,64 @@ class Perfil(models.Model):
         return self.nombre
 
 
+class ConfiguracionGlobal(models.Model):
+    """Fila única (singleton, pk=1) con los datos generales de la
+    plataforma que antes admin/configuracion mostraba quemados."""
+
+    nombre_empresa = models.CharField(max_length=150, default="Reviive SAS")
+    correo_contacto = models.EmailField(default="contacto@reviive.com")
+    telefono_contacto = models.CharField(max_length=30, blank=True, default="")
+    zona_horaria = models.CharField(max_length=50, default="America/Bogota")
+    moneda = models.CharField(max_length=10, default="COP")
+    idioma = models.CharField(max_length=10, default="es")
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def obtener(cls) -> "ConfiguracionGlobal":
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self) -> str:
+        return self.nombre_empresa
+
+
+class PlantillaNotificacion(models.Model):
+    """Plantillas reales de correo/Telegram que el equipo administra
+    (antes admin/notificaciones mostraba una lista fija inventada)."""
+
+    class Canal(models.TextChoices):
+        CORREO = "correo", "Correo"
+        TELEGRAM = "telegram", "Telegram"
+
+    nombre = models.CharField(max_length=150)
+    canal = models.CharField(max_length=16, choices=Canal.choices, default=Canal.CORREO)
+    asunto = models.CharField(max_length=200, blank=True, default="")
+    cuerpo = models.TextField(blank=True, default="")
+    activa = models.BooleanField(default=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return self.nombre
+
+
+class CodigoVinculacionTelegram(models.Model):
+    """Código temporal para vincular la cuenta web de un usuario con su
+    chat de Telegram (evita quedar con dos identidades separadas, ver
+    comentario en Perfil.telegram_chat_id)."""
+
+    usuario = models.ForeignKey(
+        Usuario, on_delete=models.CASCADE, related_name="codigos_vinculacion_telegram"
+    )
+    codigo = models.CharField(max_length=8, unique=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    expira_en = models.DateTimeField()
+    usado = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f"{self.codigo} ({self.usuario.email})"
+
+
 class EstadoCanalTelegram(models.Model):
     """Fila única (singleton, pk=1) que sincroniza el sondeo (long-polling)
     del canal de Telegram entre ejecuciones del workflow de n8n que pueden

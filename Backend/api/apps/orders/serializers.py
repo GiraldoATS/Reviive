@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import EventoPedido, MensajePedido, Pedido, Resena
+from .models import EventoPedido, Envio, MensajePedido, Pedido, Reclamacion, Resena
 
 
 class EventoPedidoSerializer(serializers.ModelSerializer):
@@ -60,6 +60,63 @@ class MensajePedidoSerializer(serializers.ModelSerializer):
             return perfil.nombre
         proveedor = getattr(obj.autor, "proveedor", None)
         return proveedor.nombre_taller if proveedor else obj.autor.email
+
+
+class EnvioSerializer(serializers.ModelSerializer):
+    pedido_codigo = serializers.CharField(source="pedido.codigo", read_only=True)
+    cliente_nombre = serializers.SerializerMethodField()
+    ciudad_destino = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Envio
+        fields = [
+            "id",
+            "pedido",
+            "pedido_codigo",
+            "cliente_nombre",
+            "ciudad_destino",
+            "transportadora",
+            "numero_guia",
+            "estado",
+            "fecha_estimada",
+            "creado_en",
+        ]
+        read_only_fields = ["id", "pedido", "creado_en"]
+
+    def get_cliente_nombre(self, obj: Envio) -> str:
+        perfil = getattr(obj.pedido.cliente, "perfil", None)
+        return perfil.nombre if perfil else obj.pedido.cliente.email
+
+    def get_ciudad_destino(self, obj: Envio) -> str:
+        perfil = getattr(obj.pedido.cliente, "perfil", None)
+        return perfil.ciudad if perfil else ""
+
+
+class ReclamacionSerializer(serializers.ModelSerializer):
+    cliente_nombre = serializers.SerializerMethodField()
+    pedido_codigo = serializers.CharField(source="pedido.codigo", read_only=True, default="")
+
+    class Meta:
+        model = Reclamacion
+        fields = [
+            "id",
+            "cliente",
+            "cliente_nombre",
+            "pedido",
+            "pedido_codigo",
+            "tipo",
+            "descripcion",
+            "estado",
+            "prioridad",
+            "respuesta_staff",
+            "creado_en",
+            "actualizado_en",
+        ]
+        read_only_fields = ["id", "cliente", "creado_en", "actualizado_en"]
+
+    def get_cliente_nombre(self, obj: Reclamacion) -> str:
+        perfil = getattr(obj.cliente, "perfil", None)
+        return perfil.nombre if perfil else obj.cliente.email
 
 
 class PedidoSerializer(serializers.ModelSerializer):

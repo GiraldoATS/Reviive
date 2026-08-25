@@ -6,6 +6,7 @@ django-environ==0.11.2
 django-cors-headers==4.6.0
 gunicorn==23.0.0
 requests==2.34.2
+mercadopago==3.5.0
 # Modulo de Machine Learning (Backend/ml/) -- carga el pipeline entrenado
 # (arbol de decision) para POST /api/v1/ml/recomendar-producto.
 scikit-learn==1.9.0

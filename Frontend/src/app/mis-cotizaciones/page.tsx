@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/Button";
 import ClienteShell from "@/components/ClienteShell";
 import { useAuth } from "@/lib/AuthContext";
@@ -31,6 +31,93 @@ const ESTADO_INFO: Record<string, { label: string; clase: string }> = {
   rechazada: { label: "Rechazada", clase: "bg-carbon/10 text-carbon/50" },
   vencida: { label: "Vencida", clase: "bg-greige/50 text-carbon/45" },
 };
+
+function ModalPagoSimulado({
+  cotizacion,
+  procesando,
+  onConfirmar,
+  onCancelar,
+}: {
+  cotizacion: CotizacionApi;
+  procesando: boolean;
+  onConfirmar: () => void;
+  onCancelar: () => void;
+}) {
+  const [numero, setNumero] = useState("");
+  const [titular, setTitular] = useState("");
+  const [vencimiento, setVencimiento] = useState("");
+  const [cvv, setCvv] = useState("");
+  const listo = numero.replace(/\s/g, "").length >= 12 && titular.trim().length >= 2 && vencimiento.length >= 4 && cvv.length >= 3;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-carbon/50 px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+        <h3 className="font-display text-xl text-carbon">Pagar cotización</h3>
+        <p className="mt-1 text-sm text-carbon/60">
+          {cotizacion.producto_nombre || "Servicio de restauración"} — {formatoCOP(Number(cotizacion.total))}
+        </p>
+
+        <div className="mt-5 space-y-3">
+          <div>
+            <label className="text-xs text-carbon/60">Número de tarjeta</label>
+            <input
+              value={numero}
+              onChange={(e) => setNumero(e.target.value)}
+              placeholder="0000 0000 0000 0000"
+              maxLength={19}
+              className="mt-1 w-full rounded-xl border border-greige/60 px-4 py-2.5 text-sm focus:border-borgona focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-carbon/60">Nombre del titular</label>
+            <input
+              value={titular}
+              onChange={(e) => setTitular(e.target.value)}
+              placeholder="Como aparece en la tarjeta"
+              className="mt-1 w-full rounded-xl border border-greige/60 px-4 py-2.5 text-sm focus:border-borgona focus:outline-none"
+            />
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="text-xs text-carbon/60">Vencimiento</label>
+              <input
+                value={vencimiento}
+                onChange={(e) => setVencimiento(e.target.value)}
+                placeholder="MM/AA"
+                maxLength={5}
+                className="mt-1 w-full rounded-xl border border-greige/60 px-4 py-2.5 text-sm focus:border-borgona focus:outline-none"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="text-xs text-carbon/60">CVV</label>
+              <input
+                value={cvv}
+                onChange={(e) => setCvv(e.target.value)}
+                placeholder="123"
+                maxLength={4}
+                className="mt-1 w-full rounded-xl border border-greige/60 px-4 py-2.5 text-sm focus:border-borgona focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 flex gap-3">
+          <button
+            type="button"
+            onClick={onCancelar}
+            disabled={procesando}
+            className="flex-1 rounded-full border border-greige/60 px-4 py-2.5 text-sm text-carbon/60 hover:border-borgona/40 hover:text-borgona transition-colors disabled:opacity-50"
+          >
+            Cancelar
+          </button>
+          <Button onClick={onConfirmar} disabled={!listo || procesando} className="flex-1 text-sm">
+            {procesando ? "Procesando…" : "Pagar"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const filtros = [
   { id: "todas", label: "Todas" },
@@ -62,6 +149,9 @@ function ContenidoCotizaciones() {
   const [filtro, setFiltro] = useState<(typeof filtros)[number]["id"]>("todas");
   const [procesando, setProcesando] = useState<string | null>(null);
   const [avisoPorId, setAvisoPorId] = useState<Record<string, string>>({});
+  const [avisoPago, setAvisoPago] = useState<string | null>(null);
+  const [pagoSimulado, setPagoSimulado] = useState<CotizacionApi | null>(null);
+  const searchParams = useSearchParams();
 
   function cargar() {
     if (!accessToken) return;
@@ -72,6 +162,78 @@ function ContenidoCotizaciones() {
   }
 
   useEffect(cargar, [accessToken]);
+
+  // Mercado Pago redirige de vuelta aquí con ?payment_id=... (o
+  // collection_id=...): se confirma YA MISMO contra la API real en vez de
+  // confiar en el estado que venga en la URL (RN-10 sobre dinero real).
+  useEffect(() => {
+    if (!accessToken) return;
+    const paymentId = searchParams.get("payment_id") || searchParams.get("collection_id");
+    if (!paymentId) return;
+    setAvisoPago("Confirmando tu pago…");
+    fetch(`${API_URL}/payments/mercadopago/confirmar?payment_id=${paymentId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((pago) => {
+        if (pago?.estado === "aprobado") {
+          setAvisoPago(null);
+          router.push("/mis-procesos");
+        } else if (pago?.estado === "rechazado") {
+          setAvisoPago("El pago no fue aprobado. Puedes intentar de nuevo desde tu cotización.");
+        } else {
+          setAvisoPago("Tu pago está pendiente de confirmación. Te avisaremos cuando se confirme.");
+        }
+        cargar();
+      })
+      .catch(() => setAvisoPago("No pudimos confirmar el pago todavía. Si ya pagaste, actualiza esta página en un momento."));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken, searchParams]);
+
+  async function iniciarPago(c: CotizacionApi) {
+    if (!accessToken) return;
+    setProcesando(c.id);
+    setAvisoPorId((prev) => ({ ...prev, [c.id]: "" }));
+    try {
+      const resPago = await fetch(`${API_URL}/payments/mercadopago/iniciar/${c.id}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const pago = await resPago.json().catch(() => null);
+      if (!resPago.ok) {
+        throw new Error(pago?.detail || pago?.error?.mensaje || "No se pudo iniciar el cobro.");
+      }
+      if (pago.simulado) {
+        setProcesando(null);
+        setPagoSimulado(c);
+        return;
+      }
+      window.location.href = pago.checkout_url;
+    } catch (err) {
+      setAvisoPorId((prev) => ({ ...prev, [c.id]: err instanceof Error ? err.message : "Ocurrió un error inesperado." }));
+      setProcesando(null);
+    }
+  }
+
+  async function confirmarPagoSimulado(c: CotizacionApi) {
+    if (!accessToken) return;
+    setProcesando(c.id);
+    try {
+      const res = await fetch(`${API_URL}/payments/simulado/confirmar/${c.id}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.detail || data?.error?.mensaje || "No se pudo confirmar el pago.");
+      }
+      setPagoSimulado(null);
+      router.push("/mis-procesos");
+    } catch (err) {
+      setAvisoPorId((prev) => ({ ...prev, [c.id]: err instanceof Error ? err.message : "Ocurrió un error inesperado." }));
+      setProcesando(null);
+    }
+  }
 
   async function aceptar(c: CotizacionApi) {
     if (!accessToken) return;
@@ -87,20 +249,10 @@ function ContenidoCotizaciones() {
         const data = await resEstado.json().catch(() => null);
         throw new Error(data?.error?.mensaje || "No se pudo aceptar la cotización.");
       }
-      const resPedido = await fetch(`${API_URL}/orders/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
-        body: JSON.stringify({ cotizacion: c.id }),
-      });
-      const pedido = await resPedido.json().catch(() => null);
-      if (!resPedido.ok) {
-        throw new Error(pedido?.error?.mensaje || "La cotización quedó aceptada, pero no se pudo iniciar el pedido.");
-      }
-      router.push(`/pedido/${pedido.id}`);
+      await iniciarPago(c);
     } catch (err) {
       setAvisoPorId((prev) => ({ ...prev, [c.id]: err instanceof Error ? err.message : "Ocurrió un error inesperado." }));
       cargar();
-    } finally {
       setProcesando(null);
     }
   }
@@ -160,6 +312,9 @@ function ContenidoCotizaciones() {
       </section>
 
       {error && <p className="mx-auto max-w-6xl px-6 pt-6 text-sm text-borgona">{error}</p>}
+      {avisoPago && (
+        <p className="mx-auto max-w-6xl px-6 pt-6 text-sm text-borgona-dark bg-dorado-suave/10 rounded-xl py-3">{avisoPago}</p>
+      )}
 
       {tiene && (
         <section className="mx-auto max-w-6xl w-full px-6 pt-10 grid sm:grid-cols-3 gap-5">
@@ -282,9 +437,18 @@ function ContenidoCotizaciones() {
                           </>
                         )}
                         {c.estado === "aceptada" && (
-                          <Link href="/mis-procesos" className="rounded-full border border-borgona text-borgona px-6 py-2.5 text-xs hover:bg-borgona/5 transition-colors whitespace-nowrap text-center">
-                            Ver mi proceso →
-                          </Link>
+                          <>
+                            <Button
+                              onClick={() => iniciarPago(c)}
+                              disabled={procesando === c.id}
+                              className="text-xs whitespace-nowrap"
+                            >
+                              {procesando === c.id ? "Redirigiendo…" : "Pagar ahora"}
+                            </Button>
+                            <Link href="/mis-procesos" className="rounded-full border border-borgona text-borgona px-6 py-2.5 text-xs hover:bg-borgona/5 transition-colors whitespace-nowrap text-center">
+                              Ya pagué, ver mi proceso →
+                            </Link>
+                          </>
                         )}
                       </div>
                     </div>
@@ -329,6 +493,15 @@ function ContenidoCotizaciones() {
           </div>
         </div>
       </section>
+
+      {pagoSimulado && (
+        <ModalPagoSimulado
+          cotizacion={pagoSimulado}
+          procesando={procesando === pagoSimulado.id}
+          onConfirmar={() => confirmarPagoSimulado(pagoSimulado)}
+          onCancelar={() => setPagoSimulado(null)}
+        />
+      )}
     </>
   );
 }
@@ -336,7 +509,9 @@ function ContenidoCotizaciones() {
 export default function MisCotizacionesPage() {
   return (
     <ClienteShell activeHref="/mis-cotizaciones">
-      <ContenidoCotizaciones />
+      <Suspense fallback={<div className="min-h-[60vh]" />}>
+        <ContenidoCotizaciones />
+      </Suspense>
     </ClienteShell>
   );
 }

@@ -71,7 +71,7 @@ export default function ProveedoresAdminPage() {
             <Badge key="e" tone={p.estado_validacion === "validado" ? "success" : p.estado_validacion === "suspendido" ? "pending" : "pending"}>
               {labelByEstado[p.estado_validacion] ?? p.estado_validacion}
             </Badge>,
-            <a key="a" href="/admin/proveedores/validacion" className="text-borgona text-xs">Ver →</a>,
+            <a key="a" href={`/admin/proveedores/validacion?proveedor=${p.id}`} className="text-borgona text-xs">Ver →</a>,
           ])}
         />
       )}

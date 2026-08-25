@@ -54,6 +54,7 @@ export interface DatosRegistro {
   consentimiento_datos: boolean;
   rol?: "cliente" | "proveedor";
   nombre_taller?: string;
+  documentos?: { tipo: "portafolio" | "documento_legal"; nombre: string; base64: string }[];
 }
 
 export async function registrarUsuario(datos: DatosRegistro): Promise<RespuestaAuth> {

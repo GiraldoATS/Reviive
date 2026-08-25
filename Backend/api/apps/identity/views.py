@@ -1,4 +1,7 @@
 import logging
+import random
+import string
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
@@ -7,8 +10,8 @@ from django.db import transaction
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import mixins, status, viewsets
+from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,16 +21,73 @@ from django.utils import timezone
 
 from apps.agents.permissions import IsN8nOrchestrator
 
-from .models import EstadoCanalTelegram, Perfil, Usuario
+from .models import (
+    CodigoVinculacionTelegram,
+    ConfiguracionGlobal,
+    EstadoCanalTelegram,
+    Perfil,
+    PlantillaNotificacion,
+    Usuario,
+)
 from .serializers import (
+    ConfiguracionGlobalSerializer,
     ConfirmarRestablecimientoSerializer,
     IdentificarTelegramSerializer,
     LiberarBloqueoTelegramSerializer,
     PerfilSerializer,
+    PlantillaNotificacionSerializer,
     RegistroSerializer,
     SolicitarRestablecimientoSerializer,
+    UsuarioAdminSerializer,
     UsuarioSerializer,
 )
+
+STAFF_ROLES = {"administrador", "superadministrador"}
+
+
+class EsStaffAdministrativo(BasePermission):
+    def has_permission(self, request, view) -> bool:
+        user = request.user
+        return user.is_authenticated and (user.is_staff or user.rol in STAFF_ROLES)
+
+
+class UsuarioAdminViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+    """/api/v1/users — gestión de usuarios y roles, sólo staff. Lista,
+    detalle y edición de rol/estado — nunca creación/borrado desde aquí
+    (eso pasa por /auth/register), ni self-service (eso es /users/me)."""
+
+    serializer_class = UsuarioAdminSerializer
+    permission_classes = [EsStaffAdministrativo]
+    queryset = Usuario.objects.select_related("perfil").order_by("-date_joined")
+
+
+class PlantillaNotificacionViewSet(viewsets.ModelViewSet):
+    """/api/v1/notification-templates — sólo staff."""
+
+    serializer_class = PlantillaNotificacionSerializer
+    permission_classes = [EsStaffAdministrativo]
+    queryset = PlantillaNotificacion.objects.order_by("-actualizado_en")
+
+
+class ConfiguracionGlobalView(APIView):
+    """GET/PUT /api/v1/settings — configuración general de la plataforma."""
+
+    permission_classes = [EsStaffAdministrativo]
+
+    def get(self, request: Request) -> Response:
+        return Response(ConfiguracionGlobalSerializer(ConfiguracionGlobal.obtener()).data)
+
+    def put(self, request: Request) -> Response:
+        config = ConfiguracionGlobal.obtener()
+        serializer = ConfiguracionGlobalSerializer(config, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 logger = logging.getLogger(__name__)
 
@@ -270,3 +330,87 @@ class ConfirmarRestablecimientoView(APIView):
         usuario.save(update_fields=["password"])
 
         return Response({"mensaje": "Tu contraseña se actualizó correctamente."})
+
+
+def _generar_codigo_telegram() -> str:
+    alfabeto = "".join(c for c in string.ascii_uppercase + string.digits if c not in "0O1I")
+    for _ in range(10):
+        codigo = "".join(random.choices(alfabeto, k=6))
+        if not CodigoVinculacionTelegram.objects.filter(codigo=codigo).exists():
+            return codigo
+    raise RuntimeError("No se pudo generar un código de vinculación único.")
+
+
+class GenerarCodigoTelegramView(APIView):
+    """POST /api/v1/auth/telegram/link/generate — el usuario web pide un
+    código para vincular su cuenta a su chat de Telegram."""
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request) -> Response:
+        # Invalida códigos anteriores sin usar: sólo el más reciente es válido.
+        CodigoVinculacionTelegram.objects.filter(usuario=request.user, usado=False).delete()
+        codigo = CodigoVinculacionTelegram.objects.create(
+            usuario=request.user,
+            codigo=_generar_codigo_telegram(),
+            expira_en=timezone.now() + timedelta(minutes=10),
+        )
+        return Response(
+            {
+                "codigo": codigo.codigo,
+                "expira_en": codigo.expira_en,
+                "bot_username": "AlmaReviiveBot",
+            }
+        )
+
+
+class EstadoVinculacionTelegramView(APIView):
+    """GET /api/v1/auth/telegram/link/status — para que el frontend haga
+    polling y sepa cuándo se completó la vinculación."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request) -> Response:
+        perfil = getattr(request.user, "perfil", None)
+        return Response({"vinculado": bool(perfil and perfil.telegram_chat_id)})
+
+
+class ConfirmarVinculacionTelegramView(APIView):
+    """POST /api/v1/auth/telegram/link/confirm — la llama n8n (canal de
+    Telegram) cuando el usuario envía un código al bot."""
+
+    permission_classes = [IsN8nOrchestrator]
+
+    def post(self, request: Request) -> Response:
+        codigo_texto = (request.data.get("codigo") or "").strip().upper()
+        chat_id = request.data.get("chat_id")
+        if not codigo_texto or chat_id is None:
+            return Response({"ok": False, "mensaje": "Faltan datos."}, status=400)
+
+        codigo = CodigoVinculacionTelegram.objects.filter(
+            codigo=codigo_texto, usado=False, expira_en__gt=timezone.now()
+        ).first()
+        if codigo is None:
+            return Response(
+                {"ok": False, "mensaje": "Ese código no es válido o ya venció. Genera uno nuevo desde la web."},
+                status=404,
+            )
+
+        # Si ese chat ya estaba vinculado a otra cuenta (p. ej. una creada
+        # automáticamente por hablar con Alma sin haberse registrado antes),
+        # se libera de ahí para poder asignarlo a la cuenta que sí está
+        # vinculando activamente (unique=True en telegram_chat_id).
+        Perfil.objects.filter(telegram_chat_id=chat_id).exclude(usuario=codigo.usuario).update(
+            telegram_chat_id=None
+        )
+
+        perfil, _ = Perfil.objects.get_or_create(
+            usuario=codigo.usuario, defaults={"nombre": codigo.usuario.email}
+        )
+        perfil.telegram_chat_id = chat_id
+        perfil.save(update_fields=["telegram_chat_id"])
+
+        codigo.usado = True
+        codigo.save(update_fields=["usado"])
+
+        return Response({"ok": True, "nombre": perfil.nombre})

@@ -1,17 +1,29 @@
 from rest_framework import status, viewsets
-from rest_framework.exceptions import NotFound
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.permissions import BasePermission, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.agents.permissions import IsN8nOrchestrator
 
-from .models import Proveedor
-from .serializers import DiaBloqueadoProveedorSerializer, MatchRequestSerializer, ProveedorSerializer
+from .models import DocumentoProveedor, Proveedor
+from .serializers import (
+    DiaBloqueadoProveedorSerializer,
+    DocumentoProveedorSerializer,
+    MatchRequestSerializer,
+    ProveedorSerializer,
+)
 
 
 STAFF_ROLES = {"administrador", "superadministrador"}
+
+
+class EsStaffAdministrativo(BasePermission):
+    def has_permission(self, request, view) -> bool:
+        user = request.user
+        return user.is_authenticated and (user.is_staff or user.rol in STAFF_ROLES)
 
 
 class ProveedorViewSet(viewsets.ReadOnlyModelViewSet):
@@ -27,6 +39,44 @@ class ProveedorViewSet(viewsets.ReadOnlyModelViewSet):
         if user.is_staff or user.rol in STAFF_ROLES:
             return Proveedor.objects.all()
         return Proveedor.objects.filter(estado_validacion="validado")
+
+    @action(detail=True, methods=["get"], permission_classes=[EsStaffAdministrativo])
+    def documentos(self, request: Request, pk=None) -> Response:
+        proveedor = self.get_object()
+        return Response(
+            DocumentoProveedorSerializer(proveedor.documentos.all(), many=True).data
+        )
+
+    @action(detail=True, methods=["post"], url_path="validar", permission_classes=[EsStaffAdministrativo])
+    def validar(self, request: Request, pk=None) -> Response:
+        proveedor = self.get_object()
+        accion = request.data.get("accion")
+        if accion == "aprobar":
+            proveedor.estado_validacion = Proveedor.EstadoValidacion.VALIDADO
+        elif accion == "rechazar":
+            proveedor.estado_validacion = Proveedor.EstadoValidacion.SUSPENDIDO
+        else:
+            raise ValidationError({"accion": "Debe ser 'aprobar' o 'rechazar'."})
+        proveedor.save(update_fields=["estado_validacion"])
+        return Response(ProveedorSerializer(proveedor).data)
+
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path=r"documentos/(?P<doc_id>[^/.]+)/revisar",
+        permission_classes=[EsStaffAdministrativo],
+    )
+    def revisar_documento(self, request: Request, pk=None, doc_id=None) -> Response:
+        proveedor = self.get_object()
+        documento = proveedor.documentos.filter(pk=doc_id).first()
+        if documento is None:
+            raise NotFound("Documento no encontrado.")
+        nuevo_estado = request.data.get("estado_revision")
+        if nuevo_estado not in {choice[0] for choice in DocumentoProveedor.EstadoRevision.choices}:
+            raise ValidationError({"estado_revision": "Estado inválido."})
+        documento.estado_revision = nuevo_estado
+        documento.save(update_fields=["estado_revision"])
+        return Response(DocumentoProveedorSerializer(documento).data)
 
 
 class ProveedorMeView(APIView):

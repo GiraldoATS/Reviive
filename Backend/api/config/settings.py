@@ -141,6 +141,25 @@ EMAIL_BACKEND = (
     else "django.core.mail.backends.console.EmailBackend"
 )
 
+# Pago real del cliente (Mercado Pago, credenciales de prueba -- ver
+# apps.payments). Vacío por defecto: el checkout falla con un mensaje
+# claro en vez de fingir un pago exitoso (RN-10).
+MERCADOPAGO_ACCESS_TOKEN = env("MERCADOPAGO_ACCESS_TOKEN", default="")
+MERCADOPAGO_PUBLIC_KEY = env("MERCADOPAGO_PUBLIC_KEY", default="")
+MERCADOPAGO_WEBHOOK_SECRET = env("MERCADOPAGO_WEBHOOK_SECRET", default="")
+
+# El sandbox de Mercado Pago exige que comprador y vendedor sean ambos de
+# prueba o ambos reales -- lograr esa combinación requiere credenciales
+# de prueba que Mercado Pago no deja obtener de forma automatizada. Para
+# poder demostrar el flujo de pago (laboratorio/exposición, sin
+# despliegue a producción) sin depender de que su sandbox coopere, esta
+# bandera permite "aprobar" el pago dentro de la propia app -- pero
+# siempre reutilizando crear_pedido_desde_cotizacion, el mismo camino
+# real que usaría un pago aprobado de verdad. Apagada por defecto: con
+# credenciales reales configuradas, jamás se debe fingir un cobro que no
+# ocurrió (RN-10).
+PAGOS_SIMULADOS = env.bool("PAGOS_SIMULADOS", default=False)
+
 LANGUAGE_CODE = "es-co"
 TIME_ZONE = "America/Bogota"
 USE_I18N = True
