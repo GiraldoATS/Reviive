@@ -3,9 +3,9 @@ import Image from "next/image";
 import Button from "./Button";
 
 const redes = [
-  { icono: "/images/social/instagram.png", label: "Instagram", href: "https://instagram.com" },
-  { icono: "/images/social/facebook.png", label: "Facebook", href: "https://facebook.com" },
-  { icono: "/images/social/tiktok.png", label: "TikTok", href: "https://tiktok.com" },
+  { icono: "/images/social/instagram.png", label: "Instagram", href: "https://www.instagram.com/reviivemedellin" },
+  { icono: "/images/social/facebook.png", label: "Facebook", href: "https://www.facebook.com/share/1CB8T3Zvh3/" },
+  { icono: "/images/social/tiktok.png", label: "TikTok", href: "https://www.tiktok.com/@reviive.medellin" },
   { icono: "/images/social/correo.png", label: "Correo", href: "mailto:reviivemed@gmail.com" },
   { icono: "/images/social/telegram.png", label: "Telegram", href: "https://t.me" },
 ];
@@ -55,6 +55,7 @@ export default function Footer() {
                 key={r.label}
                 href={r.href}
                 aria-label={r.label}
+                {...(r.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 className="relative h-10 w-10 shrink-0 transition-transform duration-200 hover:scale-110 hover:drop-shadow-[0_0_10px_rgba(212,175,55,0.9)]"
               >
                 <Image src={r.icono} alt={r.label} fill sizes="40px" className="object-contain" />

@@ -52,9 +52,9 @@ const contactoDirecto = [
 ];
 
 const redes = [
-  { icono: "instagram", nombre: "Instagram", texto: "Historias, procesos y resultados." },
-  { icono: "facebook", nombre: "Facebook", texto: "Comunidad Reviive." },
-  { icono: "tiktok", nombre: "TikTok", texto: "Transformaciones y detrás de cámaras." },
+  { icono: "instagram", nombre: "Instagram", texto: "Historias, procesos y resultados.", href: "https://www.instagram.com/reviivemedellin" },
+  { icono: "facebook", nombre: "Facebook", texto: "Comunidad Reviive.", href: "https://www.facebook.com/share/1CB8T3Zvh3/" },
+  { icono: "tiktok", nombre: "TikTok", texto: "Transformaciones y detrás de cámaras.", href: "https://www.tiktok.com/@reviive.medellin" },
 ];
 
 const preguntas = [
@@ -348,7 +348,7 @@ export default function ContactoPage() {
                 </div>
                 <h3 className="mt-3 font-display text-base text-borgona">{r.nombre}</h3>
                 <p className="mt-1 text-xs text-carbon/60">{r.texto}</p>
-                <Button variant="secondary" className="mt-4 !px-5 !py-2 text-xs">
+                <Button href={r.href} externo variant="secondary" className="mt-4 !px-5 !py-2 text-xs">
                   Síguenos
                 </Button>
               </div>
