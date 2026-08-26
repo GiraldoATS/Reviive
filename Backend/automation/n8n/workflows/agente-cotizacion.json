@@ -1,0 +1,511 @@
+{
+  "name": "Agente - Cotizacion",
+  "nodes": [
+    {
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "reviive-recommendations-creadas",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "reviive/recommendations/creadas",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "obtener-recuerdo",
+      "name": "Obtener recuerdo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.DJANGO_API_URL }}/memories/{{ $json.body.recuerdo_id }}/",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.body.access_token }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "obtener-producto",
+      "name": "Obtener producto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.DJANGO_API_URL }}/products/{{ $('Webhook').item.json.body.producto_id }}/",
+        "authentication": "none",
+        "options": {}
+      }
+    },
+    {
+      "id": "construir-firma-match",
+      "name": "Construir firma match",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const webhookBody = $('Webhook').item.json.body;\nconst body = {\n  producto_id: webhookBody.producto_id,\n  ciudad: webhookBody.ciudad || '',\n};\nreturn [{ json: { bodyString: JSON.stringify(body) } }];"
+      }
+    },
+    {
+      "id": "firmar-match",
+      "name": "Firmar match",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        1020,
+        0
+      ],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ $json.bodyString }}",
+        "dataPropertyName": "signature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": {
+          "id": "fG3VUKNiYE9P68kJ",
+          "name": "Reviive HMAC"
+        }
+      }
+    },
+    {
+      "id": "consultar-matching-real",
+      "name": "Consultar matching real",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1260,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/providers/match",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Reviive-Signature",
+              "value": "={{ $json.signature }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $('Construir firma match').item.json.bodyString }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "construir-firma-request",
+      "name": "Construir firma request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const body = { agente: 'cotizacion', agent_version: 'v1' };\nreturn [{ json: { bodyString: JSON.stringify(body) } }];"
+      }
+    },
+    {
+      "id": "firmar-request",
+      "name": "Firmar request",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        0
+      ],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ $json.bodyString }}",
+        "dataPropertyName": "signature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": {
+          "id": "fG3VUKNiYE9P68kJ",
+          "name": "Reviive HMAC"
+        }
+      }
+    },
+    {
+      "id": "registrar-inicio-agente",
+      "name": "Registrar inicio de agente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2040,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/agent-runs/request",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Reviive-Signature",
+              "value": "={{ $json.signature }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.bodyString }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "preparar-prompt-cotizacion",
+      "name": "Preparar prompt cotizacion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2300,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const recuerdo = $('Obtener recuerdo').item.json;\nconst producto = $('Obtener producto').item.json;\n\n// /providers/match responde un array JSON; el nodo HTTP Request de n8n\n// reparte cada elemento del array en un ITEM separado (no llega como un\n// solo item.json = array), por eso hay que leer .all() y no .item. Si el\n// matching fallo (onError continueRegularOutput) o no encontro nadie, se\n// sigue con lista vacia -- el prompt esta instruido para devolver\n// cotizaciones: [] en ese caso, nunca inventar un proveedor.\nconst proveedoresRaw = $('Consultar matching real').all().map((i) => i.json);\nconst proveedores = proveedoresRaw\n  .filter((p) => p && p.id != null)\n  .slice(0, 5)\n  .map((p) => ({ id: Number(p.id), nombre_taller: p.nombre_taller, ciudad: p.ciudad, calificacion: p.calificacion }));\n\nconst systemPrompt = `Eres el agente de Cotizacion de Reviive, un taller de restauracion de objetos con valor emocional. Preparas BORRADORES preliminares de cotizacion para que cada proveedor (taller) los revise, ajuste y envie el mismo -- nunca son precios oficiales ni confirmados al cliente (RN-10). Recibiras la historia del recuerdo, el servicio del catalogo ya recomendado (con su precio_base de referencia) y una lista de proveedores reales, ya validados y compatibles con ese servicio y ciudad. Responde UNICAMENTE con un JSON con esta forma exacta: {\"cotizaciones\": [{\"proveedor_id\": <id entero que exista en la lista de proveedores dada>, \"total\": <numero entero en pesos colombianos, cercano a precio_base pero ajustado segun la complejidad de la historia y el estado del objeto>, \"vigencia_dias\": <entero entre 7 y 30>, \"notas\": <string breve, 1-2 frases, desglose aproximado de materiales, mano de obra, logistica y comision que respalde el valor>}]}. Genera como maximo una cotizacion por cada proveedor de la lista, priorizando a los de mejor calificacion, y nunca mas de 3 en total. Si la lista de proveedores esta vacia, responde exactamente {\"cotizaciones\": []}. Nunca inventes un proveedor_id que no este en la lista dada. Deja siempre claro (en notas) que es una estimacion preliminar sujeta a revision del taller, nunca un precio o tiempo confirmado.`;\n\nconst userPayload = {\n  recuerdo: {\n    historia: recuerdo.historia,\n    objetos: (recuerdo.objetos || []).map((o) => ({\n      tipo: o.tipo, material: o.material, estado: o.estado, nivel_transformacion: o.nivel_transformacion,\n    })),\n  },\n  servicio: {\n    nombre: producto.nombre,\n    descripcion: producto.descripcion,\n    precio_base: Number(producto.precio_base),\n  },\n  proveedores,\n};\n\nreturn [{\n  json: {\n    recuerdo_id: $('Webhook').item.json.body.recuerdo_id,\n    producto_id: $('Webhook').item.json.body.producto_id,\n    run_id: $('Registrar inicio de agente').item.json.run_id,\n    openaiPayload: {\n      model: 'gpt-4o-mini',\n      response_format: { type: 'json_object' },\n      temperature: 0.4,\n      max_tokens: 500,\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: JSON.stringify(userPayload) },\n      ],\n    },\n  },\n}];"
+      }
+    },
+    {
+      "id": "llamar-openai",
+      "name": "Llamar a OpenAI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2560,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.openaiPayload }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "8kXUBb43FVoTNqhA",
+          "name": "OpenAI Reviive"
+        }
+      }
+    },
+    {
+      "id": "procesar-respuesta",
+      "name": "Procesar respuesta OpenAI",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2820,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const resp = $json;\nlet cotizaciones = [];\nlet estado = 'fallido';\n\ntry {\n  if (!resp.error && resp.choices && resp.choices.length) {\n    const parsed = JSON.parse(resp.choices[0].message.content);\n    if (Array.isArray(parsed.cotizaciones)) {\n      cotizaciones = parsed.cotizaciones;\n      estado = 'completado';\n    }\n  }\n} catch (e) {\n  estado = 'fallido';\n}\n\nreturn [{\n  json: {\n    recuerdo_id: $('Preparar prompt cotizacion').item.json.recuerdo_id,\n    producto_id: $('Preparar prompt cotizacion').item.json.producto_id,\n    run_id: $('Preparar prompt cotizacion').item.json.run_id,\n    estado,\n    cotizaciones,\n  },\n}];"
+      }
+    },
+    {
+      "id": "construir-firma-complete",
+      "name": "Construir firma complete",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3080,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const body = {\n  status: $json.estado,\n  structured_data: {\n    recuerdo_id: $json.recuerdo_id,\n    producto_id: $json.producto_id,\n    cotizaciones: $json.cotizaciones,\n  },\n};\n\nreturn [{\n  json: {\n    run_id: $json.run_id,\n    recuerdo_id: $json.recuerdo_id,\n    producto_id: $json.producto_id,\n    estado: $json.estado,\n    bodyString: JSON.stringify(body),\n  },\n}];"
+      }
+    },
+    {
+      "id": "firmar-complete",
+      "name": "Firmar complete",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        3340,
+        0
+      ],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ $json.bodyString }}",
+        "dataPropertyName": "signature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": {
+          "id": "fG3VUKNiYE9P68kJ",
+          "name": "Reviive HMAC"
+        }
+      }
+    },
+    {
+      "id": "completar-ejecucion-agente",
+      "name": "Completar ejecucion de agente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3600,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DJANGO_API_URL }}/agent-runs/{{ $json.run_id }}/complete",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Reviive-Signature",
+              "value": "={{ $json.signature }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.bodyString }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "responder-frontend",
+      "name": "Responder al frontend",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        3860,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { recuerdo_id: $('Construir firma complete').item.json.recuerdo_id, run_id: $('Construir firma complete').item.json.run_id, estado: $('Construir firma complete').item.json.estado } }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Obtener recuerdo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener recuerdo": {
+      "main": [
+        [
+          {
+            "node": "Obtener producto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener producto": {
+      "main": [
+        [
+          {
+            "node": "Construir firma match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir firma match": {
+      "main": [
+        [
+          {
+            "node": "Firmar match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firmar match": {
+      "main": [
+        [
+          {
+            "node": "Consultar matching real",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar matching real": {
+      "main": [
+        [
+          {
+            "node": "Construir firma request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir firma request": {
+      "main": [
+        [
+          {
+            "node": "Firmar request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firmar request": {
+      "main": [
+        [
+          {
+            "node": "Registrar inicio de agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar inicio de agente": {
+      "main": [
+        [
+          {
+            "node": "Preparar prompt cotizacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar prompt cotizacion": {
+      "main": [
+        [
+          {
+            "node": "Llamar a OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Llamar a OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Procesar respuesta OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar respuesta OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Construir firma complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir firma complete": {
+      "main": [
+        [
+          {
+            "node": "Firmar complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firmar complete": {
+      "main": [
+        [
+          {
+            "node": "Completar ejecucion de agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Completar ejecucion de agente": {
+      "main": [
+        [
+          {
+            "node": "Responder al frontend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

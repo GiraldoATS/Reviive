@@ -16,20 +16,22 @@ export default async function CatalogoAdminPage() {
           <h1 className="font-display text-2xl text-carbon">Gestión del catálogo</h1>
           <p className="text-sm text-carbon/55">Servicios de restauración activos, cargados desde la API.</p>
         </div>
-        <Button variant="primary" className="text-xs">
-          <IconPlus className="h-4 w-4" /> Nuevo producto
-        </Button>
+        <span title="Próximamente">
+          <Button variant="primary" className="text-xs opacity-50 cursor-not-allowed" disabled>
+            <IconPlus className="h-4 w-4" /> Nuevo producto
+          </Button>
+        </span>
       </div>
 
       <SimpleTable
         columns={["", "Nombre", "Categoría", "Precio base", "Estado", ""]}
         rows={productos.map((p) => [
-          <ProductPhoto key="i" icono={p.imagen} className="h-10 w-10 rounded-lg" />,
+          <ProductPhoto key={`${p.id}-foto`} icono={p.imagen} src={p.imagenUrl} className="h-10 w-10 rounded-lg" />,
           p.nombre,
           p.categoria,
           `$${p.precioBase.toLocaleString("es-CO")}`,
-          <Badge key="e" tone={p.activo ? "success" : "pending"}>{p.activo ? "Activo" : "Inactivo"}</Badge>,
-          <span key="a" className="text-borgona text-xs">Editar →</span>,
+          <Badge key={`${p.id}-estado`} tone={p.activo ? "success" : "pending"}>{p.activo ? "Activo" : "Inactivo"}</Badge>,
+          <span key={`${p.id}-editar`} className="text-carbon/35 text-xs" title="Próximamente">Editar</span>,
         ])}
       />
     </RolePortalShell>

@@ -1,46 +1,121 @@
+"use client";
+
+import { use, useEffect, useState } from "react";
 import RolePortalShell from "@/components/RolePortalShell";
 import Card from "@/components/Card";
 import Badge from "@/components/Badge";
-import Button from "@/components/Button";
+import SimpleTable from "@/components/SimpleTable";
+import { useAuth } from "@/lib/AuthContext";
+import { API_URL } from "@/lib/api";
 
-export default async function DetalleAgenteSupervisionPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  await params;
+interface AgenteApi {
+  agente: string;
+  agente_display: string;
+  total_ejecuciones: number;
+  puntaje_promedio: number | null;
+  latencia_promedio_ms: number | null;
+}
+
+interface EjecucionApi {
+  run_id: string;
+  estado: string;
+  reply: string;
+  agent_version: string;
+  latencia_ms: number | null;
+  evaluation_score: string | null;
+  creado_en: string;
+}
+
+const toneByEstado: Record<string, "success" | "progress" | "pending"> = {
+  completado: "success",
+  en_progreso: "progress",
+  fallido: "pending",
+};
+
+function fechaCorta(iso: string) {
+  return new Date(iso).toLocaleString("es-CO", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
+export default function DetalleAgenteSupervisionPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const { accessToken, cargando: cargandoSesion } = useAuth();
+  const [agente, setAgente] = useState<AgenteApi | null>(null);
+  const [ejecuciones, setEjecuciones] = useState<EjecucionApi[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (cargandoSesion || !accessToken) return;
+    const headers = { Authorization: `Bearer ${accessToken}` };
+    Promise.all([
+      fetch(`${API_URL}/supervision/agentes`, { headers }).then((r) => (r.ok ? r.json() : [])),
+      fetch(`${API_URL}/agent-runs/?agente=${id}`, { headers }).then((r) => (r.ok ? r.json() : { results: [] })),
+    ])
+      .then(([agentes, runs]) => {
+        setAgente((agentes as AgenteApi[]).find((a) => a.agente === id) ?? null);
+        setEjecuciones(runs.results ?? runs);
+      })
+      .catch(() => setError("No se pudo cargar la información del agente."));
+  }, [accessToken, cargandoSesion, id]);
+
+  if (!agente && !error) {
+    return (
+      <RolePortalShell role="supervision" crumbs={["Supervisión", "Agentes", "Detalle"]}>
+        <p className="text-sm text-carbon/50">Cargando…</p>
+      </RolePortalShell>
+    );
+  }
 
   return (
     <RolePortalShell role="supervision" crumbs={["Supervisión", "Agentes", "Detalle"]}>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="font-display text-2xl text-carbon">Acompañamiento (Alma)</h1>
-          <p className="text-sm text-carbon/55">Brinda acompañamiento emocional a clientes en cada canal.</p>
-        </div>
-        <Badge tone="success">Activo</Badge>
-      </div>
-
-      <div className="grid md:grid-cols-[1fr_300px] gap-6">
-        <Card className="space-y-4">
-          <h2 className="text-xs uppercase tracking-wide text-carbon/50">Configuración</h2>
-          <label className="block"><span className="block text-xs text-carbon/50 mb-1">Modelo</span><input className="input" defaultValue="Claude 3.5 Sonnet" readOnly /></label>
-          <label className="block"><span className="block text-xs text-carbon/50 mb-1">Versión activa</span><input className="input" defaultValue="v1.8.3" readOnly /></label>
-          <label className="block"><span className="block text-xs text-carbon/50 mb-1">Prompt del sistema (resumen)</span>
-            <textarea className="input resize-none" rows={4} readOnly defaultValue="Acompaña con tono cálido, claro y no invasivo. No se presenta como psicólogo. Escala mensajes de riesgo o solicitudes fuera de alcance." />
-          </label>
-        </Card>
-
-        <Card className="h-fit space-y-3 text-sm">
-          <h2 className="text-xs uppercase tracking-wide text-carbon/50">Métricas (30 días)</h2>
-          <div className="flex justify-between"><span className="text-carbon/50">Tasa de éxito</span><span>97.8%</span></div>
-          <div className="flex justify-between"><span className="text-carbon/50">Latencia promedio</span><span>2.4s</span></div>
-          <div className="flex justify-between"><span className="text-carbon/50">Pruebas ejecutadas</span><span>18</span></div>
-          <div className="pt-3 border-t border-greige/60 space-y-2">
-            <Button variant="secondary" className="w-full justify-center text-xs">Ver versiones</Button>
-            <Button variant="primary" className="w-full justify-center text-xs">Ejecutar pruebas</Button>
+      {error && <p className="text-sm text-borgona mb-6">{error}</p>}
+      {agente && (
+        <>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="font-display text-2xl text-carbon">{agente.agente_display}</h1>
+              <p className="text-sm text-carbon/55">Código interno: {agente.agente} · agent-runs orquestados por n8n</p>
+            </div>
+            <Badge tone={agente.total_ejecuciones > 0 ? "success" : "pending"}>
+              {agente.total_ejecuciones > 0 ? "Con actividad" : "Sin ejecuciones aún"}
+            </Badge>
           </div>
-        </Card>
-      </div>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-6">
+            <Card className="text-sm">
+              <p className="text-xs uppercase tracking-wide text-carbon/50 mb-1">Ejecuciones totales</p>
+              <p className="font-display text-2xl text-carbon">{agente.total_ejecuciones}</p>
+            </Card>
+            <Card className="text-sm">
+              <p className="text-xs uppercase tracking-wide text-carbon/50 mb-1">Puntaje promedio</p>
+              <p className="font-display text-2xl text-carbon">
+                {agente.puntaje_promedio !== null ? `${(agente.puntaje_promedio * 100).toFixed(1)}%` : "—"}
+              </p>
+            </Card>
+            <Card className="text-sm">
+              <p className="text-xs uppercase tracking-wide text-carbon/50 mb-1">Latencia promedio</p>
+              <p className="font-display text-2xl text-carbon">
+                {agente.latencia_promedio_ms !== null ? `${agente.latencia_promedio_ms} ms` : "—"}
+              </p>
+            </Card>
+          </div>
+
+          <h2 className="text-xs uppercase tracking-wide text-carbon/50 mb-3">Ejecuciones recientes</h2>
+          {!ejecuciones || ejecuciones.length === 0 ? (
+            <p className="text-sm text-carbon/50">Este agente todavía no tiene ejecuciones registradas.</p>
+          ) : (
+            <SimpleTable
+              columns={["Fecha", "Estado", "Respuesta", "Puntaje", "Latencia"]}
+              rows={ejecuciones.slice(0, 20).map((e) => [
+                fechaCorta(e.creado_en),
+                <Badge key={`${e.run_id}-e`} tone={toneByEstado[e.estado] ?? "pending"}>{e.estado}</Badge>,
+                <span key={`${e.run_id}-r`} className="line-clamp-2 max-w-sm text-xs text-carbon/70">{e.reply || "—"}</span>,
+                e.evaluation_score ? `${(Number(e.evaluation_score) * 100).toFixed(0)}%` : "—",
+                e.latencia_ms !== null ? `${e.latencia_ms} ms` : "—",
+              ])}
+            />
+          )}
+        </>
+      )}
     </RolePortalShell>
   );
 }

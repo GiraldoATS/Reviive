@@ -17,6 +17,11 @@ class Producto(models.Model):
     precio_base = models.DecimalField(max_digits=12, decimal_places=2)
     # Clave del set de íconos de línea fina del frontend (ver Frontend/src/components/icons.tsx)
     icono = models.CharField(max_length=32, default="tiempo")
+    # Foto de la tarjeta del producto en /catalogo. Ruta relativa a
+    # Frontend/public (p. ej. "/images/servicios/sol-peluche.png") o una URL
+    # externa completa. Se controla desde aquí (admin de Django), no desde
+    # código del frontend.
+    imagen_url = models.CharField(max_length=500, blank=True, default="")
     activo = models.BooleanField(default=True)
     creado_en = models.DateTimeField(auto_now_add=True)
 

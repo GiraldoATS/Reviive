@@ -1,28 +1,41 @@
 "use client";
 
 import { useState } from "react";
+import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Button from "@/components/Button";
 import ClienteShell from "@/components/ClienteShell";
 import CuentaSidebar from "@/components/CuentaSidebar";
 import { useAuth } from "@/lib/AuthContext";
+import { actualizarPerfil } from "@/lib/auth";
 import { IconInfo, IconLock } from "@/components/icons";
 
 function ContenidoDatos() {
   const router = useRouter();
-  const { usuario } = useAuth();
+  const { usuario, accessToken, actualizarUsuario } = useAuth();
   const [nombre, setNombre] = useState(() => usuario?.perfil?.nombre ?? "");
   const [telefono, setTelefono] = useState(() => usuario?.perfil?.telefono ?? "");
   const [ciudad, setCiudad] = useState(() => usuario?.perfil?.ciudad ?? "");
   const [mensaje, setMensaje] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [guardando, setGuardando] = useState(false);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    // Todavía no existe un endpoint para que el cliente actualice su propio
-    // perfil (nombre/teléfono/ciudad) desde la cuenta; por ahora dirigimos
-    // el cambio a soporte en vez de simular un guardado que no ocurre.
-    setMensaje("Por ahora no podemos guardar cambios automáticamente. Escríbenos a hola@reviive.com y con gusto actualizamos tus datos.");
+    if (!accessToken || guardando) return;
+    setError(null);
+    setMensaje(null);
+    setGuardando(true);
+    try {
+      const actualizado = await actualizarPerfil(accessToken, { nombre, ciudad, telefono });
+      actualizarUsuario(actualizado);
+      setMensaje("Tus datos se guardaron correctamente.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudieron guardar los cambios.");
+    } finally {
+      setGuardando(false);
+    }
   }
 
   function cancelar() {
@@ -30,6 +43,7 @@ function ContenidoDatos() {
     setTelefono(usuario?.perfil?.telefono ?? "");
     setCiudad(usuario?.perfil?.ciudad ?? "");
     setMensaje(null);
+    setError(null);
     router.push("/mi-cuenta/perfil");
   }
 
@@ -100,14 +114,21 @@ function ContenidoDatos() {
           </div>
 
           {mensaje && (
-            <div className="mt-4 rounded-xl bg-dorado-suave/15 border border-dorado-suave/40 p-4 text-sm text-borgona-dark">
+            <div className="mt-4 rounded-xl bg-[#e3ead9] border border-[#c3d6ae] p-4 text-sm text-[#3f5c2b]">
               {mensaje}
+            </div>
+          )}
+          {error && (
+            <div className="mt-4 rounded-xl bg-rosa/20 border border-rosa/40 p-4 text-sm text-borgona">
+              {error}
             </div>
           )}
 
           <div className="mt-5 flex justify-end gap-3">
             <Button type="button" onClick={cancelar} variant="secondary">Cancelar</Button>
-            <Button type="submit" variant="primary">Guardar cambios</Button>
+            <Button type="submit" variant="primary" disabled={guardando}>
+              {guardando ? "Guardando…" : "Guardar cambios"}
+            </Button>
           </div>
         </form>
       </div>

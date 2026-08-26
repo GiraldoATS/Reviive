@@ -6,11 +6,20 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/lib/AuthContext";
-import { sugerirUsername } from "@/lib/auth";
+import { destinoPorRol, sugerirUsername } from "@/lib/auth";
 import { IconStar, IconBox, IconChevronDown } from "@/components/icons";
 
 const ICONS = "/images/auth/registro-proveedor";
 const ICONS_CLIENTE = "/images/auth/registro-cliente";
+
+function archivoABase64(archivo: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const lector = new FileReader();
+    lector.onload = () => resolve(lector.result as string);
+    lector.onerror = reject;
+    lector.readAsDataURL(archivo);
+  });
+}
 
 const beneficios = [
   { icono: `${ICONS_CLIENTE}/icon-shield-check.png`, titulo: "Visibilidad para tu taller", texto: "Muestra tu experiencia y destaca lo que te hace único." },
@@ -187,7 +196,20 @@ export default function RegistroProveedorPage() {
     setError(null);
     setEnviando(true);
     try {
-      await registrar({
+      const documentosBase64 = (
+        await Promise.all(
+          [
+            portafolio ? { archivo: portafolio, tipo: "portafolio" as const } : null,
+            documentos ? { archivo: documentos, tipo: "documento_legal" as const } : null,
+          ].map(async (item) => {
+            if (!item) return null;
+            const base64 = await archivoABase64(item.archivo);
+            return { tipo: item.tipo, nombre: item.archivo.name, base64 };
+          })
+        )
+      ).filter((d): d is { tipo: "portafolio" | "documento_legal"; nombre: string; base64: string } => d !== null);
+
+      const perfil = await registrar({
         username: sugerirUsername(email),
         email,
         password,
@@ -197,8 +219,9 @@ export default function RegistroProveedorPage() {
         telefono: telefono || undefined,
         consentimiento_datos: aceptaTerminos,
         rol: "proveedor",
+        documentos: documentosBase64,
       });
-      router.push("/chat");
+      router.push(destinoPorRol(perfil.rol));
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo enviar la solicitud.");
     } finally {

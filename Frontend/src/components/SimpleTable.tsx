@@ -12,8 +12,8 @@ export default function SimpleTable({
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-greige/60 text-left text-xs uppercase tracking-wide text-carbon/45">
-            {columns.map((c) => (
-              <th key={c} className="px-4 py-3 font-medium whitespace-nowrap">
+            {columns.map((c, i) => (
+              <th key={i} className="px-4 py-3 font-medium whitespace-nowrap">
                 {c}
               </th>
             ))}

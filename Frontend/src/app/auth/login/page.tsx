@@ -8,6 +8,7 @@ import Logo from "@/components/Logo";
 import Button from "@/components/Button";
 import { IconHeart } from "@/components/icons";
 import { useAuth } from "@/lib/AuthContext";
+import { destinoPorRol } from "@/lib/auth";
 
 function Divider() {
   return (
@@ -35,8 +36,8 @@ function LoginForm() {
     setError(null);
     setEnviando(true);
     try {
-      await login(email, password);
-      router.push(searchParams.get("next") || "/chat");
+      const perfil = await login(email, password);
+      router.push(searchParams.get("next") || destinoPorRol(perfil.rol));
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo iniciar sesión.");
     } finally {

@@ -22,6 +22,7 @@ from model_recomendacion import (  # noqa: E402
 )
 
 _RUTA_MODELO = _ML_DIR / "modelo_recomendacion.joblib"
+RUTA_METRICAS = _ML_DIR / "reporte_metricas.json"
 _lock = threading.Lock()
 _pipeline = None
 
@@ -38,4 +39,10 @@ def obtener_pipeline():
     return _pipeline
 
 
-__all__ = ["obtener_pipeline", "CLASES", "COLUMNAS_ENTRADA", "fila_desde_objeto_memoria"]
+__all__ = [
+    "obtener_pipeline",
+    "CLASES",
+    "COLUMNAS_ENTRADA",
+    "fila_desde_objeto_memoria",
+    "RUTA_METRICAS",
+]

@@ -18,6 +18,7 @@ const navLinks = [
   { href: "/mi-cuenta", label: "Inicio" },
   { href: "/mis-recuerdos", label: "Mis recuerdos" },
   { href: "/evaluaciones", label: "Evaluaciones" },
+  { href: "/mis-cotizaciones", label: "Cotizaciones" },
   { href: "/mis-procesos", label: "Mis procesos" },
   { href: "/envios", label: "Envíos" },
   { href: "/ayuda", label: "Ayuda" },

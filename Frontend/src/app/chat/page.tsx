@@ -1,9 +1,17 @@
 "use client";
 
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import SiteShell from "@/components/SiteShell";
 import ClienteShell from "@/components/ClienteShell";
 import ChatAlma from "@/components/ChatAlma";
 import { useAuth } from "@/lib/AuthContext";
+
+function ChatConPregunta() {
+  const searchParams = useSearchParams();
+  const pregunta = searchParams.get("pregunta") ?? undefined;
+  return <ChatAlma mensajeInicial={pregunta} />;
+}
 
 function Contenido() {
   return (
@@ -14,7 +22,9 @@ function Contenido() {
           Tu asistente para acompañarte en cada paso de la restauración.
         </p>
       </div>
-      <ChatAlma />
+      <Suspense fallback={null}>
+        <ChatConPregunta />
+      </Suspense>
     </div>
   );
 }

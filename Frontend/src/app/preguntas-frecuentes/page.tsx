@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/components/Logo";
 import Button from "@/components/Button";
+import { useAuth } from "@/lib/AuthContext";
+import { destinoPorRol } from "@/lib/auth";
 import {
   IconMessage,
   IconSeguro,
@@ -90,16 +92,25 @@ const preguntas = [
 export default function PreguntasFrecuentesPage() {
   const [activa, setActiva] = useState("como-funciona");
   const categoriaActiva = categorias.find((c) => c.id === activa)!;
+  const { usuario, cargando } = useAuth();
 
   return (
     <div className="min-h-screen bg-marfil">
       <header className="border-b border-greige/60 px-6 py-4 flex items-center justify-between gap-4">
-        <Link href="/">
+        <Link href={usuario ? destinoPorRol(usuario.rol) : "/"}>
           <Logo tagline="Recuerdos que perduran" />
         </Link>
         <div className="flex items-center gap-5 text-sm text-carbon/70">
-          <Link href="/" className="hover:text-borgona transition-colors">Volver al inicio</Link>
-          <Link href="/auth/login" className="hover:text-borgona transition-colors">Iniciar sesión</Link>
+          {!cargando && usuario ? (
+            <Link href={destinoPorRol(usuario.rol)} className="hover:text-borgona transition-colors">
+              Volver a mi cuenta
+            </Link>
+          ) : (
+            <>
+              <Link href="/" className="hover:text-borgona transition-colors">Volver al inicio</Link>
+              <Link href="/auth/login" className="hover:text-borgona transition-colors">Iniciar sesión</Link>
+            </>
+          )}
           <span className="h-5 w-px bg-greige/60" />
           <span className="relative h-6 w-6 shrink-0">
             <Image src="/images/auth/hourglass-icon.png" alt="" fill sizes="24px" className="object-contain" unoptimized />
@@ -307,6 +318,9 @@ export default function PreguntasFrecuentesPage() {
           <div className="mt-14 grid lg:grid-cols-[1fr_360px] gap-8 text-left">
             <div>
               <h2 className="font-display text-xl text-borgona">Preguntas frecuentes</h2>
+              <p className="mt-1 text-xs text-carbon/55">
+                Haz clic en una pregunta para ver la respuesta.
+              </p>
               <div className="mt-4">
                 {preguntas.map((item) => (
                   <details key={item.p} className="group border-b border-greige/60 py-3">
@@ -328,8 +342,7 @@ export default function PreguntasFrecuentesPage() {
                   Estas cuatro opciones son las únicas categorías de ayuda.
                 </p>
                 <p className="mt-1.5 text-xs text-carbon/65">
-                  Al seleccionar cada una, el contenido de la derecha se actualiza con la información
-                  correspondiente. No te llevará a otras secciones.
+                  ¿No encuentras tu respuesta aquí? Habla con Alma para una orientación personalizada.
                 </p>
               </div>
             </div>

@@ -54,6 +54,7 @@ export interface DatosRegistro {
   consentimiento_datos: boolean;
   rol?: "cliente" | "proveedor";
   nombre_taller?: string;
+  documentos?: { tipo: "portafolio" | "documento_legal"; nombre: string; base64: string }[];
 }
 
 export async function registrarUsuario(datos: DatosRegistro): Promise<RespuestaAuth> {
@@ -66,11 +67,38 @@ export async function registrarUsuario(datos: DatosRegistro): Promise<RespuestaA
   return res.json();
 }
 
+/** A dónde llevar a cada rol después de iniciar sesión o registrarse. */
+export function destinoPorRol(rol: RolUsuario): string {
+  switch (rol) {
+    case "cliente":
+      return "/mi-cuenta";
+    case "proveedor":
+      return "/proveedor/dashboard";
+    case "administrador":
+    case "superadministrador":
+      return "/admin";
+    case "supervisor_ia":
+      return "/supervision";
+    default:
+      return "/chat";
+  }
+}
+
 /** Deriva un username a partir del correo (Django lo exige, pero la UI no lo pide). */
 export function sugerirUsername(email: string): string {
   const base = email.split("@")[0].toLowerCase().replace(/[^a-z0-9._-]/g, "");
   const sufijo = Math.random().toString(36).slice(2, 6);
   return `${base || "usuario"}-${sufijo}`;
+}
+
+export async function refrescarToken(refreshToken: string): Promise<{ access: string }> {
+  const res = await fetch(`${API_URL}/auth/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh: refreshToken }),
+  });
+  if (!res.ok) throw new Error(await leerError(res));
+  return res.json();
 }
 
 export async function obtenerPerfil(accessToken: string): Promise<SesionUsuario> {
@@ -79,4 +107,43 @@ export async function obtenerPerfil(accessToken: string): Promise<SesionUsuario>
   });
   if (!res.ok) throw new Error(await leerError(res));
   return res.json();
+}
+
+export async function actualizarPerfil(
+  accessToken: string,
+  datos: { nombre?: string; ciudad?: string; telefono?: string }
+): Promise<SesionUsuario> {
+  const res = await fetch(`${API_URL}/users/me`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(datos),
+  });
+  if (!res.ok) throw new Error(await leerError(res));
+  return res.json();
+}
+
+export async function solicitarRestablecimiento(email: string): Promise<void> {
+  const res = await fetch(`${API_URL}/auth/password-reset/solicitar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) throw new Error(await leerError(res));
+}
+
+export async function confirmarRestablecimiento(datos: {
+  uid: string;
+  token: string;
+  password: string;
+  password_confirmar: string;
+}): Promise<void> {
+  const res = await fetch(`${API_URL}/auth/password-reset/confirmar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos),
+  });
+  if (!res.ok) throw new Error(await leerError(res));
 }

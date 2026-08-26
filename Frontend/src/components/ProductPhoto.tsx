@@ -3,12 +3,15 @@ import { ProductIcon, productPhotos } from "./icons";
 
 export default function ProductPhoto({
   icono,
+  src: srcProp,
   className = "",
 }: {
   icono: string;
+  /** Foto real del producto (Producto.imagen_url, controlada desde el admin). */
+  src?: string;
   className?: string;
 }) {
-  const src = productPhotos[icono];
+  const src = srcProp || productPhotos[icono];
 
   if (!src) {
     return (
@@ -20,7 +23,7 @@ export default function ProductPhoto({
 
   return (
     <div className={`relative overflow-hidden ${className}`}>
-      <Image src={src} alt="" fill sizes="400px" className="object-cover" />
+      <Image src={src} alt="" fill sizes="400px" className="object-cover" unoptimized />
     </div>
   );
 }

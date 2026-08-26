@@ -79,7 +79,7 @@ const secciones: SeccionLegal[] = [
     id: "solicitar-actualizacion",
     titulo: "Cómo solicitar actualización",
     parrafos: [
-      "Escríbenos a hola@reviive.com indicando el cambio que necesitas. Responderemos tu solicitud dentro de los plazos establecidos por la ley.",
+      "Escríbenos a reviivemed@gmail.com indicando el cambio que necesitas. Responderemos tu solicitud dentro de los plazos establecidos por la ley.",
     ],
   },
   {
@@ -93,7 +93,7 @@ const secciones: SeccionLegal[] = [
     id: "canales-contacto",
     titulo: "Canales de contacto",
     parrafos: [
-      "Si tienes dudas sobre esta política o el tratamiento de tus datos, escríbenos a hola@reviive.com.",
+      "Si tienes dudas sobre esta política o el tratamiento de tus datos, escríbenos a reviivemed@gmail.com.",
     ],
   },
 ];

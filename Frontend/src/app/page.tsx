@@ -1,20 +1,30 @@
 import Image from "next/image";
+import Link from "next/link";
 import SiteShell from "@/components/SiteShell";
 import Button from "@/components/Button";
+import { getProductos } from "@/lib/api";
+
+const ICONO_POR_CATEGORIA: Record<string, string> = {
+  "Objetos personales": "/images/categories2/vasija.png",
+  Textiles: "/images/categories2/cuero.png",
+  "Arte y decoración": "/images/categories2/anillo.png",
+  "Documentos y papel": "/images/categories2/fotografia.png",
+  Digitales: "/images/categories2/silla.png",
+};
+
+const FOTO_POR_CATEGORIA: Record<string, string> = {
+  "Objetos personales": "/images/categories/objetos-decorativos.png",
+  Textiles: "/images/categories/cuero-textiles.png",
+  "Arte y decoración": "/images/categories/joyas-relojes.png",
+  "Documentos y papel": "/images/categories/memorias-papel.png",
+  Digitales: "/images/categories/muebles-maderas.png",
+};
 
 const pasos = [
   { icono: "/images/steps2/step1.png", titulo: "Cuéntanos tu historia", texto: "Cada objeto tiene un significado. Escuchamos tu historia y entendemos qué lo hace único." },
   { icono: "/images/steps2/step2.png", titulo: "Evaluamos y proponemos", texto: "Analizamos su estado y te proponemos la mejor forma de preservarlo o transformarlo." },
   { icono: "/images/steps2/step3.png", titulo: "Restauramos y creamos", texto: "Trabajamos con técnicas artesanales y materiales de la más alta calidad para devolverle vida." },
   { icono: "/images/steps2/step4.png", titulo: "Lo devolvemos a tu historia", texto: "Recibes tu pieza restaurada o transformada, lista para seguir siendo parte de tu vida." },
-];
-
-const categorias = [
-  { icono: "/images/categories2/anillo.png", titulo: "Joyas y Relojes", texto: "Restauración y mantenimiento de piezas que guardan momentos inolvidables.", foto: "/images/categories/joyas-relojes.png" },
-  { icono: "/images/categories2/fotografia.png", titulo: "Memorias en Papel", texto: "Conservación y restauración de fotografías, cartas y documentos familiares.", foto: "/images/categories/memorias-papel.png" },
-  { icono: "/images/categories2/vasija.png", titulo: "Objetos Decorativos", texto: "Devolvemos la belleza a piezas de cerámica, vidrio, metal y más.", foto: "/images/categories/objetos-decorativos.png" },
-  { icono: "/images/categories2/cuero.png", titulo: "Cuero y Textiles", texto: "Restauración de bolsos, prendas y textiles con valor emocional.", foto: "/images/categories/cuero-textiles.png" },
-  { icono: "/images/categories2/silla.png", titulo: "Muebles y Maderas", texto: "Reparación y restauración para que vuelvan a ser parte de tu hogar.", foto: "/images/categories/muebles-maderas.png" },
 ];
 
 const confianza = [
@@ -25,13 +35,17 @@ const confianza = [
   { icono: "/images/trust/reloj.png", titulo: "Herencias que perduran", texto: "Creamos piezas que siguen contando historias por generaciones." },
 ];
 
-const testimonios = [
-  { nombre: "Mariana G.", foto: "/images/avatars/mariana-v3.png", texto: "Mi abuela estaría feliz de ver su reloj otra vez conmigo. Gracias por tanto cuidado y amor." },
-  { nombre: "Andrés P.", foto: "/images/avatars/andres-v3.png", texto: "Transformaron un mueble que ya no usábamos en la pieza favorita de mi hogar." },
-  { nombre: "Lucía T.", foto: "/images/avatars/lucia-v3.png", texto: "Profesionales, cálidos y atentos. Superaron todas mis expectativas." },
-];
+export default async function Home() {
+  const productos = await getProductos().catch(() => []);
+  const categoriasReales = Array.from(new Set(productos.map((p) => p.categoria))).map((titulo) => {
+    const ejemplo = productos.find((p) => p.categoria === titulo);
+    return {
+      titulo,
+      icono: ICONO_POR_CATEGORIA[titulo] ?? "/images/categories2/vasija.png",
+      texto: ejemplo?.descripcion ?? "",
+    };
+  });
 
-export default function Home() {
   return (
     <SiteShell>
       <section className="grid lg:grid-cols-2 items-stretch">
@@ -102,19 +116,23 @@ export default function Home() {
             <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="56px" className="object-contain" />
           </div>
           <div className="mt-8 grid sm:grid-cols-2 md:grid-cols-5 gap-6">
-            {categorias.map((c) => (
-              <div key={c.titulo} className="rounded-2xl border border-greige/50 bg-greige/20 overflow-hidden">
+            {categoriasReales.map((c) => (
+              <Link
+                key={c.titulo}
+                href={`/catalogo?categoria=${encodeURIComponent(c.titulo)}`}
+                className="rounded-2xl border border-greige/50 bg-greige/20 overflow-hidden block hover:border-borgona/40 transition-colors"
+              >
                 <div className="relative h-28 w-full">
-                  <Image src={c.foto} alt="" fill sizes="220px" className="object-cover" />
+                  <Image src={FOTO_POR_CATEGORIA[c.titulo] ?? "/images/categories/objetos-decorativos.png"} alt="" fill sizes="220px" className="object-cover" />
                 </div>
                 <div className="px-4 pb-5 pt-8 relative text-center">
                   <div className="absolute -top-6 left-1/2 -translate-x-1/2 h-12 w-12">
                     <Image src={c.icono} alt="" fill sizes="48px" className="object-contain" />
                   </div>
                   <h3 className="font-display text-base text-borgona">{c.titulo}</h3>
-                  <p className="mt-1.5 text-xs text-carbon/60">{c.texto}</p>
+                  <p className="mt-1.5 text-xs text-carbon/60 line-clamp-2">{c.texto}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -153,31 +171,19 @@ export default function Home() {
       </section>
 
       <section className="bg-rosa/25 py-16">
-        <div className="mx-auto max-w-6xl px-6 grid lg:grid-cols-[0.8fr_2.2fr] gap-8 items-center">
-          <div>
-            <div className="flex items-start gap-2">
-              <span className="font-display text-4xl text-dorado leading-none shrink-0">&ldquo;</span>
-              <p className="font-display text-2xl text-borgona leading-snug">
-                No es solo restaurar un objeto, es devolverle su lugar en tu historia.
-              </p>
-            </div>
-            <div className="relative h-7 w-14 mt-3">
-              <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="56px" className="object-contain object-left" />
-            </div>
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <div className="flex items-start justify-center gap-2">
+            <span className="font-display text-4xl text-dorado leading-none shrink-0">&ldquo;</span>
+            <p className="font-display text-2xl text-borgona leading-snug">
+              No es solo restaurar un objeto, es devolverle su lugar en tu historia.
+            </p>
           </div>
-          <div className="grid sm:grid-cols-3 gap-5">
-            {testimonios.map((t) => (
-              <div key={t.nombre} className="flex items-start gap-4">
-                <div className="relative h-14 w-14 rounded-full overflow-hidden shrink-0 ring-2 ring-white">
-                  <Image src={t.foto} alt={t.nombre} fill sizes="56px" className="object-cover" />
-                </div>
-                <div>
-                  <p className="text-sm text-carbon/75 italic">&ldquo;{t.texto}&rdquo;</p>
-                  <p className="mt-1.5 text-xs font-medium text-borgona">{t.nombre}</p>
-                </div>
-              </div>
-            ))}
+          <div className="relative h-7 w-14 mx-auto mt-3">
+            <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="56px" className="object-contain" />
           </div>
+          <Button href="/recuerdos/nuevo" variant="primary" className="mt-6">
+            Comienza tu historia →
+          </Button>
         </div>
       </section>
     </SiteShell>

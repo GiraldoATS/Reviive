@@ -17,7 +17,7 @@ interface RecomendacionApi {
   titulo: string;
   justificacion: string;
   puntaje: string;
-  producto: { id: number; nombre: string; icono: string };
+  producto: { id: number; nombre: string; icono: string; imagen_url: string };
 }
 
 function ListaRecomendaciones() {
@@ -90,7 +90,7 @@ function ListaRecomendaciones() {
     <div className="grid sm:grid-cols-2 gap-6">
       {recomendaciones.map((rec) => (
         <Card key={rec.id} className="flex gap-0 !p-0 overflow-hidden">
-          <ProductPhoto icono={rec.producto.icono} className="h-auto w-28 shrink-0 self-stretch" />
+          <ProductPhoto icono={rec.producto.icono} src={rec.producto.imagen_url} className="h-auto w-28 shrink-0 self-stretch" />
           <div className="p-5 flex-1">
             <h3 className="font-display text-lg text-carbon">{rec.titulo}</h3>
             <p className="mt-1 text-sm text-carbon/65">{rec.justificacion}</p>
@@ -102,6 +102,8 @@ function ListaRecomendaciones() {
 }
 
 export default function RecomendacionesPage() {
+  const [tabActiva, setTabActiva] = useState<(typeof tabs)[number]>(tabs[0]);
+
   return (
     <SiteShell>
       <div className="mx-auto max-w-5xl px-6 py-14">
@@ -113,23 +115,33 @@ export default function RecomendacionesPage() {
         </p>
 
         <div className="flex gap-2 mb-8">
-          {tabs.map((tab, i) => (
-            <span
+          {tabs.map((tab) => (
+            <button
               key={tab}
-              className={`rounded-full px-4 py-1.5 text-sm ${
-                i === 0
+              type="button"
+              onClick={() => setTabActiva(tab)}
+              className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
+                tab === tabActiva
                   ? "bg-borgona text-marfil"
-                  : "border border-greige/70 text-carbon/70"
+                  : "border border-greige/70 text-carbon/70 hover:border-borgona/40"
               }`}
             >
               {tab}
-            </span>
+            </button>
           ))}
         </div>
 
-        <Suspense fallback={<Card className="text-center py-10 text-carbon/60">Cargando…</Card>}>
-          <ListaRecomendaciones />
-        </Suspense>
+        {tabActiva === "Para el objeto" ? (
+          <Suspense fallback={<Card className="text-center py-10 text-carbon/60">Cargando…</Card>}>
+            <ListaRecomendaciones />
+          </Suspense>
+        ) : (
+          <Card className="text-center py-10 text-carbon/60">
+            {tabActiva === "Cuidados"
+              ? "Muy pronto: consejos de cuidado para tu objeto, según su material y estado."
+              : "Muy pronto: historias e ideas de otros clientes para inspirar tu propio proyecto."}
+          </Card>
+        )}
 
         <Card className="mt-10 bg-gradient-to-br from-rosa/30 to-marfil">
           <h3 className="font-display text-lg text-borgona">
@@ -138,7 +150,7 @@ export default function RecomendacionesPage() {
           <p className="mt-2 text-sm text-carbon/65">
             Descubre proyectos que han marcado momentos.
           </p>
-          <Button href="/catalogo" variant="ghost" className="mt-2 px-0 text-xs">
+          <Button href="/historias" variant="ghost" className="mt-2 px-0 text-xs">
             Ver historias →
           </Button>
         </Card>

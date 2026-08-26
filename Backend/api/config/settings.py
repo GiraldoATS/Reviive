@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     "apps.recommendations",
     "apps.quotations",
     "apps.orders",
+    "apps.payments",
     "apps.memorials",
     "apps.evaluations",
     "apps.analytics",
     "apps.ml",
+    "apps.contact",
 ]
 
 MIDDLEWARE = [
@@ -132,12 +134,31 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Reviive <no-responder@reviive.com>")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Reviive <reviivemed@gmail.com>")
 EMAIL_BACKEND = (
     "django.core.mail.backends.smtp.EmailBackend"
     if EMAIL_HOST_USER
     else "django.core.mail.backends.console.EmailBackend"
 )
+
+# Pago real del cliente (Mercado Pago, credenciales de prueba -- ver
+# apps.payments). Vacío por defecto: el checkout falla con un mensaje
+# claro en vez de fingir un pago exitoso (RN-10).
+MERCADOPAGO_ACCESS_TOKEN = env("MERCADOPAGO_ACCESS_TOKEN", default="")
+MERCADOPAGO_PUBLIC_KEY = env("MERCADOPAGO_PUBLIC_KEY", default="")
+MERCADOPAGO_WEBHOOK_SECRET = env("MERCADOPAGO_WEBHOOK_SECRET", default="")
+
+# El sandbox de Mercado Pago exige que comprador y vendedor sean ambos de
+# prueba o ambos reales -- lograr esa combinación requiere credenciales
+# de prueba que Mercado Pago no deja obtener de forma automatizada. Para
+# poder demostrar el flujo de pago (laboratorio/exposición, sin
+# despliegue a producción) sin depender de que su sandbox coopere, esta
+# bandera permite "aprobar" el pago dentro de la propia app -- pero
+# siempre reutilizando crear_pedido_desde_cotizacion, el mismo camino
+# real que usaría un pago aprobado de verdad. Apagada por defecto: con
+# credenciales reales configuradas, jamás se debe fingir un cobro que no
+# ocurrió (RN-10).
+PAGOS_SIMULADOS = env.bool("PAGOS_SIMULADOS", default=False)
 
 LANGUAGE_CODE = "es-co"
 TIME_ZONE = "America/Bogota"

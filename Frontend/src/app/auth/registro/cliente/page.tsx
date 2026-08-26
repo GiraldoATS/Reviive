@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/lib/AuthContext";
-import { sugerirUsername } from "@/lib/auth";
+import { destinoPorRol, sugerirUsername } from "@/lib/auth";
 
 const ICONS = "/images/auth/registro-cliente";
 
@@ -122,7 +122,7 @@ export default function RegistroClientePage() {
     setError(null);
     setEnviando(true);
     try {
-      await registrar({
+      const perfil = await registrar({
         username: sugerirUsername(email),
         email,
         password,
@@ -132,7 +132,7 @@ export default function RegistroClientePage() {
         consentimiento_datos: aceptaTerminos,
         rol: "cliente",
       });
-      router.push("/chat");
+      router.push(destinoPorRol(perfil.rol));
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo crear la cuenta.");
     } finally {

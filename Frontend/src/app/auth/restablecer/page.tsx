@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import type { FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { IconCheck } from "@/components/icons";
+import { confirmarRestablecimiento } from "@/lib/auth";
 
 const ICONS = "/images/auth";
 
@@ -71,10 +74,22 @@ function CampoPassword({
 }
 
 export default function RestablecerContrasenaPage() {
+  return (
+    <Suspense fallback={null}>
+      <RestablecerContrasenaForm />
+    </Suspense>
+  );
+}
+
+function RestablecerContrasenaForm() {
+  const searchParams = useSearchParams();
+  const uid = searchParams.get("uid") ?? "";
+  const token = searchParams.get("token") ?? "";
   const [password, setPassword] = useState("");
   const [confirmar, setConfirmar] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [actualizada, setActualizada] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const tieneOchoCaracteres = password.length >= 8;
   const tieneMayusYMinus = /[a-z]/.test(password) && /[A-Z]/.test(password);
@@ -82,14 +97,23 @@ export default function RestablecerContrasenaPage() {
   const requisitosOk = tieneOchoCaracteres && tieneMayusYMinus && tieneNumeroOSimbolo;
   const coinciden = confirmar.length > 0 && password === confirmar;
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!requisitosOk || !coinciden || enviando) return;
+    if (!uid || !token) {
+      setError("El enlace de restablecimiento no es válido. Solicita uno nuevo.");
+      return;
+    }
+    setError(null);
     setEnviando(true);
-    setTimeout(() => {
-      setEnviando(false);
+    try {
+      await confirmarRestablecimiento({ uid, token, password, password_confirmar: confirmar });
       setActualizada(true);
-    }, 700);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo actualizar la contraseña.");
+    } finally {
+      setEnviando(false);
+    }
   }
 
   if (actualizada) {
@@ -149,6 +173,8 @@ export default function RestablecerContrasenaPage() {
               <p className="mt-1.5 text-xs text-borgona">Las contraseñas no coinciden.</p>
             )}
           </div>
+
+          {error && <p className="text-sm text-borgona">{error}</p>}
 
           <button
             type="submit"

@@ -1,46 +1,94 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import RolePortalShell from "@/components/RolePortalShell";
 import StatCard from "@/components/StatCard";
 import SimpleTable from "@/components/SimpleTable";
 import Badge from "@/components/Badge";
-import Button from "@/components/Button";
-import { IconSparkle, IconCheckCircle, IconStar, IconPlus } from "@/components/icons";
+import { IconSparkle, IconCheckCircle, IconStar } from "@/components/icons";
+import { useAuth } from "@/lib/AuthContext";
+import { API_URL } from "@/lib/api";
 
-const agentes = [
-  ["Orquestador", "Coordina y orquesta tareas", "v2.1.0", "GPT-4o", "99.2%"],
-  ["Acompañamiento (Alma)", "Brinda acompañamiento emocional", "v1.8.3", "Claude 3.5 Sonnet", "97.8%"],
-  ["Extracción", "Extrae y estructura información", "v2.0.4", "GPT-4o Mini", "98.7%"],
-  ["Creativo", "Genera contenido y alternativas", "v1.9.1", "GPT-4o", "96.3%"],
-  ["Proveedores", "Gestiona proveedores y servicios", "v1.7.2", "Claude 3.5 Haiku", "98.1%"],
-  ["Cotización", "Genera y evalúa cotizaciones", "v1.6.5", "GPT-4o Mini", "97.2%"],
-  ["Evaluador", "Evalúa calidad y desempeño", "v1.4.8", "GPT-4o Mini", "97.9%"],
-];
+interface AgenteApi {
+  agente: string;
+  agente_display: string;
+  total_ejecuciones: number;
+  puntaje_promedio: number | null;
+  latencia_promedio_ms: number | null;
+}
 
 export default function AgentesSupervisionPage() {
+  const { accessToken, cargando: cargandoSesion } = useAuth();
+  const [agentes, setAgentes] = useState<AgenteApi[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (cargandoSesion || !accessToken) return;
+    fetch(`${API_URL}/supervision/agentes`, { headers: { Authorization: `Bearer ${accessToken}` } })
+      .then((r) => {
+        if (!r.ok) throw new Error("No se pudieron cargar los agentes.");
+        return r.json();
+      })
+      .then(setAgentes)
+      .catch((err) => setError(err instanceof Error ? err.message : "Error inesperado."));
+  }, [accessToken, cargandoSesion]);
+
+  const totalEjecuciones = agentes?.reduce((acc, a) => acc + a.total_ejecuciones, 0) ?? 0;
+  const conDatos = agentes?.filter((a) => a.puntaje_promedio !== null) ?? [];
+  const promedioGeneral = conDatos.length
+    ? conDatos.reduce((acc, a) => acc + (a.puntaje_promedio ?? 0), 0) / conDatos.length
+    : null;
+
   return (
     <RolePortalShell role="supervision" crumbs={["Supervisión", "Agentes"]}>
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl text-carbon">Gestión de agentes</h1>
-          <p className="text-sm text-carbon/55">Supervisa, evalúa y administra los agentes de IA orquestados en n8n.</p>
+          <p className="text-sm text-carbon/55">Desempeño real de los agentes de IA orquestados en n8n.</p>
         </div>
-        <Button variant="primary" className="text-xs"><IconPlus className="h-4 w-4" /> Nuevo agente</Button>
+        <Link
+          href="/supervision/agentes/pruebas"
+          className="shrink-0 rounded-full border border-borgona/40 px-4 py-2 text-xs text-borgona hover:bg-borgona/5 transition-colors whitespace-nowrap"
+        >
+          Pruebas de agentes →
+        </Link>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <StatCard icon={<IconSparkle className="h-5 w-5" />} value="9" label="Agentes activos" trend="100% operativos" tone="rosa" />
-        <StatCard icon={<IconCheckCircle className="h-5 w-5" />} value="136" label="Pruebas ejecutadas (30 días)" tone="verde" />
-        <StatCard icon={<IconStar className="h-5 w-5" />} value="98.4%" label="Tasa de éxito promedio" trend="+2.6% vs. periodo anterior" trendTone="up" tone="dorado" />
-      </div>
+      {error && <p className="text-sm text-borgona mb-6">{error}</p>}
+      {!agentes && !error && <p className="text-sm text-carbon/50 mb-6">Cargando…</p>}
 
-      <SimpleTable
-        columns={["Agente", "Versión", "Modelo", "Tasa de éxito", ""]}
-        rows={agentes.map((a, i) => [
-          <div key="n"><p className="font-medium text-carbon">{a[0]}</p><p className="text-xs text-carbon/45">{a[1]}</p></div>,
-          a[2], a[3],
-          <Badge key="t" tone="success">{a[4]}</Badge>,
-          <a key="link" href={`/supervision/agentes/${i + 1}`} className="text-borgona text-xs">Ver →</a>,
-        ])}
-      />
+      {agentes && (
+        <>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            <StatCard icon={<IconSparkle className="h-5 w-5" />} value={String(agentes.length)} label="Agentes definidos" tone="rosa" />
+            <StatCard icon={<IconCheckCircle className="h-5 w-5" />} value={String(totalEjecuciones)} label="Ejecuciones totales" tone="verde" />
+            <StatCard
+              icon={<IconStar className="h-5 w-5" />}
+              value={promedioGeneral !== null ? `${(promedioGeneral * 100).toFixed(1)}%` : "—"}
+              label="Puntaje promedio (evaluador)"
+              tone="dorado"
+            />
+          </div>
+
+          <SimpleTable
+            columns={["Agente", "Ejecuciones", "Puntaje promedio", "Latencia promedio", ""]}
+            rows={agentes.map((a) => [
+              a.agente_display,
+              String(a.total_ejecuciones),
+              a.puntaje_promedio !== null ? (
+                <Badge key={`${a.agente}-p`} tone={a.puntaje_promedio >= 0.8 ? "success" : a.puntaje_promedio >= 0.6 ? "progress" : "pending"}>
+                  {(a.puntaje_promedio * 100).toFixed(1)}%
+                </Badge>
+              ) : (
+                <span key={`${a.agente}-p`} className="text-xs text-carbon/40">Sin evaluar</span>
+              ),
+              a.latencia_promedio_ms !== null ? `${a.latencia_promedio_ms} ms` : "—",
+              <a key={`${a.agente}-link`} href={`/supervision/agentes/${a.agente}`} className="text-borgona text-xs">Ver →</a>,
+            ])}
+          />
+        </>
+      )}
     </RolePortalShell>
   );
 }

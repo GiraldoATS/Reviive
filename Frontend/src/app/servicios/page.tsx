@@ -151,12 +151,6 @@ const soluciones = [
   },
 ];
 
-const testimonios = [
-  { nombre: "Mariana G.", foto: "/images/avatars/mariana-v3.png", texto: "Mi camisa favorita de mi papá ahora es un peluche que abraza a mi hijo cada noche. Gracias Reviive por hacerlo posible." },
-  { nombre: "Andrés P.", foto: "/images/avatars/andres-v3.png", texto: "Restauraron las fotos de mi abuela y ahora mis hijos conocen su historia tal como ella quería que la recordáramos." },
-  { nombre: "Lucía T.", foto: "/images/avatars/lucia-v3.png", texto: "El mueble de mi bisabuela volvió a brillar. No es solo un mueble, es parte de nuestra historia familiar." },
-];
-
 const preguntas = [
   {
     p: "¿Cómo sé qué servicio necesita mi objeto?",
@@ -443,28 +437,6 @@ export default function ServiciosPage() {
           </div>
         )}
       </Modal>
-
-      <section className="mx-auto max-w-6xl px-6 py-16 text-center">
-        <h2 className="inline-flex items-center gap-2 font-display text-2xl md:text-3xl font-medium text-borgona">
-          Ellos confiaron en Reviive para conservar sus recuerdos
-          <span className="relative h-5 w-8 shrink-0">
-            <Image src="/images/branch-sprig-v3.png" alt="" fill sizes="32px" className="object-contain" />
-          </span>
-        </h2>
-        <div className="mt-10 grid sm:grid-cols-3 gap-6">
-          {testimonios.map((t) => (
-            <div key={t.nombre} className="rounded-2xl border border-greige/50 bg-greige/20 p-6 flex items-start gap-4 text-left">
-              <div className="relative h-14 w-14 rounded-full overflow-hidden shrink-0 ring-2 ring-white">
-                <Image src={t.foto} alt={t.nombre} fill sizes="56px" className="object-cover" />
-              </div>
-              <div>
-                <p className="text-sm text-carbon/75 italic">&ldquo;{t.texto}&rdquo;</p>
-                <p className="mt-1.5 text-xs font-medium text-borgona">{t.nombre}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       <section className="mx-auto max-w-4xl px-6 pb-20">
         <h2 className="flex items-center justify-center gap-2 font-display text-2xl md:text-3xl font-medium text-borgona">

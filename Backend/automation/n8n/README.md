@@ -21,6 +21,7 @@ n8n recibe los eventos externos y dispara los workflows correspondientes:
 | `/webhook/reviive/email/inbound` | Correo entrante (IMAP) | Workflow Orquestador (canal correo) |
 | `/webhook/reviive/orders/status-changed` | API Django (evento saliente) | Workflow de notificaciones al cliente |
 | `/webhook/reviive/memories/recuerdo-creado` | Web (tras registrar un recuerdo) | Workflow Agente - Recomendación (+ Creativo + Viabilidad) |
+| `/webhook/reviive/recommendations/creadas` | API Django (tras crear las recomendaciones de un recuerdo) | Workflow Agente - Cotización (+ Proveedores, matching real) |
 | `/webhook/reviive/memorials/memorial-creado` | Web (tras crear un memorial digital) | Workflow Agente - Memorial |
 
 Todos los webhooks se firman con HMAC-SHA256 usando `N8N_WEBHOOK_SECRET`
@@ -98,7 +99,7 @@ curl -X POST http://127.0.0.1:5678/api/v1/workflows/<id>/activate -H "X-N8N-API-
 
 Los 12 agentes de la sección 11.1 de `Reviive_Documento_Arquitectura_y_Diseno_Tecnico_v1`
 y la sección 12 de `Reviive_Documento_Definicion_Estrategica_y_Funcional_v1`
-están todos implementados, repartidos en 3 workflows:
+están todos implementados, repartidos en 4 workflows:
 
 | Agente | Workflow | Cómo |
 |---|---|---|
@@ -106,14 +107,39 @@ están todos implementados, repartidos en 3 workflows:
 | Acompañamiento | Chat con Alma | rama por defecto de la intención |
 | Seguridad | Chat con Alma | riesgo alto → respuesta fija + escalamiento, sin llamar al LLM creativo |
 | Pedidos (Seguimiento) | Chat con Alma | rama `pedidos`, con `GET /orders/` real como contexto |
-| Proveedores | Chat con Alma | rama `proveedores`, con `GET /providers/` real como contexto |
-| Cotización | Chat con Alma | rama `cotizacion`, estimación preliminar sobre `precio_base` real del catálogo |
+| Proveedores | Chat con Alma **+** Agente - Cotizacion | en el chat, rama `proveedores` con `GET /providers/` como contexto conversacional; en el agente automático, matching real vía `POST /providers/match` (filtra por producto+ciudad) |
+| Cotización | Chat con Alma **+** Agente - Cotizacion | en el chat, rama `cotizacion`: si el cliente ya tiene cotizaciones reales (`GET /quotations/`, incluidas las que dejó en borrador el agente automático), Alma las cita concretas (taller, valor, estado); si no hay ninguna, da una estimación conversacional sobre `precio_base`. El agente automático (dispara solo tras crearse una recomendación) es quien realmente las crea, en estado `borrador`, listas para que el proveedor emparejado las revise y envíe desde su portal (RN-10: nunca queda como oficial sin que el taller la confirme) |
 | Extracción | Chat con Alma | rama `extraccion`: convierte la conversación en un `Recuerdo` + `ObjetoMemoria` reales |
 | Evaluador | Chat con Alma | corre después de responder (no le agrega espera al usuario), califica la respuesta y crea una `Evaluacion` |
 | Recomendación | Agente - Recomendacion | rankea hasta 3 productos reales del catálogo |
 | Creativo | Agente - Recomendacion | mismo paso, aporta el `concepto_creativo` de cada recomendación |
 | Viabilidad | Agente - Recomendacion | mismo paso, aporta `advertencias` / `requiere_revision_humana` (RN-03) |
 | Memorial | Agente - Memorial | redacta la biografía del memorial y la guarda con el token del propio cliente |
+
+### Agente - Cotizacion (automático, no conversacional)
+
+1. Se dispara desde Django (`_disparar_agente_cotizacion` en
+   `apps/agents/views.py`) justo después de que el agente Recomendación
+   crea sus filas reales, usando el producto mejor rankeado. Si n8n no
+   responde, las recomendaciones ya quedaron guardadas igual — no bloquea
+   nada para el cliente.
+2. **Webhook** recibe `{ recuerdo_id, producto_id, ciudad, access_token }`.
+3. Trae el `Recuerdo` real (con Bearer del propio cliente) y el `Producto`
+   real (`precio_base` como ancla).
+4. Firma y llama `POST /providers/match` (matching real por producto+ciudad,
+   sólo proveedores validados) — si falla, sigue con lista vacía.
+5. Firma y llama `POST /agent-runs/request` (`agente=cotizacion`).
+6. Con la historia, el producto y los proveedores reales como contexto,
+   pide a OpenAI hasta 3 borradores de cotización (uno por proveedor
+   emparejado), cada uno con `total`, `vigencia_dias` y `notas` (desglose
+   aproximado) — nunca inventa un proveedor que no esté en la lista.
+7. Firma y llama `POST /agent-runs/{run_id}/complete`; Django crea las
+   filas reales de `Cotizacion` en estado `borrador`, cada una ligada a la
+   ejecución del agente para poder auditar su origen
+   (`Cotizacion.ejecucion_agente`).
+8. El proveedor las ve en `/proveedor/cotizaciones` (ya filtra por
+   `borrador`/`enviada`/etc.) y decide si las ajusta y envía — la IA nunca
+   confirma un precio oficial por su cuenta (RN-10).
 
 ### Chat con Alma (Orquestador + 7 agentes)
 
@@ -125,8 +151,10 @@ están todos implementados, repartidos en 3 workflows:
    `riesgo` (bajo/medio/alto) e `intencion`
    (`acompanamiento` / `pedidos` / `proveedores` / `cotizacion` / `extraccion`).
 4. Trae siempre contexto real: `GET /orders/`, `GET /providers/`,
-   `GET /products/` — así el modelo sólo puede citar pedidos, proveedores
-   y precios reales, nunca inventados (RN-10).
+   `GET /products/`, `GET /quotations/` (las cotizaciones reales del
+   propio cliente, incluidas las que el agente Cotizacion dejó en
+   borrador) — así el modelo sólo puede citar pedidos, proveedores,
+   precios y cotizaciones reales, nunca inventados (RN-10).
 5. Firma y llama `POST /agent-runs/request` con `agente` = la intención
    detectada (o `seguridad` si el riesgo es alto).
 6. **Riesgo alto** → mensaje fijo de contención (línea de ayuda 192) +

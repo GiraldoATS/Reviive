@@ -13,5 +13,6 @@ class ProductoSerializer(serializers.ModelSerializer):
             "descripcion",
             "precio_base",
             "icono",
+            "imagen_url",
             "activo",
         ]

@@ -6,7 +6,7 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 
-from .models import Perfil, Usuario
+from .models import ConfiguracionGlobal, Perfil, PlantillaNotificacion, Usuario
 
 ROLES_AUTOREGISTRABLES = [Usuario.Rol.CLIENTE, Usuario.Rol.PROVEEDOR]
 
@@ -35,6 +35,41 @@ class UsuarioSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "rol", "estado"]
 
 
+class ConfiguracionGlobalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConfiguracionGlobal
+        fields = [
+            "nombre_empresa",
+            "correo_contacto",
+            "telefono_contacto",
+            "zona_horaria",
+            "moneda",
+            "idioma",
+            "actualizado_en",
+        ]
+        read_only_fields = ["actualizado_en"]
+
+
+class PlantillaNotificacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlantillaNotificacion
+        fields = ["id", "nombre", "canal", "asunto", "cuerpo", "activa", "creado_en", "actualizado_en"]
+        read_only_fields = ["id", "creado_en", "actualizado_en"]
+
+
+class UsuarioAdminSerializer(serializers.ModelSerializer):
+    """Para /api/v1/users (gestión de usuarios y roles) — sólo staff. A
+    diferencia de UsuarioSerializer (self-service), aquí rol y estado sí
+    son editables: es exactamente el propósito de esta vista."""
+
+    perfil = PerfilSerializer(read_only=True)
+
+    class Meta:
+        model = Usuario
+        fields = ["id", "email", "rol", "estado", "perfil", "date_joined"]
+        read_only_fields = ["id", "email", "date_joined"]
+
+
 class RegistroSerializer(serializers.Serializer):
     """POST /api/v1/auth/register — RN-01: exige consentimiento de datos."""
 
@@ -50,6 +85,11 @@ class RegistroSerializer(serializers.Serializer):
     consentimiento_datos = serializers.BooleanField()
     rol = serializers.ChoiceField(choices=ROLES_AUTOREGISTRABLES, default=Usuario.Rol.CLIENTE)
     nombre_taller = serializers.CharField(max_length=150, required=False, allow_blank=True)
+    # Portafolio/documentos legales del proveedor (RN-05); ver
+    # apps.providers.models.DocumentoProveedor.Tipo para los valores válidos.
+    documentos = serializers.ListField(
+        child=serializers.DictField(), required=False, default=list
+    )
 
     def validate_username(self, value):
         if Usuario.objects.filter(username=value).exists():
@@ -88,6 +128,7 @@ class RegistroSerializer(serializers.Serializer):
         consentimiento = validated_data.pop("consentimiento_datos")
         rol = validated_data.pop("rol")
         nombre_taller = validated_data.pop("nombre_taller", "")
+        documentos = validated_data.pop("documentos", [])
 
         usuario = Usuario(rol=rol, **validated_data)
         usuario.set_password(password)
@@ -103,12 +144,26 @@ class RegistroSerializer(serializers.Serializer):
         )
 
         if rol == Usuario.Rol.PROVEEDOR:
-            Proveedor.objects.create(
+            from apps.providers.models import DocumentoProveedor
+
+            proveedor = Proveedor.objects.create(
                 usuario=usuario,
                 nombre_taller=nombre_taller,
                 ciudad=ciudad,
                 estado_validacion=Proveedor.EstadoValidacion.PENDIENTE,
             )
+            tipos_validos = {c[0] for c in DocumentoProveedor.Tipo.choices}
+            for doc in documentos:
+                tipo = doc.get("tipo")
+                base64_data = doc.get("base64")
+                if tipo not in tipos_validos or not base64_data:
+                    continue
+                DocumentoProveedor.objects.create(
+                    proveedor=proveedor,
+                    tipo=tipo,
+                    nombre_archivo=doc.get("nombre", ""),
+                    archivo_base64=base64_data,
+                )
 
         return usuario
 

@@ -12,7 +12,11 @@ class RecomendacionViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Recomendacion.objects.filter(recuerdo__cliente=self.request.user)
+        user = self.request.user
+        if user.is_staff or user.rol in {"administrador", "superadministrador", "supervisor_ia"}:
+            queryset = Recomendacion.objects.all()
+        else:
+            queryset = Recomendacion.objects.filter(recuerdo__cliente=user)
         recuerdo_id = self.request.query_params.get("recuerdo")
         if recuerdo_id:
             queryset = queryset.filter(recuerdo_id=recuerdo_id)
