@@ -88,7 +88,7 @@ export default function LogisticaAdminPage() {
             e.cliente_nombre,
             e.ciudad_destino || "—",
             <select
-              key="t"
+              key={`${e.id}-t`}
               value={e.transportadora}
               onChange={(ev) => actualizar(e.id, "transportadora", ev.target.value)}
               className="rounded-lg border border-greige/60 bg-white px-2 py-1 text-xs outline-none"
@@ -98,14 +98,14 @@ export default function LogisticaAdminPage() {
               ))}
             </select>,
             <input
-              key="g"
+              key={`${e.id}-g`}
               defaultValue={e.numero_guia}
               onBlur={(ev) => actualizar(e.id, "numero_guia", ev.target.value)}
               placeholder="N° de guía"
               className="w-28 rounded-lg border border-greige/60 bg-white px-2 py-1 text-xs outline-none"
             />,
             <select
-              key="e"
+              key={`${e.id}-e`}
               value={e.estado}
               onChange={(ev) => actualizar(e.id, "estado", ev.target.value)}
               className="rounded-lg border-none bg-transparent text-xs outline-none"

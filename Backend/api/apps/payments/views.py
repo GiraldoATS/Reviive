@@ -78,6 +78,9 @@ class IniciarPagoMercadoPagoView(APIView):
             raise ValidationError(
                 {"cotizacion": "Sólo se puede pagar una cotización ya aceptada."}
             )
+        pago_existente = getattr(cotizacion, "pago_cliente", None)
+        if pago_existente and pago_existente.estado == PagoCliente.Estado.APROBADO:
+            raise ValidationError({"cotizacion": "Esta cotización ya fue pagada."})
 
         if settings.PAGOS_SIMULADOS:
             PagoCliente.objects.update_or_create(
@@ -212,6 +215,8 @@ class ConfirmarPagoSimuladoView(APIView):
             cotizacion=cotizacion,
             defaults={"preference_id": f"SIMULADO-{uuid.uuid4().hex}", "monto": cotizacion.total},
         )
+        if pago_cliente.estado == PagoCliente.Estado.APROBADO:
+            raise ValidationError({"cotizacion": "Esta cotización ya fue pagada."})
         pago_cliente.payment_id = f"SIMULADO-{uuid.uuid4().hex}"
         pago_cliente.estado = PagoCliente.Estado.APROBADO
         pago_cliente.pagado_en = timezone.now()

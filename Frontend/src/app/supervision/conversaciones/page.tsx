@@ -66,9 +66,9 @@ export default function ConversacionesSupervisionPage() {
             c.usuario_nombre,
             labelByCanal[c.canal] ?? c.canal,
             c.intencion || "—",
-            <Badge key="e" tone={toneByEstado[c.estado] ?? "neutral"}>{labelByEstado[c.estado] ?? c.estado}</Badge>,
+            <Badge key={`${c.id}-e`} tone={toneByEstado[c.estado] ?? "neutral"}>{labelByEstado[c.estado] ?? c.estado}</Badge>,
             new Date(c.creada_en).toLocaleDateString("es-CO"),
-            <a key="a" href={`/supervision/conversaciones/${c.id}`} className="text-borgona text-xs">Ver →</a>,
+            <a key={`${c.id}-a`} href={`/supervision/conversaciones/${c.id}`} className="text-borgona text-xs">Ver →</a>,
           ])}
         />
       )}

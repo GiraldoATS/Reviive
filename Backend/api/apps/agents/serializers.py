@@ -39,6 +39,12 @@ class AgentRunCompleteSerializer(serializers.Serializer):
 
 
 class EjecucionAgenteSerializer(serializers.ModelSerializer):
+    # El puntaje real lo deja el agente Evaluador como una Evaluacion aparte
+    # (ver _crear_evaluacion en apps.agents.views), no en este mismo modelo
+    # -- EjecucionAgente.evaluation_score casi nunca se llena porque el
+    # Evaluador corre después de completar la ejecución evaluada.
+    evaluation_score = serializers.SerializerMethodField()
+
     class Meta:
         model = EjecucionAgente
         fields = [
@@ -57,3 +63,7 @@ class EjecucionAgenteSerializer(serializers.ModelSerializer):
             "creado_en",
             "completado_en",
         ]
+
+    def get_evaluation_score(self, obj: EjecucionAgente):
+        ultima = obj.evaluaciones.order_by("-creado_en").first()
+        return ultima.puntaje if ultima else obj.evaluation_score

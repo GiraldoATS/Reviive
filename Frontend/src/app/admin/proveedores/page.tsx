@@ -68,10 +68,10 @@ export default function ProveedoresAdminPage() {
             p.ciudad,
             p.capacidades.map((c) => c.producto_nombre).join(", ") || "—",
             `★ ${Number(p.calificacion).toFixed(1)}`,
-            <Badge key="e" tone={p.estado_validacion === "validado" ? "success" : p.estado_validacion === "suspendido" ? "pending" : "pending"}>
+            <Badge key={`${p.id}-e`} tone={p.estado_validacion === "validado" ? "success" : p.estado_validacion === "suspendido" ? "pending" : "pending"}>
               {labelByEstado[p.estado_validacion] ?? p.estado_validacion}
             </Badge>,
-            <a key="a" href={`/admin/proveedores/validacion?proveedor=${p.id}`} className="text-borgona text-xs">Ver →</a>,
+            <a key={`${p.id}-a`} href={`/admin/proveedores/validacion?proveedor=${p.id}`} className="text-borgona text-xs">Ver →</a>,
           ])}
         />
       )}

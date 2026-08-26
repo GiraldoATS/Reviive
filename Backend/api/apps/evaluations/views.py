@@ -212,7 +212,12 @@ class AgentesResumenView(APIView):
             EjecucionAgente.objects.values("agente")
             .annotate(
                 total_ejecuciones=Count("run_id"),
-                puntaje_promedio=Avg("evaluation_score"),
+                # El puntaje real lo deja el agente Evaluador como una fila
+                # aparte en Evaluacion (ver _crear_evaluacion en
+                # apps.agents.views) -- EjecucionAgente.evaluation_score casi
+                # nunca se llena porque el Evaluador corre después de
+                # completar la ejecución evaluada, no en el mismo POST.
+                puntaje_promedio=Avg("evaluaciones__puntaje"),
                 latencia_promedio_ms=Avg("latencia_ms"),
             )
             .order_by("-total_ejecuciones")

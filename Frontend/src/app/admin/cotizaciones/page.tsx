@@ -87,7 +87,7 @@ export default function CotizacionesAdminPage() {
             c.proveedor_nombre,
             `$${Number(c.total).toLocaleString("es-CO")}`,
             c.vigencia,
-            <Badge key="e" tone={toneByEstado[c.estado] ?? "neutral"}>{labelByEstado[c.estado] ?? c.estado}</Badge>,
+            <Badge key={`${c.id}-e`} tone={toneByEstado[c.estado] ?? "neutral"}>{labelByEstado[c.estado] ?? c.estado}</Badge>,
           ])}
         />
       )}

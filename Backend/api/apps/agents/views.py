@@ -50,7 +50,7 @@ class EjecucionAgenteViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [EsSupervisorOAdmin]
 
     def get_queryset(self):
-        queryset = EjecucionAgente.objects.order_by("-creado_en")
+        queryset = EjecucionAgente.objects.prefetch_related("evaluaciones").order_by("-creado_en")
         agente = self.request.query_params.get("agente")
         if agente:
             queryset = queryset.filter(agente=agente)

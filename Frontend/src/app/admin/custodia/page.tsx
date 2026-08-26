@@ -56,12 +56,12 @@ export default function CustodiaAdminPage() {
           columns={["Pedido", "Estado de custodia", "Responsable actual", "Último evento", ""]}
           rows={pedidos.map((p) => [
             p.codigo,
-            <Badge key="e" tone="progress">
+            <Badge key={`${p.id}-e`} tone="progress">
               {p.resumen.ultimo_evento ? labelByEstado[p.resumen.ultimo_evento.estado] ?? p.resumen.ultimo_evento.estado : "Sin eventos"}
             </Badge>,
             p.resumen.ultimo_evento?.responsable || p.resumen.proveedor,
             p.resumen.ultimo_evento ? new Date(p.resumen.ultimo_evento.fecha).toLocaleString("es-CO") : "—",
-            <a key="a" href={`/admin/pedidos/${p.id}`} className="text-borgona text-xs">Ver trazabilidad →</a>,
+            <a key={`${p.id}-a`} href={`/admin/pedidos/${p.id}`} className="text-borgona text-xs">Ver trazabilidad →</a>,
           ])}
         />
       )}

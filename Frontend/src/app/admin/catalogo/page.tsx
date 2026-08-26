@@ -26,12 +26,12 @@ export default async function CatalogoAdminPage() {
       <SimpleTable
         columns={["", "Nombre", "Categoría", "Precio base", "Estado", ""]}
         rows={productos.map((p) => [
-          <ProductPhoto key="i" icono={p.imagen} src={p.imagenUrl} className="h-10 w-10 rounded-lg" />,
+          <ProductPhoto key={`${p.id}-foto`} icono={p.imagen} src={p.imagenUrl} className="h-10 w-10 rounded-lg" />,
           p.nombre,
           p.categoria,
           `$${p.precioBase.toLocaleString("es-CO")}`,
-          <Badge key="e" tone={p.activo ? "success" : "pending"}>{p.activo ? "Activo" : "Inactivo"}</Badge>,
-          <span key="a" className="text-carbon/35 text-xs" title="Próximamente">Editar</span>,
+          <Badge key={`${p.id}-estado`} tone={p.activo ? "success" : "pending"}>{p.activo ? "Activo" : "Inactivo"}</Badge>,
+          <span key={`${p.id}-editar`} className="text-carbon/35 text-xs" title="Próximamente">Editar</span>,
         ])}
       />
     </RolePortalShell>

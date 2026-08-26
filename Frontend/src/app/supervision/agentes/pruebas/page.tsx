@@ -116,9 +116,9 @@ export default function PruebasAgentesSupervisionPage() {
               rows={casos.map((c) => [
                 c.nombre,
                 c.agente_display,
-                <Badge key="e" tone={toneByResultado[c.resultado]}>{labelByResultado[c.resultado]}</Badge>,
+                <Badge key={`${c.id}-e`} tone={toneByResultado[c.resultado]}>{labelByResultado[c.resultado]}</Badge>,
                 <select
-                  key="a"
+                  key={`${c.id}-a`}
                   value={c.resultado}
                   onChange={(e) => marcarResultado(c.id, e.target.value)}
                   className="rounded-lg border border-greige/60 bg-white px-2 py-1 text-xs outline-none"

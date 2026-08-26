@@ -77,14 +77,14 @@ export default function AgentesSupervisionPage() {
               a.agente_display,
               String(a.total_ejecuciones),
               a.puntaje_promedio !== null ? (
-                <Badge key="p" tone={a.puntaje_promedio >= 0.8 ? "success" : a.puntaje_promedio >= 0.6 ? "progress" : "pending"}>
+                <Badge key={`${a.agente}-p`} tone={a.puntaje_promedio >= 0.8 ? "success" : a.puntaje_promedio >= 0.6 ? "progress" : "pending"}>
                   {(a.puntaje_promedio * 100).toFixed(1)}%
                 </Badge>
               ) : (
-                <span key="p" className="text-xs text-carbon/40">Sin evaluar</span>
+                <span key={`${a.agente}-p`} className="text-xs text-carbon/40">Sin evaluar</span>
               ),
               a.latencia_promedio_ms !== null ? `${a.latencia_promedio_ms} ms` : "—",
-              <a key="link" href={`/supervision/agentes/${a.agente}`} className="text-borgona text-xs">Ver →</a>,
+              <a key={`${a.agente}-link`} href={`/supervision/agentes/${a.agente}`} className="text-borgona text-xs">Ver →</a>,
             ])}
           />
         </>

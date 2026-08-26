@@ -8,6 +8,11 @@ class CotizacionSerializer(serializers.ModelSerializer):
     cliente_nombre = serializers.SerializerMethodField()
     producto_nombre = serializers.CharField(source="producto.nombre", read_only=True, default="")
     generada_por_ia = serializers.SerializerMethodField()
+    # El estado de la cotizacion (aceptada) no cambia una vez se paga -- el
+    # pago vive en PagoCliente, una tabla aparte. Sin este campo el
+    # frontend no tiene forma de saber si ya se pagó y seguía ofreciendo
+    # "Pagar ahora" para siempre.
+    pago_estado = serializers.SerializerMethodField()
 
     class Meta:
         model = Cotizacion
@@ -23,6 +28,7 @@ class CotizacionSerializer(serializers.ModelSerializer):
             "total",
             "vigencia",
             "estado",
+            "pago_estado",
             "creado_en",
         ]
         read_only_fields = ["id", "creado_en"]
@@ -33,3 +39,7 @@ class CotizacionSerializer(serializers.ModelSerializer):
 
     def get_generada_por_ia(self, obj: Cotizacion) -> bool:
         return obj.ejecucion_agente_id is not None
+
+    def get_pago_estado(self, obj: Cotizacion) -> str | None:
+        pago = getattr(obj, "pago_cliente", None)
+        return pago.estado if pago else None

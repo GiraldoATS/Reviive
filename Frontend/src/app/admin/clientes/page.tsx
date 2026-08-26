@@ -64,7 +64,7 @@ export default function ClientesAdminPage() {
                 c.nombre,
                 c.ciudad || "—",
                 String(c.num_pedidos),
-                <Badge key="e" tone={c.estado === "activo" ? "success" : "pending"}>{c.estado}</Badge>,
+                <Badge key={`${c.id}-e`} tone={c.estado === "activo" ? "success" : "pending"}>{c.estado}</Badge>,
               ])}
             />
           )}

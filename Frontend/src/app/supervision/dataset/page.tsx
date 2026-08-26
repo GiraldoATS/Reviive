@@ -102,10 +102,10 @@ export default function DatasetSupervisionPage() {
             e.conversacion_resumen,
             e.etiqueta || "—",
             e.anonimizado ? "Sí" : "No",
-            <Badge key="s" tone={toneByEstado[e.estado_revision] ?? "neutral"}>{labelByEstado[e.estado_revision] ?? e.estado_revision}</Badge>,
+            <Badge key={`${e.id}-s`} tone={toneByEstado[e.estado_revision] ?? "neutral"}>{labelByEstado[e.estado_revision] ?? e.estado_revision}</Badge>,
             e.estado_revision === "pendiente" ? (
               <button
-                key="a"
+                key={`${e.id}-a`}
                 onClick={() => aprobar(e.id)}
                 disabled={aprobando === e.id}
                 className="text-borgona text-xs disabled:opacity-50"
@@ -113,7 +113,7 @@ export default function DatasetSupervisionPage() {
                 {aprobando === e.id ? "Aprobando…" : "Aprobar →"}
               </button>
             ) : (
-              <a key="a" href={`/supervision/conversaciones/${e.conversacion}`} className="text-borgona text-xs">Ver conversación →</a>
+              <a key={`${e.id}-a`} href={`/supervision/conversaciones/${e.conversacion}`} className="text-borgona text-xs">Ver conversación →</a>
             ),
           ])}
         />

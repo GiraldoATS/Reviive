@@ -15,7 +15,7 @@ interface PedidoApi {
   codigo: string;
   estado: string;
   total: string;
-  resumen: { objeto: string; historia: string; proveedor: string };
+  resumen: { recuerdo_id: string; objeto: string; historia: string; proveedor: string };
   eventos: unknown[];
 }
 
@@ -185,7 +185,7 @@ export default function DetallePedidoPage() {
             <Button href={`/pedido/${pedido.id}/seguimiento`} variant="primary" className="flex-1 justify-center">
               Ver seguimiento
             </Button>
-            <Button href="/recomendaciones" variant="secondary">
+            <Button href={`/recomendaciones?recuerdo=${pedido.resumen.recuerdo_id}`} variant="secondary">
               Volver
             </Button>
           </div>

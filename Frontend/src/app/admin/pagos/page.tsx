@@ -91,11 +91,11 @@ export default function PagosAdminPage() {
             p.proveedor_nombre,
             p.pedido_codigo,
             formatoCOP(Number(p.monto_neto)),
-            <Badge key="e" tone={p.estado === "pagado" ? "success" : "pending"}>{p.estado === "pagado" ? "Pagado" : "Pendiente"}</Badge>,
+            <Badge key={`${p.id}-e`} tone={p.estado === "pagado" ? "success" : "pending"}>{p.estado === "pagado" ? "Pagado" : "Pendiente"}</Badge>,
             p.fecha_pago ? fechaCorta(p.fecha_pago) : p.fecha_estimada ? fechaCorta(p.fecha_estimada) : "—",
             p.estado === "pendiente" ? (
               <button
-                key="a"
+                key={`${p.id}-a`}
                 onClick={() => marcarPagado(p.id)}
                 disabled={marcando === p.id}
                 className="text-borgona text-xs disabled:opacity-50"
@@ -103,7 +103,7 @@ export default function PagosAdminPage() {
                 {marcando === p.id ? "Marcando…" : "Marcar pagado →"}
               </button>
             ) : (
-              <span key="a" className="text-carbon/40 text-xs">—</span>
+              <span key={`${p.id}-a`} className="text-carbon/40 text-xs">—</span>
             ),
           ])}
         />

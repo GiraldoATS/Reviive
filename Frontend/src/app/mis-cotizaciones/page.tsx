@@ -22,6 +22,7 @@ interface CotizacionApi {
   total: string;
   vigencia: string;
   estado: "enviada" | "aceptada" | "rechazada" | "vencida";
+  pago_estado: "pendiente" | "aprobado" | "rechazado" | null;
   creado_en: string;
 }
 
@@ -436,19 +437,25 @@ function ContenidoCotizaciones() {
                             </button>
                           </>
                         )}
+                        {c.estado === "aceptada" && c.pago_estado === "aprobado" && (
+                          <span className="rounded-full bg-emerald-50 text-emerald-700 px-4 py-2 text-xs text-center inline-flex items-center justify-center gap-1.5">
+                            <IconCheck className="h-3.5 w-3.5" />
+                            Pagado
+                          </span>
+                        )}
+                        {c.estado === "aceptada" && c.pago_estado !== "aprobado" && (
+                          <Button
+                            onClick={() => iniciarPago(c)}
+                            disabled={procesando === c.id}
+                            className="text-xs whitespace-nowrap"
+                          >
+                            {procesando === c.id ? "Redirigiendo…" : "Pagar ahora"}
+                          </Button>
+                        )}
                         {c.estado === "aceptada" && (
-                          <>
-                            <Button
-                              onClick={() => iniciarPago(c)}
-                              disabled={procesando === c.id}
-                              className="text-xs whitespace-nowrap"
-                            >
-                              {procesando === c.id ? "Redirigiendo…" : "Pagar ahora"}
-                            </Button>
-                            <Link href="/mis-procesos" className="rounded-full border border-borgona text-borgona px-6 py-2.5 text-xs hover:bg-borgona/5 transition-colors whitespace-nowrap text-center">
-                              Ya pagué, ver mi proceso →
-                            </Link>
-                          </>
+                          <Link href="/mis-procesos" className="rounded-full border border-borgona text-borgona px-6 py-2.5 text-xs hover:bg-borgona/5 transition-colors whitespace-nowrap text-center">
+                            {c.pago_estado === "aprobado" ? "Ver mi proceso →" : "Ya pagué, ver mi proceso →"}
+                          </Link>
                         )}
                       </div>
                     </div>

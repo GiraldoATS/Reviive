@@ -37,13 +37,14 @@ class CotizacionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        base = Cotizacion.objects.select_related("pago_cliente")
         if user.is_staff or user.rol in STAFF_ROLES:
-            return Cotizacion.objects.all()
+            return base.all()
         if user.rol == "proveedor":
-            return Cotizacion.objects.filter(proveedor__usuario=user)
+            return base.filter(proveedor__usuario=user)
         # El cliente no ve borradores: son propuestas internas del agente o
         # del taller que todavía no fueron revisadas ni enviadas.
-        return Cotizacion.objects.filter(recuerdo__cliente=user).exclude(
+        return base.filter(recuerdo__cliente=user).exclude(
             estado=Cotizacion.Estado.BORRADOR
         )
 

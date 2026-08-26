@@ -107,8 +107,8 @@ export default function DetalleAgenteSupervisionPage({ params }: { params: Promi
               columns={["Fecha", "Estado", "Respuesta", "Puntaje", "Latencia"]}
               rows={ejecuciones.slice(0, 20).map((e) => [
                 fechaCorta(e.creado_en),
-                <Badge key="e" tone={toneByEstado[e.estado] ?? "pending"}>{e.estado}</Badge>,
-                <span key="r" className="line-clamp-2 max-w-sm text-xs text-carbon/70">{e.reply || "—"}</span>,
+                <Badge key={`${e.run_id}-e`} tone={toneByEstado[e.estado] ?? "pending"}>{e.estado}</Badge>,
+                <span key={`${e.run_id}-r`} className="line-clamp-2 max-w-sm text-xs text-carbon/70">{e.reply || "—"}</span>,
                 e.evaluation_score ? `${(Number(e.evaluation_score) * 100).toFixed(0)}%` : "—",
                 e.latencia_ms !== null ? `${e.latencia_ms} ms` : "—",
               ])}

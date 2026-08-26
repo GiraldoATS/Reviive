@@ -82,8 +82,8 @@ export default function PedidosAdminPage() {
             p.resumen.objeto || "—",
             p.resumen.proveedor,
             `$${Number(p.total).toLocaleString("es-CO")}`,
-            <Badge key="e" tone={toneByEstado[p.estado] ?? "neutral"}>{labelByEstado[p.estado] ?? p.estado}</Badge>,
-            <a key="a" href={`/admin/pedidos/${p.id}`} className="text-borgona text-xs">Ver →</a>,
+            <Badge key={`${p.id}-e`} tone={toneByEstado[p.estado] ?? "neutral"}>{labelByEstado[p.estado] ?? p.estado}</Badge>,
+            <a key={`${p.id}-a`} href={`/admin/pedidos/${p.id}`} className="text-borgona text-xs">Ver →</a>,
           ])}
         />
       )}

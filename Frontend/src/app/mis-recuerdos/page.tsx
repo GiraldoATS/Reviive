@@ -109,7 +109,7 @@ function ContenidoMisRecuerdos() {
             <p className="mt-1 font-display text-lg text-dorado-suave max-w-sm">
               Aquí viven los objetos, historias y procesos que has confiado a Reviive.
             </p>
-            <Button href="/mis-recuerdos/nuevo" variant="primary" className="mt-6 inline-flex items-center gap-2">
+            <Button href="/recuerdos/nuevo" variant="primary" className="mt-6 inline-flex items-center gap-2">
               + Registrar un nuevo recuerdo
             </Button>
           </div>
@@ -213,7 +213,7 @@ function ContenidoMisRecuerdos() {
               Cada historia comienza con un objeto especial. Registra el primero y cuéntanos por qué es
               importante para ti.
             </p>
-            <Button href="/mis-recuerdos/nuevo" variant="primary" className="mt-5 inline-flex items-center gap-2">
+            <Button href="/recuerdos/nuevo" variant="primary" className="mt-5 inline-flex items-center gap-2">
               <span className="relative h-4 w-4 shrink-0">
                 <Image src="/images/dashboard/icon-hourglass.png" alt="" fill sizes="16px" className="object-contain" unoptimized />
               </span>

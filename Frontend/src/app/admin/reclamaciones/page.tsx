@@ -96,9 +96,9 @@ export default function ReclamacionesAdminPage() {
             r.pedido_codigo || "—",
             labelByTipo[r.tipo] ?? r.tipo,
             r.cliente_nombre,
-            <span key="d" className="line-clamp-2 max-w-xs text-xs text-carbon/70">{r.descripcion}</span>,
+            <span key={`${r.id}-d`} className="line-clamp-2 max-w-xs text-xs text-carbon/70">{r.descripcion}</span>,
             r.prioridad,
-            <div key="e" className="flex items-center gap-2">
+            <div key={`${r.id}-e`} className="flex items-center gap-2">
               <Badge tone={toneByEstado[r.estado]}>{labelByEstado[r.estado]}</Badge>
               <select
                 value={r.estado}

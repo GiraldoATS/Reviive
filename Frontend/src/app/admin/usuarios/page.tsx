@@ -94,7 +94,7 @@ export default function UsuariosAdminPage() {
             u.perfil?.nombre || "—",
             u.email,
             <select
-              key="rol"
+              key={`${u.id}-rol`}
               value={u.rol}
               disabled={guardandoId === u.id}
               onChange={(e) => actualizar(u.id, "rol", e.target.value)}
@@ -104,7 +104,7 @@ export default function UsuariosAdminPage() {
                 <option key={r} value={r}>{LABEL_ROL[r]}</option>
               ))}
             </select>,
-            <div key="estado" className="flex items-center gap-2">
+            <div key={`${u.id}-estado`} className="flex items-center gap-2">
               <Badge tone={u.estado === "activo" ? "success" : "pending"}>{u.estado}</Badge>
               <select
                 value={u.estado}

@@ -70,14 +70,14 @@ export default function EvaluacionesSupervisionPage() {
           columns={["Agente", "Respuesta evaluada", "Tipo", "Puntaje", "Fecha", ""]}
           rows={evaluaciones.map((e) => [
             e.agente_display,
-            <span key="r" className="line-clamp-2 max-w-xs text-xs text-carbon/70">{e.reply || "—"}</span>,
+            <span key={`${e.id}-r`} className="line-clamp-2 max-w-xs text-xs text-carbon/70">{e.reply || "—"}</span>,
             e.tipo === "automatica" ? "Automática" : "Supervisor",
             e.puntaje,
             fechaCorta(e.creado_en),
             e.requiere_revision ? (
-              <Badge key="b" tone="pending">Requiere revisión</Badge>
+              <Badge key={`${e.id}-b`} tone="pending">Requiere revisión</Badge>
             ) : (
-              <Badge key="b" tone="success">OK</Badge>
+              <Badge key={`${e.id}-b`} tone="success">OK</Badge>
             ),
           ])}
         />

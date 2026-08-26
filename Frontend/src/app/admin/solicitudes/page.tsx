@@ -74,19 +74,19 @@ export default function SolicitudesAdminPage() {
             return [
               s.cliente_nombre,
               objeto ? `${objeto.tipo}${objeto.categoria ? ` · ${objeto.categoria}` : ""}` : "—",
-              <span key="h" className="block max-w-[220px] truncate" title={s.historia}>
+              <span key={`${s.id}-h`} className="block max-w-[220px] truncate" title={s.historia}>
                 {s.historia || "—"}
               </span>,
               resumen.total > 0 ? (
-                <span key="r" className="flex items-center gap-1.5">
+                <span key={`${s.id}-r`} className="flex items-center gap-1.5">
                   <Badge tone="success">{resumen.total} sugerida{resumen.total > 1 ? "s" : ""}</Badge>
                   {resumen.requiere_revision_humana && <Badge tone="pending">Revisar</Badge>}
                 </span>
               ) : (
-                <Badge key="r" tone="pending">Pendiente</Badge>
+                <Badge key={`${s.id}-r`} tone="pending">Pendiente</Badge>
               ),
               new Date(s.creado_en).toLocaleDateString("es-CO"),
-              <span key="a" className="flex items-center gap-3">
+              <span key={`${s.id}-a`} className="flex items-center gap-3">
                 <a href={`/recomendaciones?recuerdo=${s.id}`} className="text-borgona text-xs">
                   Ver →
                 </a>
